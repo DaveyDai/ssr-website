@@ -129,6 +129,13 @@
       .vava-collapse-item:last-child{border-bottom: 0.052vw solid #DDDDDD;}
     }
   }
+  @media (max-width: 1450px) {
+    .after-sales{
+      .after-sales-content{
+        padding: 10.4vw 10vw;
+      }
+    }
+  }
   @media (max-width: 800px) {
     .after-sales{
       .after-sales-content{
