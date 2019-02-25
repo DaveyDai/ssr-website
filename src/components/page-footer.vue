@@ -25,8 +25,7 @@
         </div>
         <div class="left-footer-column">
           <h5>COMMUNITY</h5>
-          <li>Blog</li>
-          <li>Forum</li>
+          <li @click="linkPage('/blog')">Blog</li>
         </div>
       </div>
       <div class="footer-conter-line"></div>
@@ -62,7 +61,7 @@
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">COMMUNITY</span>
         <span slot="rightIcon" class="icon icon-right-slide"></span>
-        <li>Blog</li><li>Forum</li>
+        <li @click="linkPage('/blog')">Blog</li>
       </vava-collapse-item>
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">SUBSCRIBE</span>
@@ -102,8 +101,8 @@
           return true;
         }
       },
-      linkPage () {
-        this.$router.push('/test')
+      linkPage (path) {
+        this.$router.push(path)
       }
     }
   }

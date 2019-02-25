@@ -19,6 +19,7 @@ const TermsConditions = () => import('../views/support/terms-conditions.vue') //
 const PrivatePolicy = () => import('../views/support/private-policy.vue') // private-policy首页
 const Influeucer = () => import('../views/support/influeucer.vue') // influeucer首页
 const Feedback = () => import('../views/support/feedback.vue') // feedback首页
+const Blog = () => import('../views/blog/index.vue') // feedback首页
 
 export function createRouter () {
   return new Router({
@@ -49,6 +50,7 @@ export function createRouter () {
       { path: '/support/private-policy', component: PrivatePolicy },
       { path: '/support/influeucer', component: Influeucer },
       { path: '/support/feedback', component: Feedback },
+      { path: '/blog', component: Blog },
       {path: '/test', name: 'Test', component: Test},
       {path: '/', name: 'homePage', component: HomePage},
       {path: '/icontest', name: 'icontest', component: IconTest}
