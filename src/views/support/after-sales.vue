@@ -109,6 +109,7 @@
           }
         }
         .vava-collapse-item-content{
+          padding: 0 10px;
           .after-sales-li{
             padding-bottom: 2vw;
             font-size: 1.56vw;

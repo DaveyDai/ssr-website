@@ -217,7 +217,7 @@
           font-size: 18px;
         }
         .warranty-product-detail{
-          padding: 2.6vw 2vw;
+          padding: 20px 15px;
           margin: 0 2vw;
           .warranty-product-img{margin-right: 18px;}
           .warranty-p-order{

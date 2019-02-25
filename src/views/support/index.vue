@@ -5,11 +5,11 @@
       <div class="support-content-li" @click="routerLink('/support/warranty')"><img src="/static/website-imgages/support/Warranty Extension.jpg"><span>WARRANTY EXTENSION</span></div>
       <div class="support-content-li" @click="routerLink('/support/user-manual')"><img src="/static/website-imgages/support/User Manual.jpg"><span>USER MANUAL</span></div>
       <div class="support-content-li" @click="routerLink('/support/after-sales')"><img src="/static/website-imgages/support/After Sale.jpg"><span>AFTER-SALES</span></div>
-      <div class="support-content-li"><img src="/static/website-imgages/support/Influencer.jpg"><span>INFLUENCER</span></div>
+      <div class="support-content-li" @click="routerLink('/support/influeucer')"><img src="/static/website-imgages/support/Influencer.jpg"><span>INFLUENCER</span></div>
       <div class="support-content-li" @click="routerLink('/support/terms-conditions')"><img src="/static/website-imgages/support/Terms & Conditions.jpg"><span>TERMS & CONDITIONS</span></div>
       <div class="support-content-li" @click="routerLink('/support/private-policy')"><img src="/static/website-imgages/support/Private Policy.jpg"><span>PRIVATE POLICY</span></div>
     </div>
-    <img class="support-footer-img" src="/static/website-imgages/support/User Feedback.jpg">
+    <img @click="routerLink('/support/feedback')" class="support-footer-img" src="/static/website-imgages/support/User Feedback.jpg">
     <vava-subscribe></vava-subscribe>
   </div>
 </template>
@@ -75,6 +75,7 @@
     }
     .support-footer-img{
       width: 100%;
+      cursor: pointer;
     }
   }
   @media (max-width: 800px) {

@@ -17,6 +17,8 @@ const UserManual = () => import('../views/support/user-manual.vue') // user-manu
 const AfterSales = () => import('../views/support/after-sales.vue') // after-sales首页
 const TermsConditions = () => import('../views/support/terms-conditions.vue') // terms-conditions首页
 const PrivatePolicy = () => import('../views/support/private-policy.vue') // private-policy首页
+const Influeucer = () => import('../views/support/influeucer.vue') // influeucer首页
+const Feedback = () => import('../views/support/feedback.vue') // feedback首页
 
 export function createRouter () {
   return new Router({
@@ -45,6 +47,8 @@ export function createRouter () {
       { path: '/support/after-sales', component: AfterSales },
       { path: '/support/terms-conditions', component: TermsConditions },
       { path: '/support/private-policy', component: PrivatePolicy },
+      { path: '/support/influeucer', component: Influeucer },
+      { path: '/support/feedback', component: Feedback },
       {path: '/test', name: 'Test', component: Test},
       {path: '/', name: 'homePage', component: HomePage},
       {path: '/icontest', name: 'icontest', component: IconTest}
