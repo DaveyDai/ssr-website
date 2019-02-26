@@ -5,7 +5,7 @@ const scrollRevealFunction = function (scrollReveal, className, type) {
     container: window.document.getElementById('app'), // 滚动容器
     origin: 'bottom', // 方向
     distance: '10%', // 距离
-    duration: 1000, // 动画持续时间，单位毫秒
+    duration: 800, // 动画持续时间，单位毫秒
     delay: 200, // 延迟时间
     opacity: 0.001, // 开始的透明度
     scale: 0.9, // 开始的缩放值

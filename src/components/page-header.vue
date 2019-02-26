@@ -397,6 +397,7 @@
   }
   @media (max-width: 920px) {
     .page-header{
+      top: -1px;
       .page-header-option{
         height: 60px;
         .header-left-logo{

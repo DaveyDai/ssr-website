@@ -1,13 +1,10 @@
 <template>
   <div class="vava-home-page">
-    <!-- <img class="testimg" src="static/vacuum/Product 2.jpg" alt="">
-    <img class="testimg" src="static/vacuum/Product 21.jpg" alt="">
-    <img class="testimg" src="static/vacuum/projector——k6.286.jpg" alt="">
-    <img class="testimg" src="static/vacuum/projector——k6.28611.jpg" alt="">
-    <img class="testimg" src="static/vacuum/Rectangle 111.jpg" alt=""> -->
     <vava-swiper class="home-page-banner" :swiper-data="bannerImg" v-if="bannerType === 0"></vava-swiper>
-    <div class="home-page-banner home-scroll-reveal" v-for="(item,index) of bannerImg" :key="index">
-      <img :src="item">
+    <div v-if="bannerType === 1">
+      <div class="home-page-banner home-scroll-reveal" v-for="(item,index) of bannerImg" :key="index">
+        <img :src="item">
+      </div>
     </div>
     <h5 class="home-page-content-title">PRODUCTS</h5>
     <div class="home-page-products home-scroll-reveal">
@@ -100,7 +97,7 @@
       background: linear-gradient(to top, #fcfcfc 0%, #e8e8e8 25%, #f5f5f5 100%);
       .home-products-left{
         margin-right: 1vw;
-        img{width: 29.16vw;}
+        img{width: 29.16vw;transition: box-shadow .35s, transform .35s;}
       }
       .home-products-right{
         width: 53.5vw;
@@ -111,7 +108,8 @@
         img:nth-child(4){margin: 1vw 0 0 1vw;}
       }
       img:hover{
-        transition: box-shadow .35s;
+        transition: box-shadow .35s, transform .35s;
+        transform: scale(1.05);
         box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 1.5vw;
       }
     }

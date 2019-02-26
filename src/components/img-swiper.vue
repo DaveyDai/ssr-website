@@ -38,7 +38,7 @@
           },
           pagination: { // 分页指示
             el: '.swiper-pagination',
-            dynamicBullets: true,
+            // dynamicBullets: true,
             clickable :true
           }
         }
@@ -55,6 +55,9 @@
 <style lang="less" scoped>
   .vava-swiper{
     width: 100%;
+    .swiper-pagination-bullet-active{
+      background: #FFF;
+    }
   }
   .swiper-button-disabled{
     display: none;

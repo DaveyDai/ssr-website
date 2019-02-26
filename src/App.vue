@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <page-header></page-header>
+    <page-header v-if="!isBlogHeader"></page-header>
+    <blog-header v-else></blog-header>
     <transition name="fade" mode="out-in">
       <router-view class="vava-page-content"></router-view>
     </transition>
@@ -12,13 +13,24 @@
 <script>
   import PageHeader from '@/components/page-header.vue'
   import PageFooter from '@/components/page-footer.vue'
+  // import PageFooter from '@/components/page-footer.vue'
+  const BlogHeader = () => import('@/components/vava-blog-header.vue') // blog-detail
   // import { mapGetters } from 'vuex'
   export default {
     // computed: { ...mapGetters(['catalogList']) },
-    components: { PageHeader, PageFooter },
+    components: { PageHeader, PageFooter, BlogHeader },
     data () {
       return {
+        isBlogHeader: false // 是否显示blog页面的头部
       }
+    },
+    watch: {
+      $route (route) { // 监听路由
+        this.isBlogHeader = !!route.meta.blog
+      }
+    },
+    created () {
+      this.isBlogHeader = !!this.$route.meta.blog
     },
     methods: {
     }
@@ -30,8 +42,8 @@
   @import '/static/style/swiper.min.css';
   #app {
     position: fixed;
-    width: 100vw;
-    height: 100vw;
+    top: 0;
+    left: 0;
     height: 100%;
     width: 100%;
     background: #FFF;
@@ -43,7 +55,6 @@
     .vava-page-content{
       position: relative;
       width: 100%;
-      // min-height: 70%;
     }
     .footer-reserved{
       width: 100%;
