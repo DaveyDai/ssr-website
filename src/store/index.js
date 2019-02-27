@@ -11,7 +11,9 @@ export function createStore () {
     state: {
       categoryData: {}, // 产品分类信息
       testData: { test: 'Store测试1' },
-      language: ''
+      language: '',
+      token: '',
+      accountData: '' // 账户信息
     },
     actions,
     mutations,

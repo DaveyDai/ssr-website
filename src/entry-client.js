@@ -64,6 +64,7 @@ router.onReady((currentRoute) => {
   if(window.__serverRenderError){ // 如果拿到服务端的错误状态，则执行客户端渲染程序
     feCompatibleRende(currentRoute);
   }
+  store.commit('setToken', app.$cookies.get('token') || '') // 同步store token
   app.$mount('#app')
 })
 // node报错时前端路由重渲染

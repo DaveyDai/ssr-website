@@ -14,8 +14,8 @@
             <p class="support-faq-time">By VAVA Support Team on July 27, 2018</p>
           </li>
           <li style="cursor: grab;">
-            <p class="support-faq-aq"><em>Q:</em><span>I would like to know how long does it take to finish downloading one video to my phone ?o finish downloading one video to my phone ?</span></p>
-            <p class="support-faq-aq"><em>A:</em><span>Generally speaking, it will take about 1~1.5 minute (the video is 120MB) to finish downloading one video.Generally speaking, it will take about 1~1.5 minute (the video is 120MB) to finish downloading one video.</span></p>
+            <p class="support-faq-aq"><em>Q:</em><span>I would like to know how long does it take to finish downloading one video to my phone ?</span></p>
+            <p class="support-faq-aq"><em>A:</em><span>Generally speaking about 1~1.5 minute (the video is 120MB) to finish downloading one video.</span></p>
             <p class="support-faq-time">By VAVA Support Team on January 15, 2019</p>
           </li>
         </div>
@@ -95,14 +95,14 @@
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev',
             hideOnClick: true
-          },
-          pagination: { // 分页指示
-            el: '.swiper-pagination',
-            renderBullet: function (index, className) {
-              return '<span class="' + className + '">' + (index + 1) + '</span>';
-            },
-            clickable :true
           }
+          // pagination: { // 分页指示
+          //   el: '.swiper-pagination',
+          //   renderBullet: function (index, className) {
+          //     return '<span class="' + className + '">' + (index + 1) + '</span>';
+          //   },
+          //   clickable :true
+          // }
         },
         changeValue: false
       }
@@ -128,11 +128,11 @@
       font-size: 1.92vw;
       color: @base-font-color;
       text-align: center;
-      padding: 5.2vw 0 2.08vw 0;
+      padding: 4.17vw 0;
     }
     .swiper-wrapper{
       .swiper-slide{
-        padding: 0 15.6vw 3vw 15.6vw;
+        padding: 0 14.4vw 3vw 15.6vw;
         li{
           margin-bottom: 2.5vw;
           .support-faq-aq{
@@ -141,14 +141,15 @@
             line-height: 1.4;
             display: flex;
             flex-wrap: nowrap;
-            margin: 0.7vw 0;
-            // font-family: 'avenir-next-demi';
+            font-family: 'avenir-next-demi';
+            margin-bottom: 1vw;
             em{display: inline-block;width: 3vw;flex-shrink: 0;min-width: 20px;}
           }
           .support-faq-time{
-            margin-top: 1.2vw;
+            padding-top: 0.4vw;
             color: @base-font-color;
             font-size: 0.99vw;
+            line-height: 1.5;
           }
         }
       }
@@ -193,7 +194,9 @@
         background: @base-button-back;
       }
     }
-
+    .swiper-button-prev,.swiper-button-next{
+      display: block;
+    }
     .swiper-button-prev {
       left: 5vw;
       background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M0%2C22L22%2C0l2.1%2C2.1L4.2%2C22l19.9%2C19.9L22%2C44L0%2C22L0%2C22L0%2C22z'%20fill%3D'%23E3E3E3'%2F%3E%3C%2Fsvg%3E")

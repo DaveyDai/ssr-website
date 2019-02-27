@@ -8,7 +8,8 @@ const HomePage = () => import('../views/home-page/index.vue') // 首页
 const ErrorPage = () => import('../views/error/index.vue') // 404
 const LoginPage = () => import('../views/account/login.vue') // login
 const ForgotPassword = () => import('../views/account/forgot-password.vue') // 忘记密码
-const CreateAccount = () => import('../views/account/create-account.vue') // 忘记密码
+const CreateAccount = () => import('../views/account/create-account.vue') // 用户中心
+const Account = () => import('../views/account/index.vue') // 忘记密码
 const ProductMain = () => import('../views/products/product-main.vue') // 产品主页
 const ProductDetail = () => import('../views/products/product-detail.vue') // 产品详情
 const Support = () => import('../views/support/index.vue') // support首页
@@ -41,6 +42,7 @@ export function createRouter () {
       { path: '/login', name: 'login', component: LoginPage },
       { path: '/forgot-password', component: ForgotPassword },
       { path: '/create-account', component: CreateAccount },
+      { path: '/account', component: Account },
       { path: '/404', component: ErrorPage },
       { path: '/c/:cId', component: ProductMain },
       { path: '/p/:pId', component: ProductDetail },

@@ -4,7 +4,7 @@
   "author": "Davey Dai <327394114@qq.com>",
   "private": true,
   "scripts": {
-    "dev": "cross-env API_ROOT='https://api.vava.com' node server",
+    "dev": "cross-env API_ROOT='http://10.0.0.183:11101' node server",
     "start": "cross-env NODE_ENV=production node server",
     "build_test": "cross-env API_ROOT='http://test-api.nearbyexpress.com' npm run build",
     "build_pro": "cross-env API_ROOT='http://dev-api.nearbyexpress.com' npm run build",

@@ -7,10 +7,14 @@ export const testData =  (store, testData) => {
     }, testData.time)
   })
 }
-const requestPost = ({commit, state}, url, params) => {
-  return $http.requestPost(url, params)
+const requestPost = ({commit, state}, params) => {
+  return $http.requestPost(params.api, params.data || {}, state.token || '')
 }
-export const post = requestPost
+const requestGet = ({commit, state}, params) => {
+  return $http.requestGet(params.api, params.data || {}, state.token || '')
+}
+export const postFetch = requestPost
+export const getFetch = requestGet
 export const queryCategory = ({commit, state}, params) => {
   // return $http.requestPost(url, params)
   return new Promise((resolve, reject) => {

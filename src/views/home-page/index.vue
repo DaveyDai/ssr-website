@@ -33,7 +33,7 @@
       return {
         bannerImg: ['/static/home-page/1.jpg', '/static/home-page/2.jpg', '/static/home-page/3.jpg'],
         socialImg: ['/static/home-page/21.jpg', '/static/home-page/22.jpg', '/static/home-page/23.jpg', '/static/home-page/24.jpg','/static/home-page/21.jpg', '/static/home-page/22.jpg', '/static/home-page/23.jpg', '/static/home-page/24.jpg'],
-        bannerType: 1,
+        bannerType: 0,
         swiperOption: { // 横向轮播图片
           freeMode: true,
           slidesPerView: 'auto',
@@ -97,18 +97,17 @@
       background: linear-gradient(to top, #fcfcfc 0%, #e8e8e8 25%, #f5f5f5 100%);
       .home-products-left{
         margin-right: 1vw;
-        img{width: 29.16vw;transition: box-shadow .35s, transform .35s;}
+        img{width: 29.16vw;transition: box-shadow .35s, transform .35s;cursor: pointer;}
       }
       .home-products-right{
         width: 53.5vw;
-        img{width: 25vw;}
+        img{width: 25vw;transition: box-shadow .35s, transform .35s;cursor: pointer;}
         img:nth-child(1){margin: 0 1vw 1vw 1vw;}
         img:nth-child(2){margin: 0 0 1vw 1vw;}
         img:nth-child(3){margin: 1vw 1vw 0 1vw;}
         img:nth-child(4){margin: 1vw 0 0 1vw;}
       }
       img:hover{
-        transition: box-shadow .35s, transform .35s;
         transform: scale(1.05);
         box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 1.5vw;
       }

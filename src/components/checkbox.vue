@@ -34,11 +34,11 @@
     flex-wrap: nowrap;
     align-items: center;
     color: @base-font-color;
-    line-height: 1.5;
+    line-height: 1.3;
     .vava-checkbox-select{
       display: flex;
-      width: 1.46vw;
-      height: 1.46vw;
+      width: 1.6vw;
+      height: 1.6vw;
       min-width: 20px;
       min-height: 20px;
       align-items: center;

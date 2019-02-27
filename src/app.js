@@ -9,7 +9,7 @@ import * as filters from './common/utils/filters'
 import VueI18n from 'vue-i18n'
 import en from '@/common/language/en'
 import zh from '@/common/language/zh'
-import Message from '@/common/utils/vava-message.js' // 提示框
+import Utils from '@/common/utils/utils.js' // 工具方法
 import VavaUi from '@/components/components.js'
 // mixin for handling title
 Vue.mixin(titleMixin)
@@ -28,7 +28,7 @@ if (process.browser) {
   })
   Vue.use({
     install: function (Vue) {
-      Vue.prototype.$message = Message
+      Vue.prototype.$utils = Utils
       Vue.prototype.isIphone = navigator.userAgent.indexOf('iPhone') !== -1 // 是否是ios设备 true 是 false 不是
       Vue.prototype.$scrollReveal = require('scrollreveal') // 滚动动画插件
     }

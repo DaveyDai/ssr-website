@@ -3,9 +3,10 @@ import api from './api'
 
 axios.defaults.baseURL = process.env.API_ROOT
 axios.defaults.timeout = 10000
-axios.defaults.headers['x-language'] = 'zh-CN'
+axios.defaults.headers['accept-language'] = ''
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 axios.defaults.headers.get['Content-Type'] = 'application/x-www-form-urlencoded'
+axios.defaults.headers.get['Access-Control-Allow-Origin'] = '*'
 
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
@@ -21,20 +22,37 @@ axios.interceptors.response.use(function (response) {
   // 对响应数据做点什么
   return response
 }, function (error) {
-  // 对响应错误做点什么
+  // 对响应错误做点什么 
   return Promise.reject(error)
 })
 
 //post请求
-export function requestPost (url, params) {
+export function requestPost (url, params, token) {
+  axios.defaults.headers['token'] = token
   return new Promise((resolve, reject) => {
-    axios.post(api[url], params).then(response => { resolve(response.data) }).catch(error => { reject(error) })
+    axios.post(api[url], params).then(response => {
+      resolve(response.data)
+    }).catch(error => {
+      console.log('server is error:', error.response)
+      try{
+        reject(error.response.data)
+      } catch (errpr) { console.log('code error') }
+    })
   })
 }
 
 //get请求
-export function requestGet (url) {
+export function requestGet (url, params, token) {
+  axios.defaults.headers['token'] = token
   return new Promise((resolve, reject) => {
-    axios.get(api[url]).then(response => { resolve(response.data) }).catch(error => { reject(error) })
+    let getUrl = api[url]
+    axios.get(getUrl).then(response => {
+      resolve(response.data)
+    }).catch(error => {
+      console.log('server is error:', error.response)
+      try{
+        reject(error.response.data)
+      } catch (errpr) { console.log('code error') }
+    })
   })
 }

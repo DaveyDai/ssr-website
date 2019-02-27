@@ -7,7 +7,7 @@
       @compositionstart="handleComposition"
       @compositionupdate="handleComposition"
       @compositionend="handleComposition"
-      type="text"
+      :type="type"
     >
   </div>
 </template>
@@ -17,7 +17,11 @@
     name: 'VavaInput',
     componentName: 'VavaInput',
     props: {
-      value: [String, Number]
+      value: [String, Number],
+      type: {
+        type: String,
+        default: 'text'
+      }
     },
     watch: {
       value (newValue) {

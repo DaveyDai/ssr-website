@@ -7,12 +7,13 @@
     <div class="vava-button" @click="change('zh')">中文</div>
     <div class="vava-button" @click="change('en')">英文</div>
   </div>
+<div class="icon icon-download"></div>
 <div class="icon icon-close"></div>
+<div class="icon icon-menu"></div>
 <div class="icon icon-selected"></div>
 <div class="icon icon-facebook"></div>
 <div class="icon icon-turned"></div>
 <div class="icon icon-down"></div>
-<div class="icon icon-menu"></div>
 <div class="icon icon-instagram"></div>
 <div class="icon icon-log-in"></div>
 <div class="icon icon-right-slide"></div>
@@ -20,7 +21,10 @@
 <div class="icon icon-shopping-cart"></div>
 <div class="icon icon-twitter"></div>
 <div class="icon icon-youtube"></div>
-
+<div class="icon icon-account-user"></div>
+<div class="icon icon-account-position"></div>
+<div class="icon icon-account-card"></div>
+<div class="icon icon-account-lock"></div>
   </div>
 </template>
 <script>

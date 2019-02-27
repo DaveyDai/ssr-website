@@ -25,7 +25,7 @@ export default {
 <style lang="less" scoped>
   .count-time{
     font-size: 0.84vw;
-    color: @font-back-color;
+    color: @un-font-color;
     text-align: center;
     span{
       font-size: 0.9vw;

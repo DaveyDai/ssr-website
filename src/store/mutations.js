@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import VueCookies from 'vue-cookies'
 export default {
   setCategoryData (state, data) {
     state.categoryData[data.data.cId] = data.data
@@ -8,6 +9,13 @@ export default {
   },
   setLanguage (state, data) {
     state.language = data
+  },
+  setToken (state, data) {
+    state.token = data
+    VueCookies.set('token', data)
+  },
+  setAccountData (state, data) {
+    state.accountData = data
   }
   // SET_LIST: (state, { type, ids }) => {
   //   state.lists[type] = ids
