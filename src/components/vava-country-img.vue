@@ -1,5 +1,5 @@
 <template>
-  <div class="vava-country-img" @click="clickShow(3)"
+  <div class="vava-country-img" @click="clickShow"
     :class="{
       'vava-country-china': countryName === 'zh',
       'vava-country-us': countryName === 'en',
@@ -11,9 +11,6 @@
 
 <script>
   export default {
-    props: {
-      clickShow: Function
-    },
     data () {
       return {
         countryName: ''
@@ -32,6 +29,9 @@
         this.countryName = type
         this.$cookies.set('language', type)
         this.$i18n.locale = type === 'ge' || type === 'jp' ? 'en' : type
+      },
+      clickShow () {
+        this.$emit('click', 3)
       }
     }
   }

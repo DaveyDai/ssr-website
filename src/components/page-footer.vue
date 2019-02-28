@@ -3,20 +3,17 @@
     <div class="footer-pc">
       <div class="page-footer-left">
         <div class="left-footer-column">
-          <h5 @click="linkPage">PRODUCTS</h5>
-          <li>Dash Cam</li>
-          <li>4K TV Projector</li>
-          <li>Robot Vacuum</li>
-          <li @click="linkPage">Accessory</li>
+          <h5>PRODUCTS</h5>
+          <li v-for="(item, index) of categoryList" :key="index" @click="routerLink('/c/' + item.id)">{{item.categoryName}}</li>
         </div>
         <div class="left-footer-column">
           <h5>SUPPORT</h5>
-          <li>Warranty</li>
-          <li>User Manual</li>
-          <li>Influencer</li>
-          <li>After-sales</li>
-          <li>Terms & Conditions</li>
-          <li>Private Policy</li>
+          <li @click="routerLink('/support/warranty')">Warranty</li>
+          <li @click="routerLink('/support/user-manual')">User Manual</li>
+          <li @click="routerLink('/support/influeucer')">Influencer</li>
+          <li @click="routerLink('/support/after-sales')">After-sales</li>
+          <li @click="routerLink('/support/terms-conditions')">Terms & Conditions</li>
+          <li @click="routerLink('/support/private-policy')">Private Policy</li>
         </div>
         <div class="left-footer-column">
           <h5>OTHERS</h5>
@@ -25,7 +22,7 @@
         </div>
         <div class="left-footer-column">
           <h5>COMMUNITY</h5>
-          <li @click="linkPage('/blog')">Blog</li>
+          <li @click="routerLink('/blog')">Blog</li>
         </div>
       </div>
       <div class="footer-conter-line"></div>
@@ -43,15 +40,17 @@
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">PRODUCTS</span>
         <span slot="rightIcon" class="icon icon-right-slide"></span>
-        <li>Dash Cam</li>
-        <li>4K TV Projector</li>
-        <li>Robot Vacuum</li>
-        <li>Accessory</li>
+        <li v-for="(item, index) of categoryList" :key="index" @click="routerLink('/c/' + item.id)">{{item.categoryName}}</li>
       </vava-collapse-item>
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">SUPPORT</span>
         <span slot="rightIcon" class="icon icon-right-slide"></span>
-        <li>Warranty</li><li>User Manual</li><li>Influencer</li><li>After-sales</li><li>Terms & Conditions</li><li>Private Policy</li>
+        <li @click="routerLink('/support/warranty')">Warranty</li>
+        <li @click="routerLink('/support/user-manual')">User Manual</li>
+        <li @click="routerLink('/support/influeucer')">Influencer</li>
+        <li @click="routerLink('/support/after-sales')">After-sales</li>
+        <li @click="routerLink('/support/terms-conditions')">Terms & Conditions</li>
+        <li @click="routerLink('/support/private-policy')">Private Policy</li>
       </vava-collapse-item>
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">OTHERS</span>
@@ -61,7 +60,7 @@
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">COMMUNITY</span>
         <span slot="rightIcon" class="icon icon-right-slide"></span>
-        <li @click="linkPage('/blog')">Blog</li>
+        <li @click="routerLink('/blog')">Blog</li>
       </vava-collapse-item>
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">SUBSCRIBE</span>
@@ -87,6 +86,11 @@
         subscribeEmail: ''
       }
     },
+    computed: {
+      categoryList () {
+        return this.$store.state.categoryList
+      }
+    },
     methods: {
       getEmailValid () {
         let email = this.email;
@@ -101,7 +105,7 @@
           return true;
         }
       },
-      linkPage (path) {
+      routerLink (path) {
         this.$router.push(path)
       }
     }

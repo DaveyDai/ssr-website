@@ -29,12 +29,9 @@
 </template>
 
 <script>
-  import VavaInput from '@/components/vava-input.vue'
-  import VavaButton from '@/components/vava-button.vue'
-  import VavaCheckbox from '@/components/checkbox.vue'
   import CountTime from '@/components/count-time.vue'
   export default {
-    components: { VavaInput, VavaButton, VavaCheckbox, CountTime },
+    components: { CountTime },
     data () {
       return {
         verificationShow: false, // 显示输入验证码界面
@@ -101,10 +98,20 @@
         this.$bar.start()
         this.createPram.emailAddress = this.sendCodeParam.sendToEmail
         this.$store.dispatch('postFetch', {api: 'userRegister', data: this.createPram}).then(data => {
-          this.$bar.finish()
+          this.loginCheckData({userName: this.createPram.emailAddress, password: this.createPram.password})
         }).catch(error => {
           this.$bar.finish()
           this.$utils.message(error.message)
+        })
+      },
+      loginCheckData (loginParam) {
+        this.$store.dispatch('postFetch', {api: 'signIn', data: loginParam}).then(data => {
+          this.$bar.finish()
+          this.$store.commit('setToken', data.data.token)
+          this.routerLink('/account')
+        }).catch(error => {
+          this.$utils.message(error.message)
+          this.$bar.finish()
         })
       },
       routerLink (path, isOpen) {

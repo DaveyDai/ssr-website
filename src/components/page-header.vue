@@ -9,8 +9,8 @@
       <!-- PC菜单 -->
       <div class="header-content">
         <nav class="header-menu" v-show="!showSearch">
-          <li @click="routerLink('/c/125')"><span>DASH CAM</span><i></i></li><li @click="routerLink('/c/126')"><span>HOME CAM</span><i></i></li><li><span>4K TV PROJECTOR</span><i></i></li><li><span>ROBOT VACUUM</span><i></i></li>
-          <li><span>ACCESSORY</span><i></i></li><li @click="routerLink('/support')"><span>SUPPORT</span><i></i></li><li><span>ABOUT</span><i></i></li>
+          <li v-for="(item, index) of categoryList" :key="index" @click="routerLink('/c/' + item.id)"><span>{{item.categoryName}}</span><i></i></li>
+          <li @click="routerLink('/support')"><span>SUPPORT</span><i></i></li><li><span>ABOUT</span><i></i></li>
         </nav>
         <!-- 搜索框 -->
         <vava-search class="header-search" v-model="showSearch"></vava-search>
@@ -18,8 +18,8 @@
       <!-- 头部右侧按钮 -->
       <div class="header-right">
         <span class="header-icon-pc icon icon-search" @click="openSearch"></span>
-        <span @click="routerLink('/login')" class="header-icon-pc icon icon-log-in"></span>
-        <vava-country-img class="header-icon-pc" ref="vavaCountryImgPc" :click-show="setHeaderPanel"></vava-country-img>
+        <span @click="routerLink('/account')" class="header-icon-pc icon icon-log-in"></span>
+        <vava-country-img class="header-icon-pc" ref="vavaCountryImgPc" @click="setHeaderPanel"></vava-country-img>
         <span @click="setHeaderPanel(2)" class="phone-header-icon icon icon-turned"></span>
       </div>
     </div>
@@ -31,11 +31,9 @@
     <!--移动端菜单选择面板-->
 	  <transition name="menu-fade">
 	    <div v-show="isShowPhoneMenu" ref="phoneMenu" class="header-phone-menu header-collapse">
-	    	<vava-collapse-item><span slot="titleContent" class="header-collapse-title" @click="routerLink('/c/125')">DASH CAM</span></vava-collapse-item>
-	    	<vava-collapse-item><span slot="titleContent" class="header-collapse-title" @click="routerLink('/c/126')">HOME CAM</span></vava-collapse-item>
-	    	<vava-collapse-item><span slot="titleContent" class="header-collapse-title">4K TV PROJECTOR</span></vava-collapse-item>
-	    	<vava-collapse-item><span slot="titleContent" class="header-collapse-title">ROBOT VACUUM</span></vava-collapse-item>
-	    	<vava-collapse-item><span slot="titleContent" class="header-collapse-title">ACCESSORY</span></vava-collapse-item>
+	    	<vava-collapse-item v-for="(item, index) of categoryList" :key="index">
+          <span slot="titleContent" class="header-collapse-title" @click="routerLink('/c/' + item.id)">{{item.categoryName}}</span>
+        </vava-collapse-item>
 	    	<vava-collapse-item><span slot="titleContent" class="header-collapse-title" @click="routerLink('/support')">SUPPORT</span></vava-collapse-item>
 	    	<vava-collapse-item><span slot="titleContent" class="header-collapse-title">ABOUT</span></vava-collapse-item>
 	    </div>
@@ -46,10 +44,10 @@
         <div class="phone-option-search"><input type="text"><span class="icon icon-search"></span><vava-button class="search-button">Search</vava-button></div>
 	    	<vava-collapse-item>
 	    		<span slot="leftIcon" class="icon icon-log-in collapse-title-left"></span>
-	    		<span slot="titleContent">SIGN IN</span>
+	    		<span slot="titleContent" @click="routerLink('/account')">{{accountName}}</span>
 	    	</vava-collapse-item>
 	    	<vava-collapse-item :title-click="showLang">
-          <vava-country-img slot="leftIcon" class="collapse-title-left" ref="vavaCountryImgPhone" :click-show="setHeaderPanel"></vava-country-img>
+          <vava-country-img slot="leftIcon" class="collapse-title-left" ref="vavaCountryImgPhone" @click="setHeaderPanel"></vava-country-img>
 	    		<span slot="titleContent">LANGUAGE</span>
 	    	</vava-collapse-item>
 	    </div>
@@ -73,6 +71,16 @@
         isShowPhoneOption: false, // 移动端菜单右边下拉
         showSearch: false,
         menuList: []
+      }
+    },
+    computed: {
+      categoryList () {
+        return this.$store.state.categoryList
+      },
+      accountName () {
+        return (this.$store.state.accountData.firstName || this.$store.state.accountData.lastName)
+        ? `${this.$store.state.accountData.firstName}  ${this.$store.state.accountData.lastName}`
+        : (this.$store.state.accountData.emailAddress || 'SIGN IN')
       }
     },
     watch: {

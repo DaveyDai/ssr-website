@@ -62,7 +62,7 @@ export function createApp (language) {
     store,
     i18n,
     data () {
-      return { asyncData: ({ store, route }) => store.dispatch('queryCategoryList') }
+      return { asyncData: ({ store, route }) => store.dispatch('queryCategoryList', { store, route }) }
     },
     render: h => h(App)
   })

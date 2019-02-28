@@ -9,11 +9,12 @@ Vue.use(Vuex)
 export function createStore () {
   return new Vuex.Store({
     state: {
+      homePageData: {bannerImages: [], productImages: [], socialMediaImages: []}, // 首页数据
+      categoryList: [], // 产品分类
       categoryData: {}, // 产品分类信息
-      testData: { test: 'Store测试1' },
-      language: '',
-      token: '',
-      accountData: '' // 账户信息
+      language: 'en', // 当前地区/语言
+      token: '', // token
+      accountData: {} // 账户信息
     },
     actions,
     mutations,

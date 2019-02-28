@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import VueCookies from 'vue-cookies'
 export default {
+  setCategoryList (state, data) {
+    state.categoryList = data
+  },
   setCategoryData (state, data) {
     state.categoryData[data.data.cId] = data.data
   },
@@ -16,6 +19,9 @@ export default {
   },
   setAccountData (state, data) {
     state.accountData = data
+  },
+  setHomePageData (state, data) {
+    state.homePageData = data
   }
   // SET_LIST: (state, { type, ids }) => {
   //   state.lists[type] = ids

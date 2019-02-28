@@ -24,11 +24,13 @@ export const queryCategory = ({commit, state}, params) => {
     }, 200)
   })
 }
-export const queryCategoryList = ({commit, state}) => {
-  // return $http.requestPost(url, params)
+export const queryCategoryList = ({commit, state}, { store, route }) => {
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
+    $http.requestGet('getCategory', {}, state.token || '').then(data => {
+      commit('setCategoryList', data.data)
       resolve()
-    }, 200)
+    }).catch(error => {
+      reject(error)
+    })
   })
 }

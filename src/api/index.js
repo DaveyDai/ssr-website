@@ -2,7 +2,7 @@ import axios from 'axios'
 import api from './api'
 
 axios.defaults.baseURL = process.env.API_ROOT
-axios.defaults.timeout = 10000
+axios.defaults.timeout = 5000
 axios.defaults.headers['accept-language'] = ''
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 axios.defaults.headers.get['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -30,13 +30,17 @@ axios.interceptors.response.use(function (response) {
 export function requestPost (url, params, token) {
   axios.defaults.headers['token'] = token
   return new Promise((resolve, reject) => {
+    console.log('post请求:', api[url])
     axios.post(api[url], params).then(response => {
       resolve(response.data)
     }).catch(error => {
       console.log('server is error:', error.response)
       try{
         reject(error.response.data)
-      } catch (errpr) { console.log('code error') }
+      } catch (errpr) {
+        console.log('后台服务请求异常！')
+        reject(error)
+      }
     })
   })
 }
@@ -46,13 +50,17 @@ export function requestGet (url, params, token) {
   axios.defaults.headers['token'] = token
   return new Promise((resolve, reject) => {
     let getUrl = api[url]
+    console.log('get请求:', api[url])
     axios.get(getUrl).then(response => {
       resolve(response.data)
     }).catch(error => {
       console.log('server is error:', error.response)
       try{
         reject(error.response.data)
-      } catch (errpr) { console.log('code error') }
+      } catch (errpr) {
+        console.log('后台服务请求异常！')
+        reject(error)
+      }
     })
   })
 }

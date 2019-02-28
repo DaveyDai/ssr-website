@@ -1,11 +1,11 @@
 <template>
   <div class="vava-home-page">
-    <vava-swiper class="home-page-banner" :swiper-data="bannerImg" v-if="bannerType === 0"></vava-swiper>
-    <div v-if="bannerType === 1">
-      <div class="home-page-banner home-scroll-reveal" v-for="(item,index) of bannerImg" :key="index">
+    <div v-if="homePageData.bannerType === 1">
+      <div class="home-page-banner home-scroll-reveal" v-for="(item,index) of homePageData.bannerImages" :key="index">
         <img :src="item">
       </div>
     </div>
+    <vava-swiper v-else class="home-page-banner" :swiper-data="homePageData.bannerImages"></vava-swiper>
     <h5 class="home-page-content-title">PRODUCTS</h5>
     <div class="home-page-products home-scroll-reveal">
       <div class="home-products-left"><img :src="'static/home-page/11.jpg'"></div>
@@ -26,14 +26,21 @@
   export default {
     components: { VavaSwiper },
     asyncData ({ store, route }) { // 服务端渲染页面会等待次钩子执行完成
-      console.log('首页asyncData')
-      // return store.dispatch('requestPost', 'signIn', { test: '我是测试33', time: 100 })
+      console.log('首页钩子')
+      return new Promise((resolve, reject) => {
+        store.dispatch('getFetch', {api: 'getHomePage'}).then(data => {
+          store.commit('setHomePageData', data.data)
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
     },
     data () {
       return {
         bannerImg: ['/static/home-page/1.jpg', '/static/home-page/2.jpg', '/static/home-page/3.jpg'],
         socialImg: ['/static/home-page/21.jpg', '/static/home-page/22.jpg', '/static/home-page/23.jpg', '/static/home-page/24.jpg','/static/home-page/21.jpg', '/static/home-page/22.jpg', '/static/home-page/23.jpg', '/static/home-page/24.jpg'],
-        bannerType: 0,
+        pageData: {bannerImages: [], productImages: [], socialMediaImages: []},
         swiperOption: { // 横向轮播图片
           freeMode: true,
           slidesPerView: 'auto',
@@ -53,9 +60,15 @@
         }
       }
     },
+    computed: {
+      homePageData () {
+        return this.$store.state.homePageData
+      }
+    },
     created () {
     },
     mounted () {
+      console.log(this.homePageData)
       scrollReveal.init(this.$scrollReveal, '.home-scroll-reveal')
     },
     methods: {
@@ -67,16 +80,13 @@
 
 <style lang="less" scoped>
   .vava-home-page{
-    .testimg{
-      width: 380px;
-      height: 200px;
-    }
+    min-height: 100%;
     width: 100%;
     background-color: #f5f5f5;
     .home-page-banner{
       width: 100%;
       font-size: 0;
-      img{width: 100%;}
+      img{width: 100%;min-height: 46.8vw;}
     }
     .home-page-content-title{
       width: 100%;
