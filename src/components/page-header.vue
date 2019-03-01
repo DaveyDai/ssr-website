@@ -98,7 +98,8 @@
     },
     methods: {
       linkLogo () {
-        window.location.href = '/'
+        // window.location.href = '/'
+        this.$router.push('/')
       },
       setHeaderPanel (type, status) { // 头部面板切换操作（防止重叠显示）
         switch (type) {
@@ -128,6 +129,7 @@
         this.showSearch = !this.showSearch
       },
       routerLink (path) {
+        console.log('路由:', path)
         this.isShowPhoneOption = this.isShowPhoneMenu = this.isShowMask = false
         this.$router.push(path)
         // window.document.getElementById('app').scrollTo(0, 0)

@@ -94,8 +94,8 @@
         this.$bar.start()
         this.$store.dispatch('getFetch', {api: 'getMemberInfo'}).then(data => {
           this.$bar.finish()
-          this.informationData = data.data
-          this.$store.commit('setAccountData', JSON.parse(JSON.stringify(data.data)))
+          this.informationData = data
+          this.$store.commit('setAccountData', JSON.parse(JSON.stringify(data)))
         }).catch(error => {
           this.$bar.finish()
           if (error.code === 14006 || error.code === 14000) {

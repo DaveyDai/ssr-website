@@ -5,7 +5,7 @@ export default {
     state.categoryList = data
   },
   setCategoryData (state, data) {
-    state.categoryData[data.data.cId] = data.data
+    state.categoryData[data.cId] = data
   },
   setTestData (state, data) {
     state.testData = data
@@ -22,6 +22,9 @@ export default {
   },
   setHomePageData (state, data) {
     state.homePageData = data
+  },
+  setProductDetail (state, data) {
+    state.productDetail = data
   }
   // SET_LIST: (state, { type, ids }) => {
   //   state.lists[type] = ids

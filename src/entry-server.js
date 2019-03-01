@@ -29,7 +29,8 @@ export default context => {
       matchedComponents.push({asyncData: app.asyncData}) // 全局请求--如分类菜单
       Promise.all(matchedComponents.map(({ asyncData }) => asyncData && asyncData({
         store,
-        route: router.currentRoute
+        route: router.currentRoute,
+        language: context.language
       }))).then(() => {
         isDev && console.log(`data pre-fetch: ${Date.now() - s}ms`)
         context.state = store.state

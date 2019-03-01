@@ -3,20 +3,11 @@
     <h5>QUESTIONS & ANSWERS</h5>
     <div v-swiper:mySwiper="swiperOption">
       <div class="swiper-wrapper">
-        <div class="swiper-slide" v-for="(item, index) of viewData.faqData" :key="index">
-          <li style="cursor: grab;">
-          </li>
-        </div>
-        <div class="swiper-slide" v-for="i of 5" :key="i">
-          <li style="cursor: grab;">
-            <p class="support-faq-aq"><em>Q:</em><span>How long does the parking mode will last . Will the battery last that long if no one hit my car ?</span></p>
-            <p class="support-faq-aq"><em>A:</em><span>The recording time of parking monitoring is 15S. When the device is fully charged, triggering parking monitoring can trigger about 100-160 times.</span></p>
+        <div class="swiper-slide" v-for="(list, index) of supportFaqData" :key="index">
+          <li style="cursor: grab;" v-for="(item, number) of list" :key="number">
+            <p class="support-faq-aq"><em>Q:</em><span>{{item.question}}</span></p>
+            <p class="support-faq-aq"><em>A:</em><span>{{item.answer}}</span></p>
             <p class="support-faq-time">By VAVA Support Team on July 27, 2018</p>
-          </li>
-          <li style="cursor: grab;">
-            <p class="support-faq-aq"><em>Q:</em><span>I would like to know how long does it take to finish downloading one video to my phone ?</span></p>
-            <p class="support-faq-aq"><em>A:</em><span>Generally speaking about 1~1.5 minute (the video is 120MB) to finish downloading one video.</span></p>
-            <p class="support-faq-time">By VAVA Support Team on January 15, 2019</p>
           </li>
         </div>
       </div>
@@ -26,7 +17,7 @@
     </div>
     <h5>CHOOSE YOUR DOWNLOAD FILE</h5>
     <div class="support-download">
-      <div class="download-product"><img :src="viewData.product.productImg" alt=""><p>VAVA 150” 4K LASER PROJECTOR</p></div>
+      <div class="download-product"><img :src="supportData.productImg" alt=""><p>VAVA 150” 4K LASER PROJECTOR</p></div>
       <div class="download-detail">
         <ul class="download-detail-file">
           <li class="detail-file-li">
@@ -80,12 +71,9 @@
 
 <script>
   export default {
-    props: {
-      viewData: {
-        type: Object,
-        default () {
-          return {}
-        }
+    computed: {
+      supportData () {
+        return this.$store.state.productDetail.support
       }
     },
     data () {
@@ -104,13 +92,20 @@
           //   clickable :true
           // }
         },
-        changeValue: false
+        changeValue: false,
+        supportFaqData: []
       }
     },
-    mounted () {
+    created () {
+      this.getFaqData()
     },
     methods: {
-      callback (e) {
+      getFaqData () {
+        let pageTotal = Math.ceil(this.supportData.proFaq.total / 2)
+        for (let i = 1; i < pageTotal * 2; i += 2) {
+          this.supportFaqData[Math.floor(i / 2)] = [this.supportData.proFaq.records[i - 1]]
+          if (this.supportData.proFaq.records[i]) this.supportFaqData[Math.floor(i / 2)].push(this.supportData.proFaq.records[i])
+        }
       },
       routerLink (path) {
         this.$router.push(path)

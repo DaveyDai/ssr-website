@@ -11,5 +11,12 @@ export default {
   changePassword: '/vava-pc-user/baseUser/changePassword', // 修改密码
   forgotPassword: '/vava-pc-user/baseUser/forgotPassword', // 忘记密码
   // 产品分类及产品详情
-  getCategory: '/vava-pc-product/category/findIndexCategoryInfo',
+  getCategory: '/vava-pc-product/category/findIndexCategoryInfo', // 产品分类
+  getCategoryBanner: '/vava-pc-product/category/getIndexCategoryInfoDetailById/', // 分类banner图
+  getCategoryPro: '/vava-pc-product/product/findProductListByIndex', // 分类产品信息
+  getProOverview: '/vava-pc-product/product/findProductOverviewByIndex', // 产品Overview
+  getProSpecs: '/vava-pc-product/product/selectProductSpecsBoByIndex/', // 产品参数
+  getProFaq: '/vava-pc-product/product/findProductFaqVoByIndex', // 产品详情faq
+  getProDownload: '/vava-pc-product/product/selectProductAttachmentDetailBoByIndex/', // 产品详情附件
+  getProBuynow: '/vava-pc-product/product/getIndexProductInfoDetailVo/', // 产品详情buynow
 }

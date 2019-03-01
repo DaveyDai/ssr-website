@@ -1,30 +1,8 @@
 <template>
   <div class="product-detail-overview">
-    <img v-lazy="item" v-for="(item,index) of viewData" :key="index">
+    <img v-lazy="item.overviewImageUrl" v-for="(item,index) of $store.state.productDetail.overviewData.records" :key="index">
   </div>
 </template>
-
-<script>
-  export default {
-    props: {
-      viewData: {
-        type: Array,
-        default () {
-          return []
-        }
-      }
-    },
-    data () {
-      return {
-      }
-    },
-    mounted () {
-    },
-    methods: {
-    }
-  }
-</script>
-
 <style lang="less" scoped>
   .product-detail-overview{
     width: 100%;

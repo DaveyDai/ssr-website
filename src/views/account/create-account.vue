@@ -107,7 +107,7 @@
       loginCheckData (loginParam) {
         this.$store.dispatch('postFetch', {api: 'signIn', data: loginParam}).then(data => {
           this.$bar.finish()
-          this.$store.commit('setToken', data.data.token)
+          this.$store.commit('setToken', data.token)
           this.routerLink('/account')
         }).catch(error => {
           this.$utils.message(error.message)

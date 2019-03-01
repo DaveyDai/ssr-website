@@ -45,7 +45,7 @@
         this.$bar.start()
         this.$store.dispatch('postFetch', {api: 'signIn', data: this.loginParam}).then(data => {
           this.$bar.finish()
-          if (this.remember) this.$store.commit('setToken', data.data.token)
+          if (this.remember) this.$store.commit('setToken', data.token)
           this.routerLink('/account')
         }).catch(error => {
           this.$utils.message(error.message)

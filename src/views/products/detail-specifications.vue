@@ -1,11 +1,11 @@
 <template>
   <div class="product-detail-specifications">
     <div class="detail-specs-product">
-      <img :src="viewData.product.productImg" alt="">
-      <p v-html="viewData.product.productName"></p>
+      <img :src="specsData.productMainUrl" alt="">
+      <p v-html="specsData.productName"></p>
     </div>
     <div class="specifications-details">
-      <li v-for="(item, index) of viewData.specDetail" :key="index">
+      <li v-for="(item, index) of specsData.productSpecsBos" :key="index">
         <span class="specifications-key-name">{{item.specsKey}}</span><p class="specifications-des" v-html="item.specsValue"></p>
       </li>
     </div>
@@ -14,36 +14,9 @@
 
 <script>
   export default {
-    props: {
-      viewData: {
-        type: Object,
-        default () {
-          return {}
-        }
-      }
-    },
     computed: {
-      categoryData () {
-        return this.$store.state.categoryData[this.$route.params.cId]
-      }
-    },
-    data () {
-      return {
-        changeValue: this.value,
-        overData: ['OVERVIEW', 'SPECIFICATIONS', 'SUPPORT', 'BUY NOW']
-      }
-    },
-    mounted () {
-    },
-    methods: {
-      callback (e) {
-      },
-      routerLink (path) {
-        this.$router.push(path)
-      },
-      tabsSelect (index) {
-        this.changeValue = index
-        this.$emit('input', this.changeValue)
+      specsData () {
+        return this.$store.state.productDetail.specs
       }
     }
   }
