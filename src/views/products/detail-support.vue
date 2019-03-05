@@ -7,7 +7,7 @@
           <li style="cursor: grab;" v-for="(item, number) of list" :key="number">
             <p class="support-faq-aq"><em>Q:</em><span>{{item.question}}</span></p>
             <p class="support-faq-aq"><em>A:</em><span>{{item.answer}}</span></p>
-            <p class="support-faq-time">By VAVA Support Team on July 27, 2018</p>
+            <!-- <p class="support-faq-time">By VAVA Support Team on July 27, 2018</p> -->
           </li>
         </div>
       </div>
@@ -17,52 +17,20 @@
     </div>
     <h5>CHOOSE YOUR DOWNLOAD FILE</h5>
     <div class="support-download">
-      <div class="download-product"><img :src="supportData.productImg" alt=""><p>VAVA 150” 4K LASER PROJECTOR</p></div>
+      <div class="download-product"><img :src="supportData.proDownload.productMainUrl" alt=""><p>{{supportData.proDownload.productName}}</p></div>
       <div class="download-detail">
         <ul class="download-detail-file">
-          <li class="detail-file-li">
-            <p>An instruction manual:</p>
+          <li class="detail-file-li" v-for="(item,index) of supportData.proDownload.productAttachmentDetailBos" :key="index">
+            <p>{{dicTreeList[item.attachmentCode]}}</p>
             <div class="download-file-detail">
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-            </div>
-          </li>
-          <li class="detail-file-li">
-            <p>An instruction manual:</p>
-            <div class="download-file-detail">
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-            </div>
-          </li>
-          <li class="detail-file-li">
-            <p>An instruction manual:</p>
-            <div class="download-file-detail">
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-            </div>
-          </li>
-          <li class="detail-file-li">
-            <p>An instruction manual:</p>
-            <div class="download-file-detail">
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-            </div>
-          </li>
-          <li class="detail-file-li">
-            <p>An instruction manual:</p>
-            <div class="download-file-detail">
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
-              <div class="download-content"><i class="icon icon-download"></i><em>Instructions v1.0</em><vava-checkbox v-model="changeValue"></vava-checkbox></div>
+              <div class="download-content"><vava-single v-model="item.isSelect"></vava-single><i class="icon icon-download"></i><em>{{item.attachmentName}}</em></div>
             </div>
           </li>
         </ul>
+        <div class="down-input-line"></div>
         <div class="download-detail-email">
           <vava-input class="download-file-input" placeholder="Email address"></vava-input>
-          <vava-button :button-click="sendEmail">SEND ALL CHECKED FILES TO MY EMAIL</vava-button>
+          <vava-button :button-click="sendEmail">SEND TO MY EMAIL</vava-button>
         </div>
       </div>
     </div>
@@ -70,10 +38,15 @@
 </template>
 
 <script>
+  import VavaSingle from './single-check.vue'
   export default {
+    components: { VavaSingle },
     computed: {
       supportData () {
         return this.$store.state.productDetail.support
+      },
+      dicTreeList () {
+        return this.$store.state.dicTreeList
       }
     },
     data () {
@@ -93,7 +66,8 @@
           // }
         },
         changeValue: false,
-        supportFaqData: []
+        supportFaqData: [],
+        singValue: false
       }
     },
     created () {
@@ -208,7 +182,7 @@
     }
     .support-download{
       display: flex;
-      padding: 1vw 5vw 5vw 5vw;
+      padding: 1vw 5vw 5vw 10vw;
       .download-product{
         img{
           width: 25vw;
@@ -223,22 +197,23 @@
       }
       .download-detail{
         .download-detail-file{
+          display: flex;
+          flex-wrap: wrap;
           li.detail-file-li{
+            width: 25vw;
             padding: .5vw 2vw;
             color: @base-font-color;
             line-height: 2;
             display: flex;
-            flex-wrap: nowrap;
-            border-radius: 10px;
-            border: 0.052vw dashed @base-button-back;
+            flex-direction: column;
             margin-bottom: 1vw;
+            flex-shrink: 0;
+            overflow: hidden;
+            width: 50%;
             p{
+              // font-family: 'avenir-next-demi';
+              padding-left: 1.8vw;
               font-size: 1.5vw;
-              text-align: center;
-              flex-shrink: 0;
-              padding-right: 3vw;
-              display: flex;
-              align-items: center;
             }
             .download-file-detail{
               display: flex;
@@ -248,15 +223,16 @@
                 align-items: center;
                 justify-content: center;
                 font-size: 0.9vw;
-                padding: 0 1vw;
                 i.icon-download{
-                  font-size: 1.2vw;
-                  color: @base-button-back;
+                  font-size: 1.1vw;
+                  color: @base-font-color;
                   cursor: pointer;
                 }
                 em{
-                  margin: 0 15px 0 5px;
+                  margin: 0 15px 0 0.5vw;
                   line-height: 2.5;
+                  font-size: 1vw;
+                  white-space: nowrap;
                   cursor: pointer;
                   &:hover{
                     text-decoration: underline;
@@ -267,16 +243,24 @@
             }
           }
         }
+        .down-input-line{
+          width: 50vw;
+          height: 1px;
+          background-color: @un-font-color;
+          margin-left: 4vw;
+          margin-bottom: 2vw;
+        }
         .download-detail-email{
-          padding: 1vw;
+          padding: 1vw 1vw 1vw 4vw;
           margin-top: 10px;
           display: flex;
           flex-direction: column;
-          align-items: center;
+          align-items: flex-start;
           .download-file-input{
             width: 25vw;
             min-width: 280px;
             margin-bottom: 1.5vw;
+            input{box-shadow: rgba(0, 0, 0, 0.2) 0 0 2vw;border-width: 0;font-size: @base-font-color;}
           }
         }
       }
@@ -332,6 +316,7 @@
         display: block;
       }
       .support-download{
+        padding: 1vw 1vw 5vw 1vw;
         .download-product{
           p{
             margin-top: 20px;
@@ -339,15 +324,23 @@
           }
         }
         .download-detail{
+          .down-input-line{width: 60vw;}
           .download-detail-file{
             li.detail-file-li{
+              margin-bottom: 25px;
               p{
                 font-size: 13.7px;
+                padding-left: 20px;
+                white-space: nowrap;
               }
               .download-file-detail{
                 .download-content{
                   i.icon-download{
                     font-size: 12px;
+                  }
+                  em{
+                    font-size: 12px;
+                    line-height: 1.3;
                   }
                 }
               }
@@ -390,6 +383,7 @@
         }
       }
     }
+    .product-detail-support .support-download .download-detail .down-input-line{width: 90vw;}
     .product-detail-support .support-download .download-detail .download-detail-file li.detail-file-li .download-file-detail .download-content{font-size: 12px;}
     .product-detail-support .swiper-button-prev, .product-detail-support .swiper-button-next{
       min-width: 20px;
@@ -420,7 +414,7 @@
       }
       .support-download .download-detail .download-detail-file li.detail-file-li{
         flex-direction: column;
-        p{justify-content: center;}
+        p{padding-left: 20px;}
       }
     }
   }

@@ -7,8 +7,8 @@ export default {
   setCategoryData (state, data) {
     state.categoryData[data.cId] = data
   },
-  setTestData (state, data) {
-    state.testData = data
+  setSearchProduct (state, data) {
+    state.searchProduct = data
   },
   setLanguage (state, data) {
     state.language = data
@@ -25,6 +25,19 @@ export default {
   },
   setProductDetail (state, data) {
     state.productDetail = data
+  },
+  setDicTreeList (state, data) { // 保存数据字典---全部转换成 key value形式
+    let docData = {}
+    try {
+      for(let i = data.length; i--;) {
+        for(let j = data[i].dicItemVos.length; j--;) {
+          docData[data[i].dicItemVos[j].dicCode] = data[i].dicItemVos[j].dicValue
+        }
+      }
+      state.dicTreeList = docData
+    } catch (err) {
+      state.dicTreeList = {}
+    }
   }
   // SET_LIST: (state, { type, ids }) => {
   //   state.lists[type] = ids

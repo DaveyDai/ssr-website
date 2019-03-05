@@ -22,9 +22,13 @@ export const queryCategoryList = ({commit, state}, { language }) => { // 获取�
   return new Promise((resolve, reject) => {
     $http.requestGet('getCategory', {}, state.token || '', language).then(data => {
       commit('setCategoryList', data)
-      resolve()
+      $http.requestGet('selectDicTreeVoList', {}, state.token || '', language).then(data => {
+        commit('setDicTreeList', data)
+        resolve()
+      }).catch(err => { resolve(err) })
     }).catch(error => {
       reject(error)
     })
   })
 }
+

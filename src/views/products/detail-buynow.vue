@@ -1,57 +1,70 @@
 <template>
   <div class="product-detail-buynow">
-    <div class="buynow-product-img"><img src="/static/product-pages/ACCESSORY/Hub-VA-DK003/Rectangle 1.png" alt=""></div>
+    <div class="buynow-product-img">
+      <vava-img-swiper :swiper-data="buyProDetail.productSkuImages"></vava-img-swiper>
+      <!-- <img src="/static/product-pages/ACCESSORY/Hub-VA-DK003/Rectangle 1.png" alt=""> -->
+    </div>
     <div class="buynow-content">
-      <h5><div>VAVA INTELLIGENT&nbsp;</div><div>ROBOTIC VACUUM</div></h5>
-      <p class="product-detail-price">$159.99</p>
+      <h5>{{buynowData.productName}}</h5>
+      <!-- <h5><div>VAVA INTELLIGENT&nbsp;</div><div>ROBOTIC VACUUM</div></h5> -->
+      <p class="product-detail-price">{{dicTreeList[buyProDetail.districtCode]}} {{buyProDetail.sellPrice}}</p>
       <p class="product-Out-of-stock">Out of Stock</p>
-      <p class="product-detail-describe">A clean home is a sweep away.</p>
+      <p class="product-detail-describe">{{buynowData.shortName}}</p>
       <div class="product-high-light">
-        <li>Intelligent navigation system for 30% more efficient</li>
-        <li>Intelligent navigation system for 30% more efficient</li>
-        <li>Intelligent navigation system for 30% more </li>
-        <li>Intelligent navigation system for 30% more </li>
-        <li>Intelligent navigation system for 30% more </li>
-        <!-- <li v-for="(item, index) of 50" :key="index">Intelligent navigation system for 30% more </li> -->
-        <li>Intelligent navigation system for 30% more efficient</li>
+        <li v-for="(item, index) of buynowData.highLights" :key="index" v-html="item"></li>
       </div>
       <div class="product-detail-color">
         <p>Color: Black</p>
         <div class="color-option">
-          <li :class="{'active': colorIndex === 0}" @click="colorIndex=0"><span :style="{'background': '#000'}"></span></li>
-          <li :class="{'active': colorIndex === 1}" @click="colorIndex=1"><span :style="{'background': '#999'}"></span></li>
-          <li :class="{'active': colorIndex === 2}" @click="colorIndex=2"><span :style="{'background': '#FFF'}"></span></li>
+          <li
+            v-for="(item, index) of buynowData.productSkuDetailBos" :key="index"
+            :class="{'active': colorIndex === index}"
+            @click="handlColor(index)">
+            <span :style="{'background': dicTreeList[item.colourCode]}"></span>
+          </li>
         </div>
       </div>
       <!-- <vava-button>ADD TO CART</vava-button> -->
-      <vava-button class="product-buy-now" @click="buyNowAZ">BUY AT AMAZON</vava-button>
+      <vava-button class="product-buy-now" v-if="buyProDetail.asin" @click="buyNowAZ">BUY AT AMAZON</vava-button>
     </div>
   </div>
 </template>
 
 <script>
+  import VavaImgSwiper from '@/components/vava-swiper.vue'
   export default {
-    props: {
-      viewData: {
-        type: Object,
-        default () {
-          return {}
-        }
+    components: { VavaImgSwiper },
+    computed: {
+      buynowData () {
+        return this.$store.state.productDetail.buynow
+      },
+      dicTreeList () {
+        return this.$store.state.dicTreeList
       }
     },
     data () {
       return {
-        colorIndex: 0
+        colorIndex: 0,
+        buyProDetail: {}
       }
+    },
+    created () {
+      this.buyProDetail = this.buynowData.productSkuDetailBos[this.colorIndex] // 获取颜色对应的sku详情
     },
     mounted () {
     },
     methods: {
+      handlColor (index) { // 选择颜色
+        this.colorIndex = index
+        this.buyProDetail = this.buynowData.productSkuDetailBos[index] //  获取颜色对应的sku详情
+      },
       routerLink (path) {
         this.$router.push(path)
       },
       buyNowAZ () {
-        console.log('购买')
+        let url = 'https://www.amazon.com/gp/product/' +
+        this.buyProDetail.asin + '?keywords=' + this.buynowData.amazonKeyword
+        window.open(url)
       }
     }
   }
@@ -64,8 +77,9 @@
     padding: 8vw 12.5vw;
     background-color: #FFFFFF;
     .buynow-product-img{
-      padding-right: 5.2vw;
-      img{width: 37.5vw;}
+      margin-right: 5.2vw;
+      width: 37.5vw;
+      min-width: 300px;
     }
     .buynow-content{
       line-height: 1.4;
@@ -153,7 +167,7 @@
     .product-detail-buynow{
       padding: 8vw 5vw;
       .buynow-product-img{
-        padding-right: 4.5vw;
+        margin-right: 4.5vw;
       }
       .buynow-content{
         .product-detail-price{
@@ -179,8 +193,11 @@
       flex-direction: column;
       padding: 0 5vw;
       .buynow-product-img{
-        text-align: center;
-        padding-right: 0;
+        margin-right: 0;
+        margin-bottom: 25px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
       }
       .buynow-content{
         h5{display: flex;flex-wrap: nowrap;font-size: 17px;}

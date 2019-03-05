@@ -22,7 +22,7 @@
           speed: 1000, // 过度动画时长
           effect : 'coverflow', // 切换效果 3D
           autoplay: { // 自动切换
-            delay: 2000, //2秒切换一次
+            delay: 3000, //2秒切换一次
             waitForTransition: false
           },
           coverflowEffect: { // 切换效果配置

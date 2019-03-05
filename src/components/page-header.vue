@@ -13,7 +13,7 @@
           <li @click="routerLink('/support')"><span>SUPPORT</span><i></i></li><li><span>ABOUT</span><i></i></li>
         </nav>
         <!-- 搜索框 -->
-        <vava-search class="header-search" v-model="showSearch"></vava-search>
+        <vava-search class="header-search" v-model="searchValue" :is-show="showSearch" @close="val => showSearch = val" @keyup.enter.native="startSearch"></vava-search>
       </div>
       <!-- 头部右侧按钮 -->
       <div class="header-right">
@@ -70,7 +70,8 @@
         isShowPhoneMenu: false, // 移动端菜单
         isShowPhoneOption: false, // 移动端菜单右边下拉
         showSearch: false,
-        menuList: []
+        menuList: [],
+        searchValue: ''
       }
     },
     computed: {
@@ -98,8 +99,8 @@
     },
     methods: {
       linkLogo () {
-        // window.location.href = '/'
-        this.$router.push('/')
+        window.location.href = '/'
+        // this.$router.push('/')
       },
       setHeaderPanel (type, status) { // 头部面板切换操作（防止重叠显示）
         switch (type) {
@@ -142,6 +143,17 @@
       showLang () {
         this.setHeaderPanel(3)
       	console.log('显示语言地区选择')
+      },
+      startSearch () {
+        if (!this.searchValue) return false
+        this.$router.push('/product/search/' + this.searchValue)
+      //   if (this.$route.path.indexOf('/product/search/') !== -1) {
+      //     console.log(this.$route)
+      //     this.$router.push('/product/search/' + this.searchValue)
+      //     // this.$router.currentRoute.matched[0].components.default.asyncData({store: this.$store, route: this.$route})
+      //   } else {
+      //     this.$router.push('/product/search/' + this.searchValue)
+      //   }
       }
     }
   }

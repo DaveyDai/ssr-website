@@ -1,6 +1,6 @@
 <template>
   <div class="product-detail-tabs">
-    <li v-for="(item, index) of overData" :key="index" :class="changeValue === index ? 'active' : ''" @click="tabsSelect(index)">{{item}}</li>
+    <li v-for="(item, index) of overData" :key="index" :class="changeValue === index ? 'active' : ''" @click="tabsSelect(index)" v-show="index !== 3 || changeValue !== 3">{{item}}</li>
   </div>
 </template>
 

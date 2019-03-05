@@ -11,6 +11,7 @@ const ForgotPassword = () => import('../views/account/forgot-password.vue') // �
 const CreateAccount = () => import('../views/account/create-account.vue') // 用户中心
 const Account = () => import('../views/account/index.vue') // 忘记密码
 const ProductMain = () => import('../views/products/product-main.vue') // 产品主页
+const ProductSearch = () => import('../views/products/product-search.vue') // 搜索产品
 const ProductDetail = () => import('../views/products/product-detail.vue') // 产品详情
 const Support = () => import('../views/support/index.vue') // support首页
 const Warranty = () => import('../views/support/warranty.vue') // warranty首页
@@ -46,6 +47,7 @@ export function createRouter () {
       { path: '/404', component: ErrorPage },
       { path: '/c/:cId', component: ProductMain },
       { path: '/p/:pId', component: ProductDetail },
+      { path: '/product/search/:keyword', component: ProductSearch },
       { path: '/support', component: Support },
       { path: '/support/warranty', component: Warranty },
       { path: '/support/user-manual', component: UserManual },

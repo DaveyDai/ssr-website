@@ -9,23 +9,29 @@
       <div class="vava-search" v-if="value"><input v-model="searchValue" type="text"><i @click="closeSearch" class="iconfont icon-jiaochacross78"></i></div>
     </transition> -->
     <transition name="search-fade">
-      <div class="vava-search" v-show="value"><input v-model="searchValue" type="text"><span @click="closeSearch"><i class="icon icon-close"></i></span></div>
+      <div class="vava-search" v-show="isShow"><input v-model="searchValue" type="text"><span @click="closeSearch"><i class="icon icon-close"></i></span></div>
     </transition>
 </template>
 
 <script>
   export default {
     props: {
-      value: Boolean
+      value: [String, Number],
+      isShow: Boolean
     },
     data () {
       return {
-        searchValue: ''
+        searchValue: this.value
+      }
+    },
+    watch: {
+      searchValue (value) {
+        this.$emit('input', value)
       }
     },
     methods: {
       closeSearch () {
-        this.$emit('input', false)
+        this.$emit('close', false)
       }
     }
   }
