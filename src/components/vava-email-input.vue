@@ -1,5 +1,5 @@
 <template>
-  <div class="vava-email-input">
+  <div class="vava-email-input" @keyup.enter="handleClick">
     <input
       v-model="currentValue"
       v-bind="$attrs"
@@ -7,9 +7,9 @@
       @compositionstart="handleComposition"
       @compositionupdate="handleComposition"
       @compositionend="handleComposition"
-      type="text"
+      type="email"
     >
-    <div class="vava-email-input-icon" v-if="iconShow"><i class="icon icon-right-slide"></i></div>
+    <div class="vava-email-input-icon" v-if="iconShow" @click="handleClick"><i class="icon icon-right-slide"></i></div>
   </div>
 </template>
 
@@ -36,11 +36,9 @@
       }
     },
     mounted () {
-      // this.$store.dispatch('requestPost', 'getRegister', { test: '我是测试33', time: 100 }).then(data => {
-      //   console.log('成功===', data)
-      // }).catch(error => {
-      //   console.log('失败:', error)
-      // })
+      window.enter = () => {
+        this.handleClick()
+      }
     },
     methods: {
       handleComposition(event) {
@@ -49,6 +47,9 @@
       handleInput () {
         if (this.isOnComposition) return
         this.$emit('input', this.currentValue)
+      },
+      handleClick (el) {
+        this.$emit('click', el)
       }
     }
   }

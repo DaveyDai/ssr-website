@@ -45,17 +45,7 @@
         return this.$store.state.categoryData[this.$route.params.cId]
       }
     },
-    data () {
-      return {
-        imgData: ['/static/vacuum/01-首图_VA-DK001.241.png','/static/vacuum/01-首图_VA-DK001.241.png','/static/vacuum/01-首图_VA-RV001.202.png']
-      }
-    },
-    mounted () {
-      console.log(this.categoryData)
-    },
     methods: {
-      callback (e) {
-      },
       routerLink (path) {
         this.$router.push(path)
       }

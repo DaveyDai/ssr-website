@@ -25,6 +25,7 @@ export default {
   queryErpOrder: '/vava-pc-user/support/getErpProductByOrderNo/', // 根据erp订单获取商品数据
   submitWarranty: '/vava-pc-user/support/submitExtendedWarranty/', // 提交延保订单
   submitFeedback: '/vava-pc-user/support/submitFeedbackInfo', // 提交用户反馈
+  saveTouristsInfoVo: '/vava-pc-user/support/saveTouristsInfoVo', // 提交游客信息
   // blog 相关接口
   getBlogBanner: '/vava-pc-user/index/getIndexBlogManagerBannerByLanguageCode', // 获取blog首页banner
   getBlogHomeData: '/vava-pc-user/index/findIndexBlogManagerModuleVoByLanguageCode', // 获取blog首页分组数据

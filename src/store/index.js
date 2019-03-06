@@ -20,7 +20,8 @@ export function createStore () {
       productDetail: {overviewData: {}, specs: {}, support: {}, buynow: {}}, // 产品详情
       searchProduct: {records: []}, // 产品搜索结果
       userManual: {}, // UserManual产品列表
-      blogData: {} // blog数据
+      blogData: {bannerData: [], labelData: [], homeData: []}, // blog首页数据
+      blogDetailData: {}
     },
     actions,
     mutations,

@@ -24,25 +24,20 @@
         <div class="influeucer-from-right">
           <div class="influeucer-from-title">PERSONAL INFORMATION</div>
           <div class="influeucer-from-item">
-            <div class="influeucer-from-p"><p>FIRST NAME</p><vava-input class="influeucer-from-input"></vava-input></div>
-            <div class="influeucer-from-p"><p>LAST NAME</p><vava-input class="influeucer-from-input"></vava-input></div>
-            <div class="influeucer-from-p"><p>EMAIL ADDRESS</p><vava-input class="influeucer-from-input1"></vava-input></div>
-            <div class="influeucer-from-p"><p>COUNTRY</p><vava-input class="influeucer-from-input1"></vava-input></div>
+            <div class="influeucer-from-p"><p>FIRST NAME</p><vava-input class="influeucer-from-input" v-model="submitData.firstName"></vava-input></div>
+            <div class="influeucer-from-p"><p>LAST NAME</p><vava-input class="influeucer-from-input" v-model="submitData.lastName"></vava-input></div>
+            <div class="influeucer-from-p"><p>EMAIL ADDRESS</p><vava-input class="influeucer-from-input1" v-model="submitData.emailAddress"></vava-input></div>
+            <div class="influeucer-from-p"><p>COUNTRY</p><vava-input class="influeucer-from-input1" v-model="submitData.countryCode"></vava-input></div>
           </div>
         </div>
       </div>
-      <div class="influeucer-submit"><vava-button>SUBMIT</vava-button></div>
+      <div class="influeucer-submit"><vava-button @click="submitInformation">SUBMIT</vava-button></div>
     </div>
   </div>
 </template>
 
 <script>
   export default {
-    asyncData ({ store, route }) { // 服务端渲染页面会等待次钩子执行完成
-      console.log('产品首页asyncData', route.params.cId)
-      // (to.meta.scrollToTop) window.document.getElementById('app').scrollTo(0, 0)
-      // return store.dispatch('queryCategory', {api: 'signIn', cId: route.params.cId})
-    },
     data () {
       return {
         influeucerData: {
@@ -62,14 +57,45 @@
             {dicName: 'FORUM', active: false},
             {dicName: 'OTHER', active: false}
           ]
+        },
+        submitData: {
+          emailAddress: '',
+          firstName: '',
+          lastName: '',
+          countryCode: '',
+          interestCode: '',
+          channelsCode: ''
         }
       }
     },
-    mounted () {
-
-    },
     methods: {
-      callback (e) {
+      submitInformation () {
+        if (!this.$utils.trim(this.submitData.emailAddress)) {
+          this.$utils.message('Please enter your user Email address.')
+          return
+        }
+        if (!this.$utils.trim(this.submitData.firstName) || !this.$utils.trim(this.submitData.lastName)) {
+          this.$utils.message('Please enter your user Name.')
+          return
+        }
+        if (!this.$utils.trim(this.submitData.countryCode)) {
+          this.$utils.message('Please enter your user Country.')
+          return
+        }
+        let interestCode = []
+        let channelsCode = []
+        for (let i = this.influeucerData.topics.length; i--;) if (this.influeucerData.topics[i].active) interestCode.push(this.influeucerData.topics[i].dicName)
+        for (let i = this.influeucerData.media.length; i--;) if (this.influeucerData.media[i].active) interestCode.push(this.influeucerData.media[i].dicName)
+        this.submitData.interestCode = interestCode.join(',')
+        this.submitData.channelsCode = channelsCode.join(',')
+        this.$bar.start()
+        this.$store.dispatch('postFetch', {api: 'saveTouristsInfoVo', data: this.submitData}).then(data => {
+          this.$utils.message('Submit Success.')
+          this.$bar.finish()
+        }).catch (error => {
+          this.$utils.message(error.message || 'Fail')
+          this.$bar.finish()
+        })
       },
       routerLink (path) {
         this.$router.push(path)

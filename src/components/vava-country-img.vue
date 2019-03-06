@@ -29,7 +29,7 @@
         this.countryName = type
         this.$cookies.set('language', type)
         // this.$i18n.locale = type === 'l_de' || type === 'l_jp' ? 'l_en' : type
-        window.location.href = '/'
+        window.location.href = this.$route.path.indexOf('/blog') !== -1 ? '/blog' : '/'
       },
       clickShow () {
         this.$emit('click', 3)

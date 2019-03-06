@@ -456,7 +456,7 @@
         }
       }
       .phone-header-icon{display: block!important;font-size: 18px!important;}
-      .is-see-content{opacity: 1;}
+      .is-see-content{background: rgba(255, 255, 255, 1);}
       .page-header-country{
         img{width: 50px;height: 35px;margin: 0 10px;}
       }

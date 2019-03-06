@@ -2,7 +2,7 @@
   <div class="vava-subscribe">
     <h5>SUBSCRIBE TO VAVA</h5>
     <p>Get the latest VAVA news, giveaways, and helpful tips!</p>
-    <vava-email-input class="subscribe-input" placeholder="Enter your e-mail" v-model="subscribeEmail" maxlength="50"></vava-email-input>
+    <vava-email-input class="subscribe-input" placeholder="Enter your e-mail" @click="enterEmail" v-model="subscribeParam.sendToEmail" maxlength="50"></vava-email-input>
     <div class="subscribe-madia-icon">
       <i class="icon icon-facebook"></i><i class="icon icon-twitter"></i><i class="icon icon-instagram"></i>
     </div>
@@ -15,12 +15,28 @@
     componentName: 'VavaSubscribe',
     data () {
       return {
-        subscribeEmail: ''
+        subscribeParam: {
+          sendToEmail: '',
+          type: 3,
+          sourceCode: this.$route.meta.sourceCode || 'SUB_OTHER_SOURCE'
+        }
       }
     },
-    watch: {
-      enterEmail (newValue) {
-        // this.$emit('input', this.subscribeEmail)
+    methods: {
+      enterEmail () {
+        if (!this.$utils.trim(this.subscribeParam.sendToEmail)) {
+          this.$utils.message('Please enter your user Email address.')
+          return
+        }
+        if (!this.$utils.validateEmail(this.subscribeParam.sendToEmail)) {
+          this.$utils.message('This email address is incorrect.')
+          return
+        }
+        this.$store.dispatch('emailSubscribe', this.subscribeParam).then(data => {
+          this.$utils.message('Subscribe Success.')
+        }).catch(error => {
+          this.$utils.message(error.message)
+        })
       }
     }
   }

@@ -64,7 +64,7 @@
 
 <style lang="less" scoped>
   .vava-home-page{
-    min-height: 100vh;
+    min-height: 70vh;
     width: 100%;
     background-color: #f5f5f5;
     .home-page-banner{

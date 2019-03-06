@@ -28,7 +28,7 @@
       <div class="footer-conter-line"></div>
       <div class="page-footer-right">
         <h5>SUBSCRIBE</h5>
-        <vava-email-input class="subscribe-input" placeholder="Enter your e-mail" v-model="subscribeEmail" maxlength="50"></vava-email-input>
+        <vava-email-input class="subscribe-input" placeholder="Enter your e-mail" @click="enterEmail" v-model="subscribeParam.sendToEmail" maxlength="50"></vava-email-input>
         <h5 class="footer-right-media-h5">SOCIAL MEDIA</h5>
         <div class="footer-right-media">
           <i class="icon icon-facebook"></i><i class="icon icon-twitter"></i>
@@ -65,7 +65,9 @@
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">SUBSCRIBE</span>
         <span slot="rightIcon" class="icon icon-right-slide"></span>
-        <li><vava-email-input class="subscribe-input" placeholder="Enter your e-mail" v-model="subscribeEmail" maxlength="50"></vava-email-input></li>
+        <li>
+          <vava-email-input class="subscribe-input" placeholder="Enter your e-mail" @click="enterEmail" v-model="subscribeParam.sendToEmail" maxlength="50"></vava-email-input>
+        </li>
       </vava-collapse-item>
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">SOCIAL MEDIA</span>
@@ -83,7 +85,11 @@
   export default {
     data() {
       return {
-        subscribeEmail: ''
+        subscribeParam: {
+          sendToEmail: '',
+          type: 3,
+          sourceCode: this.$route.meta.sourceCode || 'SUB_OTHER_SOURCE'
+        }
       }
     },
     computed: {
@@ -92,18 +98,20 @@
       }
     },
     methods: {
-      getEmailValid () {
-        let email = this.email;
-        if (email === '') {
-          this.emailValidateTips = 'Please enter the email address.';
-          return false;
-        } else if(!/^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/.test(email)) {
-          this.emailValidateTips = 'Please enter a valid email address.';
-          return false;
-        } else {
-          this.emailValidateTips = '';
-          return true;
+      enterEmail () {
+        if (!this.$utils.trim(this.subscribeParam.sendToEmail)) {
+          this.$utils.message('Please enter your user Email address.')
+          return
         }
+        if (!this.$utils.validateEmail(this.subscribeParam.sendToEmail)) {
+          this.$utils.message('This email address is incorrect.')
+          return
+        }
+        this.$store.dispatch('emailSubscribe', this.subscribeParam).then(data => {
+          this.$utils.message('Subscribe Success.')
+        }).catch(error => {
+          this.$utils.message(error.message)
+        })
       },
       routerLink (path) {
         this.$router.push(path)

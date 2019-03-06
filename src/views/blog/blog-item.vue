@@ -26,18 +26,22 @@
       width: 100%;
       img{
         width: 100%;
+        min-height: 50vw;
+        cursor: pointer;
       }
       span.blog-item-img-label{
         position: absolute;
         top: 3.125vw;
         left: 3.125vw;
-        padding: 0.5vw 2.5vw 0.7vw 2.5vw;
+        padding: 0 2.5vw;
         background-color: @base-button-back;
         color: #FFF;
         font-size: 1.56vw;
         border-radius: 10vw;
         display: flex;
-        align-content: center;
+        align-items: center;
+        height: 3.125vw;
+        min-height: 22px;
       }
     }
     .blog-item-title{
@@ -65,8 +69,15 @@
       span.blog-item-img-label{
         top: 1vw;
         left: 1vw;
-        padding: 0.3vw 1vw 0.3vw 1vw;
+        padding: 0 1vw;
         font-size: 0.73vw;
+        display: flex;
+        align-items: center;
+        height: 1.25vw;
+        min-height: 24px;
+      }
+      img{
+        min-height: 13vw;
       }
     }
     .blog-item-title{
@@ -82,7 +93,6 @@
     .blog-item{
       .blog-item-img{
         span.blog-item-img-label{
-          padding: 5.7px 2.5vw 8px 2.5vw;
           border-radius: 20px;
         }
       }
@@ -90,8 +100,8 @@
     .blog-img-item{
       .blog-item-img{
         span.blog-item-img-label{
-          padding: 4px 12px 4px 12px;
           font-size: 12px;
+          min-height: 22px;
         }
       }
       .blog-item-title{
@@ -106,8 +116,7 @@
     .blog-item{
       .blog-item-img{
         span.blog-item-img-label{
-          padding: 6px 15px 5px 15px;
-          font-size: 12px;
+          font-size: 11px;
         }
       }
       .blog-item-title{
@@ -120,8 +129,8 @@
     .blog-img-item{
       .blog-item-img{
         span.blog-item-img-label{
-          padding: 3px 6px 3px 6px;
-          font-size: 10px;
+          font-size: 9px;
+          min-height: 18px;
         }
       }
       .blog-item-title{
@@ -137,7 +146,8 @@
       margin-top: 15px;
       .blog-item-img{
         span.blog-item-img-label{
-          font-size: 10px;
+          font-size: 8px;
+          padding: 0 15px;
         }
       }
       .blog-item-title{
@@ -150,8 +160,10 @@
     .blog-img-item{
       .blog-item-img{
         span.blog-item-img-label{
-          padding: 4px 8px 3px 8px;
-          font-size: 8px;
+          font-size: 6px;
+          padding: 0 8px;
+          padding-top: 1px;
+          min-height: 15px;
         }
       }
       .blog-item-title{

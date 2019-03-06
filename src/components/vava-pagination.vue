@@ -24,7 +24,7 @@
       },
       display: {// 每页显示条数
         type: Number,
-        default: 10
+        default: 4
       },
       currentPage: {// 当前页码
         type: Number,

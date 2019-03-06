@@ -16,7 +16,7 @@
       <!-- 头部右侧按钮 -->
       <div class="header-right" :class="{'is-search': showSearch}">
         <span class="header-icon-pc icon icon-search" @click="openSearch"></span>
-        <vava-country-img class="header-icon-pc" ref="vavaCountryImgPc" :click-show="showLang"></vava-country-img>
+        <vava-country-img class="header-icon-pc" ref="vavaCountryImgPc" @click="showLang"></vava-country-img>
       </div>
     </div>
     <!-- 选择语言/地区 -->
@@ -305,6 +305,19 @@
       height: 40px!important;
       width: 60vw!important;
       input{border-radius: 30px;}
+    }
+    .blog-header .blog-header-country{
+      img{
+        width: 50px;
+        height: 35px;
+        margin: 0 10px;
+      }
+      &.page-header-country-show{
+        height: 50px;
+      }
+    }
+    .blog-header .is-see-content{
+      background: rgba(255, 255, 255, 1);
     }
   }
   @media (max-width: 800px) {

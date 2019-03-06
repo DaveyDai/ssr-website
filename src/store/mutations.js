@@ -42,7 +42,28 @@ export default {
   setUserManual (state, data) {
     state.userManual = data
   },
-  setBlogData (state, data) {
-    state.blogData = data
+  setLabelData (state, data) {
+    state.blogData.labelData = data
+  },
+  setBannerData (state, data) {
+    state.blogData.bannerData = data
+  },
+  setBlogDetailData (state, data) {
+    state.blogDetailData = data
+  },
+  setBlogData (state, data) { // blog首页数据
+    try {
+      let blogData = {
+        bannerData: data.bannerData.blogManagerBannerVos,
+        labelData: data.labelData.records,
+        homeData: data.homeData.records,
+      }
+      for (let i = 0; i < blogData.homeData.length; i++) {
+        Object.assign(blogData.homeData[i], blogData.homeData[i].blogManagerModuleDetailVos.shift()) // blog首页分组数据是一大三小
+      }
+      state.blogData = blogData
+    } catch (err) {
+      state.blogData = {bannerData: [], labelData: [], homeData: []}
+    }
   }
 }

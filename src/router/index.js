@@ -45,8 +45,8 @@ export function createRouter () {
       { path: '/create-account', component: CreateAccount },
       { path: '/account', component: Account },
       { path: '/404', component: ErrorPage },
-      { path: '/c/:cId', component: ProductMain },
-      { path: '/p/:pId', component: ProductDetail },
+      { path: '/c/:cId', component: ProductMain, meta: {sourceCode: 'SUB_PRODUCT_SOURCE'} },
+      { path: '/p/:pId', component: ProductDetail, meta: {sourceCode: 'SUB_PRODUCT_DETAIL_SOURCE'} },
       { path: '/product/search/:keyword', component: ProductSearch },
       { path: '/support', component: Support },
       { path: '/support/warranty', component: Warranty },
@@ -57,10 +57,10 @@ export function createRouter () {
       { path: '/support/influeucer', component: Influeucer },
       { path: '/support/feedback', component: Feedback },
       { path: '/blog', component: Blog, meta: {blog: true} },
-      { path: '/blog/:label', component: BlogDetail, meta: {blog: true} },
-      { path: '/blog/search/:key', component: BlogSearch, meta: {blog: true} },
+      { path: '/blog/:label(\\d+)', component: BlogDetail, meta: {blog: true} },
+      { path: '/blog/search/:keyword', component: BlogSearch, meta: {blog: true} },
       {path: '/about-us', component: AboutUs},
-      {path: '/', name: 'homePage', component: HomePage},
+      {path: '/', name: 'homePage', component: HomePage, meta: {sourceCode: 'SUB_INDEX_SOURCE'} },
       {path: '/icontest', name: 'icontest', component: IconTest}
       // { path: '/', redirect: '/test' }
     ]

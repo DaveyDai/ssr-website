@@ -1,30 +1,19 @@
 <template>
   <div class="blog-detail">
-    <img class="blog-detail-banner" src="/static/website-imgages/blog/Photo 11.jpg" alt="">
-    <blog-tabs @click="handleClick" :label-data="blogTabs"></blog-tabs>
+    <vava-swiper class="blog-detail-banner" :swiper-type="0">
+      <div class="swiper-slide" v-for="(item, index) of blogData.bannerData" :key="index">
+        <img @click="jumpUrl(item.jumpUrl)" style="cursor: pointer;" :src="item.imageUrl">
+      </div>
+    </vava-swiper>
+    <blog-tabs @click="handleClick" :label-data="blogData.labelData"></blog-tabs>
     <div class="blog-detail-content">
-      <blog-item class="blog-img-home" label="New">
-        <img slot="item-img" src="/static/website-imgages/blog/Photo 11.jpg" alt="">
-        <template slot="item-title">PC GAMES TO LOOK OUT FOR IN 2018</template>
-        <template slot="item-describe">With the PC releases of 2017 officially in the rear view mirror, it’s time to look ahead to PC games in 2018 and what they bring to the table. 2018 promise to be a huge year for PC gaming as there are many different highly-anticipated releases coming.r for PC gaming as there are many different highly-anticipated releases coming</template>
-      </blog-item>
-      <blog-item class="blog-img-home" label="New">
-        <img slot="item-img" src="/static/website-imgages/blog/Photo 11.jpg" alt="">
-        <template slot="item-title">PC GAMES TO LOOK OUT FOR IN 2018</template>
-        <template slot="item-describe">With the PC releases of 2017 officially in the rear view mirror, it’s time to look ahead to PC games in 2018 and what they bring to the table. 2018 promise to be a huge year for PC gaming as there are many different highly-anticipated releases coming.r for PC gaming as there are many different highly-anticipated releases coming</template>
-      </blog-item>
-      <blog-item class="blog-img-home" label="New">
-        <img slot="item-img" src="/static/website-imgages/blog/Photo 11.jpg" alt="">
-        <template slot="item-title">PC GAMES TO LOOK OUT FOR IN 2018</template>
-        <template slot="item-describe">With the PC releases of 2017 officially in the rear view mirror, it’s time to look ahead to PC games in 2018 and what they bring to the table. 2018 promise to be a huge year for PC gaming as there are many different highly-anticipated releases coming.r for PC gaming as there are many different highly-anticipated releases coming</template>
-      </blog-item>
-      <blog-item class="blog-img-home" label="New">
-        <img slot="item-img" src="/static/website-imgages/blog/Photo 11.jpg" alt="">
-        <template slot="item-title">PC GAMES TO LOOK OUT FOR IN 2018</template>
-        <template slot="item-describe">With the PC releases of 2017 officially in the rear view mirror, it’s time to look ahead to PC games in 2018 and what they bring to the table. 2018 promise to be a huge year for PC gaming as there are many different highly-anticipated releases coming.r for PC gaming as there are many different highly-anticipated releases coming</template>
+      <blog-item class="blog-img-home" :label="item.labelCode ? dicTreeList[item.labelCode] : ''" v-for="(item, index) of blogDetailData.records" :key="index">
+        <img @click="jumpUrl(item.jumpUrl)" slot="item-img" :src="item.imageUrl">
+        <template slot="item-title">{{item.title}}</template>
+        <template slot="item-describe">{{item.description}}</template>
       </blog-item>
     </div>
-    <vava-pagination class="blog-detail-pagination" :total="total" :current-page='current' @pagechange="handleClickPage"></vava-pagination>
+    <vava-pagination v-if="blogDetailData.total>0" class="blog-detail-pagination" :total="blogDetailData.total" :display="pageSize" :current-page="blogDetailData.pageNum" @pagechange="handleClickPage"></vava-pagination>
     <vava-subscribe class="blog-detail-subscribe"></vava-subscribe>
   </div>
 </template>
@@ -33,26 +22,67 @@
   import BlogItem from './blog-item.vue'
   import BlogTabs from './blog-label-tabs.vue'
   import VavaPagination from '@/components/vava-pagination.vue'
+  import VavaSwiper from '@/components/img-swiper.vue'
+  import { mapGetters } from "vuex"
   export default {
-    asyncData ({ store, route }) { // 服务端渲染页面会等待次钩子执行完成
-      console.log('blog详情:', route)
-      // return store.dispatch('requestPost', 'signIn', { test: '我是测试33', time: 100 })
+    async asyncData ({ store, route }) { // 服务端渲染页面会等待次钩子执行完成
+      if (store.state.blogData.labelData.length === 0) {
+        let labelData = await store.dispatch('postFetch', {api: 'getBlogLabel', data: {pageNo: 1, pageSize: 1000}})
+        store.commit('setLabelData', labelData.records)
+      }
+      if (store.state.blogData.bannerData.length === 0) {
+        let bannerData = await store.dispatch('getFetch', {api: 'getBlogBanner'})
+        store.commit('setBannerData', bannerData.blogManagerBannerVos)
+      }
+      return new Promise((resolve, reject) => {
+        store.dispatch('postFetch', {api: 'getBlogModule', data: {pageNo: 1, pageSize: 4, condition: route.params.label}}).then(data => {
+          store.commit('setBlogDetailData', data)
+          resolve()
+        }).catch (error => {
+          store.commit('setBlogDetailData', {})
+          reject(error)
+        })
+      })
     },
-    components: { BlogItem, BlogTabs, VavaPagination },
+    computed: {
+      dicTreeList () {
+        return this.$store.state.dicTreeList
+      },
+      blogDetailData () {
+        return this.$store.state.blogDetailData
+      },
+      // ...mapGetters(["blogDetailData"])
+    },
+    components: { BlogItem, BlogTabs, VavaPagination, VavaSwiper },
     data () {
       return {
-        bannerImg: ['/static/website-imgages/blog/Promotion Banner1.jpg', '/static/website-imgages/blog/Promotion Banner1.jpg', '/static/website-imgages/blog/Promotion Banner1.jpg'],
-        blogTabs: [{dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}, {dicName: 'VAVA FEATURES', active: false}],
-        current: 1,
-        total: 150 // 记录总条数
+        blogData: this.$store.state.blogData,
+        blogLabelId: this.$route.params.label,
+        pageSize: 4
       }
     },
     methods: {
       handleClick (item) {
-        console.log(item)
+        this.blogLabelId = item.id
+        this.getBlogModule(1)
+      },
+      getBlogModule (pageNo) {
+        this.$bar.start()
+        this.$store.dispatch('postFetch', {api: 'getBlogModule', data: {pageNo: pageNo, pageSize: this.pageSize, condition: this.blogLabelId}}).then(data => {
+          this.$store.commit('setBlogDetailData', data)
+          window.document.getElementById('app').scrollTo(0, 0)
+          this.$bar.finish()
+        }).catch (error => {
+          this.$store.commit('setBlogDetailData', {total: 0, records: []})
+          window.document.getElementById('app').scrollTo(0, 0)
+          this.$bar.finish()
+        })
       },
       handleClickPage (page) {
-        console.log(page)
+        this.getBlogModule(page)
+      },
+      jumpUrl (path) {
+        window.open(path)
       }
     }
   }
@@ -63,6 +93,13 @@
     width: 100%;
     .blog-detail-banner{
       width: 100%;
+      font-size: 0;
+      min-height: 34vw;
+      img{width: 100%;}
+      .swiper-pagination-bullet{background: @un-font-color;opacity: 1; margin: 0 4px;}
+      .swiper-pagination-bullet-active{background: #FFF;}
+      .swiper-button-prev, .swiper-button-next{display: none;}
+      .swiper-pagination{width: 100%; bottom: 10px;}
     }
     .blog-detail-content{
       width: 100%;

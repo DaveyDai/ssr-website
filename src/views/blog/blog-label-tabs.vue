@@ -30,14 +30,16 @@
       }
     },
     created () {
-      this.labelData.forEach(item => {
-        item.active = false
-        this.slideLabel.push(item)
-      })
+      for (let i = 0; i < this.labelData.length; i++) {
+        this.labelData[i].active = false
+        if (this.$route.params.label && this.labelData[i].id === Number(this.$route.params.label)) this.labelData[i].active = true
+        this.slideLabel.push(JSON.parse(JSON.stringify(this.labelData[i])))
+      }
     },
     methods: {
       handleClick (item, index) {
-        for (let i = this.slideLabel.length; i--;) this.slideLabel[i].active = index === i
+        for (let i = this.slideLabel.length; i--;) this.slideLabel[i].active = false
+        item.active = true
         this.$emit('click', item)
       }
     }
@@ -75,6 +77,30 @@
             font-size: 12px;
             padding: 9px 12px  8px 12px;
             border-radius: 20px;
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: 920px) {
+    .blog-label-tabs{
+      .swiper-wrapper{
+        .swiper-slide{
+          padding: 18px 0;
+          .blog-tabs-key{
+            font-size: 11px;
+            padding: 8px 12px  7px 12px;
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: 800px) {
+    .blog-label-tabs{
+      .swiper-wrapper{
+        .swiper-slide{
+          .blog-tabs-key{
+            font-size: 10px;
           }
         }
       }

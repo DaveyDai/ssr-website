@@ -32,9 +32,9 @@ export function requestPost (url, params, state) {
   axios.defaults.headers['accept-language'] = state.language || 'l_en'
   axios.defaults.timeout = typeof window === 'undefined' ? 5000 : 10000
   return new Promise((resolve, reject) => {
-    console.log('post请求:', api[url])
     axios.post(api[url], params).then(response => {
       response.data.code === 200 ? resolve(response.data.data) : reject(response.data)
+      console.log('post请求:' + api[url], response.data)
     }).catch(error => {
       console.log('server is error:', error.response)
       try{
@@ -54,9 +54,9 @@ export function requestGet (url, params, state) {
   axios.defaults.timeout = typeof window === 'undefined' ? 5000 : 10000
   return new Promise((resolve, reject) => {
     let getUrl = api[url]
-    console.log('get请求:', getUrl)
     axios.get(getUrl).then(response => {
       response.data.code === 200 ? resolve(response.data.data) : reject(response.data)
+      console.log('get请求:' + getUrl, response.data)
     }).catch(error => {
       console.log('server is error:', error.response)
       try{
@@ -76,9 +76,9 @@ export function fetchGet (url, params, state) {
   axios.defaults.timeout = typeof window === 'undefined' ? 5000 : 10000
   return new Promise((resolve, reject) => {
     let getUrl = api[url] + params
-    console.log('get请求:', getUrl)
     axios.get(getUrl).then(response => {
       response.data.code === 200 ? resolve(response.data.data) : reject(response.data)
+      console.log('get请求:' + getUrl, response.data)
     }).catch(error => {
       console.log('server is error:', error.response)
       try{
