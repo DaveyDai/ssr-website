@@ -4,8 +4,8 @@
   <div class="vava-product-list" @click="getStore">
     <count-time ref="countTime"></count-time>
     <div>{{$t('login.forgotPassword')}}</div>
-    <div class="vava-button" @click="change('zh')">中文</div>
-    <div class="vava-button" @click="change('en')">英文</div>
+    <div class="vava-button" @click="change('l_zh_CN')">中文</div>
+    <div class="vava-button" @click="change('l_en')">英文</div>
   </div>
 <div class="icon icon-download"></div>
 <div class="icon icon-close"></div>

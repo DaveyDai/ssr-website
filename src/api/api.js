@@ -3,7 +3,7 @@ export default {
   // 公共接口
   sendEmail: '/vava-pc-admin/common/sendEmail', // 发生邮件验证码
   getHomePage: '/vava-pc-user/index/getHomeManagerBoByLanguageCode', // 首页
-  selectDicTreeVoList: '/vava-pc-admin/common/selectDicTreeVoList',
+  selectDicTreeVoList: '/vava-pc-admin/common/selectDicTreeVoList', // 获取数据字典
   // 登录注册接口
   signIn: '/vava-pc-user/baseUser/indexLoginUser', // 登录
   userRegister: '/vava-pc-user/baseUser/registerUser', // 注册
@@ -23,8 +23,11 @@ export default {
   // support详情
   getUserManual: '/vava-pc-user/support/findUserManualProductList', // 获取support UserManual列表
   queryErpOrder: '/vava-pc-user/support/getErpProductByOrderNo/', // 根据erp订单获取商品数据
-  submitWarranty: '/vava-pc-user/support/submitExtendedWarranty', // 提交延保订单
+  submitWarranty: '/vava-pc-user/support/submitExtendedWarranty/', // 提交延保订单
   submitFeedback: '/vava-pc-user/support/submitFeedbackInfo', // 提交用户反馈
   // blog 相关接口
-  
+  getBlogBanner: '/vava-pc-user/index/getIndexBlogManagerBannerByLanguageCode', // 获取blog首页banner
+  getBlogHomeData: '/vava-pc-user/index/findIndexBlogManagerModuleVoByLanguageCode', // 获取blog首页分组数据
+  getBlogLabel: '/vava-pc-user/index/findIndexBlogManagerModuleTitleVoByLanguageCode', // 获取blog标题数据
+  getBlogModule: '/vava-pc-user/index/findBlogManagerModuleDetailVoByManagerId', // 获取blog标题板块详情
 }

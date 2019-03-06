@@ -1,11 +1,11 @@
 <template>
   <div class="product-search">
     <div class="product-search-results">
-        <p class="search-results-keyword">Search results for: new</p>
+        <p class="search-results-keyword">Search results for: {{searchProduct.keyword}}</p>
         <div class="search-results-line"></div>
-        <p class="search-results-dec" v-if="resultsData.length > 0">2 results for ‘ new ‘ found</p>
-        <p class="search-results-dec" v-if="resultsData.length === 0">Sorry, we couldn’t find a match for that. We suggest that you:</p>
-        <div class="search-results-no" v-if="resultsData.length === 0">
+        <p class="search-results-dec" v-if="searchProduct.records.length > 0">{{searchProduct.records.length}} results for ‘ {{searchProduct.keyword}} ‘ found</p>
+        <p class="search-results-dec" v-if="searchProduct.records.length === 0">Sorry, we couldn’t find a match for that. We suggest that you:</p>
+        <div class="search-results-no" v-if="searchProduct.records.length === 0">
           <p><span></span>Please check the spelling.</p>
           <p><span></span>Please use different keywords.</p>
         </div>
@@ -26,16 +26,15 @@
   import VavaPagination from '@/components/vava-pagination.vue'
   export default {
     asyncData ({ store, route }) { // 服务端渲染页面会等待次钩子执行完成
-      console.log('搜索详情:', route)
       return new Promise((resolve, reject) => {
         let param = {pageNo: 1, pageSize: 1000, condition: {searchName: route.params.keyword}}
-        return store.dispatch('postFetch', {api: 'getCategoryPro', data: param}).then(json => { // 获取分类产品
+        store.dispatch('postFetch', {api: 'getCategoryPro', data: param}).then(json => { // 获取分类产品
           console.log('搜索结果：', json)
-          json.records[4] = json.records[3] = json.records[2] = json.records[1] = json.records[0]
+          json.keyword = route.params.keyword
           store.commit('setSearchProduct', json)
           resolve()
         }).catch(error => {
-          store.commit('setSearchProduct', {records: []})
+          store.commit('setSearchProduct', {records: [], keyword: route.params.keyword})
           reject(error)
         })
       })
@@ -55,8 +54,8 @@
       }
     },
     methods: {
-      handleClick (item) {
-        console.log(item)
+      routerLink (path) {
+        this.$router.push(path)
       },
       handleClickPage (page) {
         console.log(page)
@@ -166,6 +165,13 @@
       border-width: 6px;
     }
   }
+  @media (max-width: 920px) {
+    .product-search .product-search-content{
+      .product-search-products{
+        padding: 0 5.5vw 6vw 5.5vw;
+      }
+    }
+  }
   @media (max-width: 800px){
     .product-search{
       .product-search-results{
@@ -182,6 +188,11 @@
           }
         }
       }
+      .product-search-content{
+        .product-search-products{
+          padding: 0 5vw 6vw 5vw;
+        }
+      }
     }
   }
   @media (max-width: 600px){
@@ -195,47 +206,22 @@
         }
         .search-results-dec{
           font-size: 11px;
+          padding: 0 10px;
+          line-height: 1.4;
+          text-align: center;
         }
         .search-results-no p{
           font-size: 11px;
           line-height: 2;
-          span{border-width: 5px;}
+          span{border-width: 5px;margin-bottom: 2px;}
         }
       }
-      .product-search-products{
+      .product-search-content .product-search-products{
         padding: 0 5% 25px 5%;
         li{
           width: 31%;
           font-size: 10px;
         }
-      }
-    }
-  }
-
-
-
-
-
-  @media (max-width: 1250px) {
-    .product-search .product-search-content{
-      .product-search-products{
-        li{
-          font-size: 12px;
-        }
-      }
-    }
-  }
-  @media (max-width: 920px) {
-    .product-search .product-search-content{
-      .product-search-products{
-        padding: 0 5.5vw 6vw 5.5vw;
-      }
-    }
-  }
-  @media (max-width: 800px) {
-    .product-search .product-search-content{
-      .product-search-products{
-        padding: 0 5vw 6vw 5vw;
       }
     }
   }

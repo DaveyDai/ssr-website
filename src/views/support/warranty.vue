@@ -7,10 +7,10 @@
         <h5>CHECK YOUR WARRANTY COVERAGE</h5>
         <p>Enter your product serial number | order number | tracking number</p>
         <vava-input v-model="warrantyNumber" class="warranty-input"></vava-input>
-        <vava-button class="warranty-submit-button" @click="submitWarranty">CONTINUE</vava-button>
+        <vava-button class="warranty-submit-button" @click="queryErpOrder">CONTINUE</vava-button>
       </div>
     </div>
-    <warranty-success v-else></warranty-success>
+    <warranty-success v-else :order-details="orderDetails"></warranty-success>
   </div>
 </template>
 
@@ -18,24 +18,51 @@
   import WarrantySuccess from './warranty-success.vue'
   export default {
     components: { WarrantySuccess },
-    asyncData ({ store, route }) { // 服务端渲染页面会等待次钩子执行完成
-      console.log('support', route.params.pId)
-      // return store.dispatch('queryCategory', {api: 'signIn', cId: route.params.cId})
-    },
     data () {
       return {
-        warrantyNumber: '12456765324321',
-        warrantySuccess: false
+        warrantyNumber: '', // 111-2195004-7470646
+        warrantySuccess: false,
+        orderDetails: {}
       }
     },
     methods: {
-      submitWarranty () {
+      queryErpOrder () {
+        if (!this.warrantyNumber || this.$bar.show) return // 防止重复点击提交
         this.$bar.start()
-        setTimeout(() => {
+        this.$store.dispatch('getByUrl', {api: 'queryErpOrder', data: this.warrantyNumber}).then(data => { // 先查询erp是否有该订单
+          this.submitWarranty()
+        }).catch(error => {
+          error && error.code === 14101 ? this.$utils.message(error.message) : this.$utils.message('warranty failure!')
+          this.$bar.finish()
+        })
+      },
+      submitWarranty () {
+        this.$store.dispatch('getByUrl', {api: 'submitWarranty', data: this.warrantyNumber}).then(data => { // 提交延保
+          data.expirationTime = this.formatDate(new Date(data.expirationTime), 'MM/dd/yyyy')
+          this.orderDetails = data
           this.warrantySuccess = true
           window.document.getElementById('app').scrollTo(0, 0)
           this.$bar.finish()
-        }, 2000)
+        }).catch(error => {
+          error && error.message ? this.$utils.message(error.message) : this.$utils.message('warranty failure!')
+          this.$bar.finish()
+        })
+      },
+      formatDate (value, filter) {
+        let o = {
+          'M+' : value.getMonth() + 1,                     // 月份   
+          'd+' : value.getDate(),                          // 日   
+          'h+' : value.getHours(),                         // 小时   
+          'm+' : value.getMinutes(),                       // 分   
+          's+' : value.getSeconds(),                       // 秒   
+          'q+' : Math.floor((value.getMonth() + 3) / 3),   // 季度   
+          'S'  : value.getMilliseconds()                   // 毫秒   
+        }
+        if (/(y+)/.test(filter)) filter = filter.replace(RegExp.$1, (value.getFullYear() + '').substr(4 - RegExp.$1.length))
+        for (let k in o) 
+          if (new RegExp('('+ k +')').test(filter))
+            filter = filter.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+        return filter
       }
     }
   }
@@ -46,6 +73,7 @@
     font-size: 0;
     .support-warranty-banner{
       width: 100%;
+      min-height: 34vw;
     }
     .support-warranty-submit{
       width: 100%;

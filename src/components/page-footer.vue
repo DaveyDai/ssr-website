@@ -17,7 +17,7 @@
         </div>
         <div class="left-footer-column">
           <h5>OTHERS</h5>
-          <li>About us</li>
+          <li @click="routerLink('/about-us')">About us</li>
           <li>Subscribe</li>
         </div>
         <div class="left-footer-column">
@@ -55,7 +55,7 @@
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">OTHERS</span>
         <span slot="rightIcon" class="icon icon-right-slide"></span>
-        <li>About us</li><li>Subscribe</li>
+        <li @click="routerLink('/about-us')">About us</li><li>Subscribe</li>
       </vava-collapse-item>
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">COMMUNITY</span>

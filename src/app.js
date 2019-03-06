@@ -7,8 +7,8 @@ import VueCookies from 'vue-cookies'
 import titleMixin from './common/utils/title'
 import * as filters from './common/utils/filters'
 import VueI18n from 'vue-i18n'
-import en from '@/common/language/en'
-import zh from '@/common/language/zh'
+import l_en from '@/common/language/en'
+import l_zh_CN from '@/common/language/zh'
 import Utils from '@/common/utils/utils.js' // 工具方法
 import VavaUi from '@/components/components.js'
 // mixin for handling title
@@ -43,15 +43,16 @@ export function createApp (language) {
   const router = createRouter()
   // console.log(typeof window === 'undefined' ? '服务端' : window)
   sync(store, router)
-  // 通过cookie同步语言
-  let languageData = language || Vue.cookies.get('language') || 'en'
-  const i18n = new VueI18n({ locale: languageData, messages: { en, zh } }) // 国际化
+  // 通过cookie同步地区语言
+  let languageData = language || Vue.cookies.get('language') || 'l_en'
+  console.log('当前语言', languageData)
+  const i18n = new VueI18n({ locale: languageData, messages: { l_en, l_zh_CN } }) // 国际化
   const app = new Vue({
     router,
     store,
     i18n,
     data () {
-      return { asyncData: ({ store, language }) => store.dispatch('queryCategoryList', { language }) }
+      return { asyncData: ({ store }) => store.dispatch('queryCategoryList') }
     },
     render: h => h(App)
   })

@@ -2,7 +2,7 @@
   <div class="blog-label-tabs" v-swiper:mySwiper="swiperOption">
     <div class="swiper-wrapper">
       <div class="swiper-slide" v-for="(item, index) of slideLabel" :key="index">
-        <span @click="handleClick(item, index)" :class="{'active': item.active}" class="blog-tabs-key">{{item.dicName}}</span>
+        <span @click="handleClick(item, index)" :class="item.active ? 'active' : ''" class="blog-tabs-key">{{item.moduleTitle}}</span>
       </div>
     </div>
   </div>
@@ -26,8 +26,14 @@
             1050: { spaceBetween: 10 }
           }
         },
-        slideLabel: this.labelData
+        slideLabel: []
       }
+    },
+    created () {
+      this.labelData.forEach(item => {
+        item.active = false
+        this.slideLabel.push(item)
+      })
     },
     methods: {
       handleClick (item, index) {

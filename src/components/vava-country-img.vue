@@ -1,10 +1,10 @@
 <template>
   <div class="vava-country-img" @click="clickShow"
     :class="{
-      'vava-country-china': countryName === 'zh',
-      'vava-country-us': countryName === 'en',
-      'vava-country-germany': countryName === 'ge',
-      'vava-country-japan': countryName === 'jp'
+      'vava-country-china': countryName === 'l_zh_CN',
+      'vava-country-us': countryName === 'l_en',
+      'vava-country-germany': countryName === 'l_de',
+      'vava-country-japan': countryName === 'l_jp'
     }"
   ></div>
 </template>
@@ -18,7 +18,7 @@
     },
     beforeMount () {
       console.log('客户端cookise:', this.$cookies.get('language'))
-      this.countryName = this.$cookies.get('language') || 'en'
+      this.countryName = this.$cookies.get('language') || 'l_en'
     },
     mounted () {},
     methods: {
@@ -28,7 +28,8 @@
       setCountry (type) {
         this.countryName = type
         this.$cookies.set('language', type)
-        this.$i18n.locale = type === 'ge' || type === 'jp' ? 'en' : type
+        // this.$i18n.locale = type === 'l_de' || type === 'l_jp' ? 'l_en' : type
+        window.location.href = '/'
       },
       clickShow () {
         this.$emit('click', 3)

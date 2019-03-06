@@ -4,6 +4,7 @@ import VavaEmailInput from '@/components/vava-email-input.vue'
 import VavaCollapseItem from '@/components/vava-collapse-item.vue'
 import VavaSubscribe from '@/components/vava-subscribe.vue'
 import Checkbox from '@/components/checkbox.vue'
+import SingleCheck from '@/components/single-check.vue'
 
 VavaInput.install = function(Vue) { // 输入框
   Vue.component(VavaInput.name, VavaInput)
@@ -23,6 +24,9 @@ VavaSubscribe.install = function(Vue) { // 订阅面板
 Checkbox.install = function(Vue) { // 复选框
   Vue.component(Checkbox.name, Checkbox)
 }
+SingleCheck.install = function(Vue) { // 单选选框
+  Vue.component(SingleCheck.name, SingleCheck)
+}
 
 export default [
   VavaInput,
@@ -30,5 +34,6 @@ export default [
   VavaEmailInput,
   VavaCollapseItem,
   VavaSubscribe,
-  Checkbox
+  Checkbox,
+  SingleCheck
 ]

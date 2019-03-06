@@ -74,13 +74,14 @@ function renderStart (req, res) { // 开始render
       res.redirect('/')
     }
   }
-  let cookiesLang = 'en' // 默认英文
-  if (req.headers.cookie && req.headers.cookie.indexOf('language=') !== -1) {
+  let cookiesLang = 'l_en' // 默认美国英文
+  if (req.headers.cookie && req.headers.cookie.indexOf('language=') !== -1) { // 获取cookies中地区语言，假如用户设置过地区语言
     let cookiesData = req.headers.cookie.split(';')
     for (let i = cookiesData.length; i--;) if (cookiesData[i].indexOf('language=') !== -1) cookiesLang = cookiesData[i].split('=')[1]
+  } else {
+    res.setHeader('Set-Cookie', 'language=' + cookiesLang) // 设置cookie默认值
   }
   console.log('cookie：', req.headers.cookie)
-  res.setHeader('Set-Cookie', 'language=' + cookiesLang) // 设置cookie
   renderer.renderToString({title: 'VAVA', url: req.url, language: cookiesLang}, (err, html) => {
     if (err) {
       return handleError(err)

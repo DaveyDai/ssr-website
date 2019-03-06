@@ -6,6 +6,8 @@
 
 <script>
   export default {
+    name: 'SingleCheck',
+    componentName: 'SingleCheck',
     props: {
       value: Boolean
     },

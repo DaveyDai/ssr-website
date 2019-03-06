@@ -9,7 +9,9 @@
           <li @click="routerLink('/blog')"><span>HOME</span><i></i></li>
         </nav>
         <!-- 搜索框 -->
-        <vava-search ref="blogSearch" class="header-search" v-model="showSearch" @keyup.enter.native="startSearch"></vava-search>
+        <form class="option-search-input" action="javascript:search();">
+          <vava-search class="header-search" type="search" v-model="searchValue" :is-show="showSearch" @close="val => showSearch = val"></vava-search>
+        </form>
       </div>
       <!-- 头部右侧按钮 -->
       <div class="header-right" :class="{'is-search': showSearch}">
@@ -19,8 +21,8 @@
     </div>
     <!-- 选择语言/地区 -->
     <div class="blog-header-country" ref="countryIsShow" :class="{'blog-header-country-show': countryIsShow}">
-      <img @click="setCountry('en')" src="@/assets/images/country-icon/us.png" alt=""><img @click="setCountry('ge')" src="@/assets/images/country-icon/germany.png" alt="">
-      <img @click="setCountry('zh')" src="@/assets/images/country-icon/china.png" alt=""><img @click="setCountry('jp')" src="@/assets/images/country-icon/japan.png" alt="">
+      <img @click="setCountry('l_en')" src="@/assets/images/country-icon/us.png" alt=""><img @click="setCountry('l_de')" src="@/assets/images/country-icon/germany.png" alt="">
+      <img @click="setCountry('l_zh_CN')" src="@/assets/images/country-icon/china.png" alt=""><img @click="setCountry('l_jp')" src="@/assets/images/country-icon/japan.png" alt="">
     </div>
     <!-- 遮罩层 -->
     <div class="page-content-mask" @click="countryIsShow=isShowMask=false" :class="{'content-mask-show': isShowMask}"></div>
@@ -38,7 +40,8 @@
         countryIsShow: false, // 是否显示国家
         isSeecontent: false, // 是否阅读模式
         showSearch: false,
-        menuList: []
+        menuList: [],
+        searchValue: ''
       }
     },
     watch: {
@@ -52,6 +55,9 @@
           this.isSeecontent = e.target.scrollTop > 10
           e.target.className = this.isSeecontent ? 'app-page-read' : ''
         })
+        window.search = () => {
+          this.startSearch()
+        }
       })
     },
     methods: {
@@ -83,8 +89,8 @@
         this.isShowMask = this.countryIsShow = !this.countryIsShow
       },
       startSearch () {
-        console.log(this.$refs.blogSearch.searchValue)
-        this.$router.push('/blog/search/' + this.$refs.blogSearch.searchValue)
+        console.log(111, this.searchValue)
+        // this.$router.push('/blog/search/' + this.$refs.blogSearch.searchValue)
       }
     }
   }
@@ -102,7 +108,7 @@
     .blog-header-option{
       width: 100%;
       height: 10.4vw;
-      transition: height .25s, opacity .25s;
+      transition: height .25s, background .25s;
       overflow: hidden;
       text-align: center;
       display: flex;
@@ -186,6 +192,7 @@
       height: 3.125vw;
       min-height: 60px;
       box-shadow: 0 0 15px rgba(0,0,0,.15);
+      background: rgba(255, 255, 255, 0.4);
       .header-left-logo{
         height: 1.56vw;
         width: 6.25vw;
@@ -197,9 +204,12 @@
           width: 55vw;
           input{font-size: 1vw;}
         }
-        .header-menu{padding-top: 0.4vw;}
+        .header-menu{padding-top: 0.4vw;li{color: @base-font-color;}}
       }
-      &:hover{opacity: 1;}
+      &:hover{
+        background: #FFF;
+        .header-content .header-menu li{color: @base-font-color;}
+      }
     }
     .blog-header-country{
       position: relative;

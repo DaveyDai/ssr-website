@@ -23,7 +23,9 @@
           <li class="detail-file-li" v-for="(item,index) of supportData.proDownload.productAttachmentDetailBos" :key="index">
             <p>{{dicTreeList[item.attachmentCode]}}</p>
             <div class="download-file-detail">
-              <div class="download-content"><vava-single v-model="item.isSelect"></vava-single><i class="icon icon-download"></i><em>{{item.attachmentName}}</em></div>
+              <div class="download-content">
+                <single-check v-model="item.isSelect"></single-check><i class="icon icon-download"></i><em @click="downFile(item.attachmentUrl)">{{item.attachmentName}}</em>
+              </div>
             </div>
           </li>
         </ul>
@@ -38,9 +40,7 @@
 </template>
 
 <script>
-  import VavaSingle from './single-check.vue'
   export default {
-    components: { VavaSingle },
     computed: {
       supportData () {
         return this.$store.state.productDetail.support
@@ -83,6 +83,9 @@
       },
       routerLink (path) {
         this.$router.push(path)
+      },
+      downFile (path) {
+        window.open(path)
       },
       sendEmail () {}
     }

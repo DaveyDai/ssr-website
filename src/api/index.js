@@ -27,8 +27,10 @@ axios.interceptors.response.use(function (response) {
 })
 
 //post请求
-export function requestPost (url, params, token) {
-  axios.defaults.headers['token'] = token
+export function requestPost (url, params, state) {
+  axios.defaults.headers['token'] = state.token || ''
+  axios.defaults.headers['accept-language'] = state.language || 'l_en'
+  axios.defaults.timeout = typeof window === 'undefined' ? 5000 : 10000
   return new Promise((resolve, reject) => {
     console.log('post请求:', api[url])
     axios.post(api[url], params).then(response => {
@@ -46,8 +48,10 @@ export function requestPost (url, params, token) {
 }
 
 //get请求
-export function requestGet (url, params, token) {
-  axios.defaults.headers['token'] = token
+export function requestGet (url, params, state) {
+  axios.defaults.headers['token'] = state.token || ''
+  axios.defaults.headers['accept-language'] = state.language || 'l_en'
+  axios.defaults.timeout = typeof window === 'undefined' ? 5000 : 10000
   return new Promise((resolve, reject) => {
     let getUrl = api[url]
     console.log('get请求:', getUrl)
@@ -66,8 +70,10 @@ export function requestGet (url, params, token) {
 }
 
 //get请求 url拼接的
-export function fetchGet (url, params, token) {
-  axios.defaults.headers['token'] = token
+export function fetchGet (url, params, state) {
+  axios.defaults.headers['token'] = state.token || ''
+  axios.defaults.headers['accept-language'] = state.language || 'l_en'
+  axios.defaults.timeout = typeof window === 'undefined' ? 5000 : 10000
   return new Promise((resolve, reject) => {
     let getUrl = api[url] + params
     console.log('get请求:', getUrl)

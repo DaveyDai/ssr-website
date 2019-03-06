@@ -36,7 +36,6 @@
   export default {
     components: { VavaSwiper },
     asyncData ({ store }) { // 服务端渲染页面会等待次钩子执行完成
-      console.log('首页钩子')
       return new Promise((resolve, reject) => {
         store.dispatch('getFetch', {api: 'getHomePage'}).then(data => {
           store.commit('setHomePageData', data)
@@ -48,8 +47,6 @@
     },
     data () {
       return {
-        bannerImg: ['/static/home-page/1.jpg', '/static/home-page/2.jpg', '/static/home-page/3.jpg'],
-        socialImg: ['/static/home-page/21.jpg', '/static/home-page/22.jpg', '/static/home-page/23.jpg', '/static/home-page/24.jpg','/static/home-page/21.jpg', '/static/home-page/22.jpg', '/static/home-page/23.jpg', '/static/home-page/24.jpg'],
         pageData: {bannerImages: [], productImages: [], socialMediaImages: []}
       }
     },
@@ -57,14 +54,6 @@
       homePageData () {
         return this.$store.state.homePageData
       }
-    },
-    created () {
-    },
-    mounted () {
-      console.log(this.homePageData)
-      this.$nextTick(() => {
-        // scrollReveal.init(this.$scrollReveal, '.home-scroll-reveal')
-      })
     },
     methods: {
       callback (e) {

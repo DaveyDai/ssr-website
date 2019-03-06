@@ -30,6 +30,7 @@
     },
     methods: {
       loginCheckData () {
+        if (this.$bar.show) return // 防止重复点击登录刷新token
         if (!this.$utils.trim(this.loginParam.userName)) {
           this.$utils.message('Please enter your user name.')
           return

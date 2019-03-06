@@ -10,7 +10,7 @@
       <div class="header-content">
         <nav class="header-menu" v-show="!showSearch">
           <li v-for="(item, index) of categoryList" :key="index" @click="routerLink('/c/' + item.id)"><span>{{item.categoryName}}</span><i></i></li>
-          <li @click="routerLink('/support')"><span>SUPPORT</span><i></i></li><li><span>ABOUT</span><i></i></li>
+          <li @click="routerLink('/support')"><span>SUPPORT</span><i></i></li><li @click="routerLink('/about-us')"><span>ABOUT</span><i></i></li>
         </nav>
         <!-- 搜索框 -->
         <vava-search class="header-search" v-model="searchValue" :is-show="showSearch" @close="val => showSearch = val" @keyup.enter.native="startSearch"></vava-search>
@@ -25,8 +25,8 @@
     </div>
     <!-- 选择语言/地区 -->
     <div class="page-header-country" ref="countryIsShow" :class="{'page-header-country-show': countryIsShow}">
-      <img @click="setCountry('en')" src="@/assets/images/country-icon/us.png" alt=""><img @click="setCountry('ge')" src="@/assets/images/country-icon/germany.png" alt="">
-      <img @click="setCountry('zh')" src="@/assets/images/country-icon/china.png" alt=""><img @click="setCountry('jp')" src="@/assets/images/country-icon/japan.png" alt="">
+      <img @click="setCountry('l_en')" src="@/assets/images/country-icon/us.png" alt=""><img @click="setCountry('l_de')" src="@/assets/images/country-icon/germany.png" alt="">
+      <img @click="setCountry('l_zh_CN')" src="@/assets/images/country-icon/china.png" alt=""><img @click="setCountry('l_jp')" src="@/assets/images/country-icon/japan.png" alt="">
     </div>
     <!--移动端菜单选择面板-->
 	  <transition name="menu-fade">
@@ -35,13 +35,17 @@
           <span slot="titleContent" class="header-collapse-title" @click="routerLink('/c/' + item.id)">{{item.categoryName}}</span>
         </vava-collapse-item>
 	    	<vava-collapse-item><span slot="titleContent" class="header-collapse-title" @click="routerLink('/support')">SUPPORT</span></vava-collapse-item>
-	    	<vava-collapse-item><span slot="titleContent" class="header-collapse-title">ABOUT</span></vava-collapse-item>
+	    	<vava-collapse-item><span slot="titleContent" class="header-collapse-title" @click="routerLink('/about-us')">ABOUT</span></vava-collapse-item>
 	    </div>
 	  </transition>
 	  <!-- 移动端右侧菜单面板 -->
 	  <transition name="menu-fade">
 	    <div v-show="isShowPhoneOption" ref="phoneOption" class="header-phone-menu header-collapse">
-        <div class="phone-option-search"><input type="text"><span class="icon icon-search"></span><vava-button class="search-button">Search</vava-button></div>
+        <div class="phone-option-search">
+          <form class="option-search-input" action="javascript:search();"><input type="search" v-model="searchValue"></form>
+          <span class="icon icon-search"></span>
+          <!-- <vava-button class="search-button">Search</vava-button> -->
+        </div>
 	    	<vava-collapse-item>
 	    		<span slot="leftIcon" class="icon icon-log-in collapse-title-left"></span>
 	    		<span slot="titleContent" @click="routerLink('/account')">{{accountName}}</span>
@@ -95,6 +99,9 @@
           this.isSeecontent = e.target.scrollTop > 10
           e.target.className = this.isSeecontent ? 'app-page-read' : ''
         })
+        window.search = () => {
+          this.startSearch()
+        }
       })
     },
     methods: {
@@ -146,6 +153,7 @@
       },
       startSearch () {
         if (!this.searchValue) return false
+        this.isShowPhoneOption = this.isShowPhoneMenu = this.isShowMask = false
         this.$router.push('/product/search/' + this.searchValue)
       //   if (this.$route.path.indexOf('/product/search/') !== -1) {
       //     console.log(this.$route)
@@ -177,12 +185,12 @@
     .page-header-option{
       width: 100%;
       height: 10.4vw;
-      transition: height .25s, opacity .25s;
+      transition: height .25s, background .25s;
       overflow: hidden;
       text-align: center;
       display: flex;
       align-items: center;
-      background-color: #FFF;
+      background: #FFF;
       min-width: 280px;
       position: relative;
       z-index: 1001;
@@ -261,6 +269,7 @@
       height: 3.125vw;
       min-height: 60px;
       box-shadow: 0 0 15px rgba(0,0,0,.15);
+      background: rgba(255, 255, 255, 0.4);
       .header-left-logo{
         height: 1.56vw;
         width: 6.25vw;
@@ -272,9 +281,12 @@
           width: 55vw;
           input{font-size: 1vw;}
         }
-        .header-menu{padding-top: 0.4vw;}
+        .header-menu{padding-top: 0.4vw;li{color: @base-font-color;}}
       }
-      &:hover{opacity: 1;}
+      &:hover{
+        background: #FFF;
+        .header-content .header-menu li{color: @base-font-color;}
+      }
     }
     .page-header-country{
       position: relative;
@@ -327,17 +339,21 @@
       .phone-option-search{
         position: relative;
         width: 100%;
-        height: 80px;
+        height: 45px;
         color: #FFF;
         position: relative;
-        border-top: 1px solid #FFF;
+        // border-top: 1px solid #FFF;
         display: flex;
         align-items: center;
+        margin-bottom: 20px;
+        .option-search-input{
+          width: 100%;
+        }
         input{
           font-size: 20px;
-          height: 40px;
+          height: 45px;
           border-radius: 30px;
-          width: 70%;
+          width: 100%;
           padding: 0 20px 0 40px;
           background-color: @base-back-color;
           border: 1px solid #FFF;
@@ -457,9 +473,10 @@
       }
     }
     .page-header .header-collapse .phone-option-search{
-      height: 60px;
+      height: 40px;
       .search-button{ height: 35px; width: 20%;font-size: 14px;padding: 0;}
-      input{ height: 35px; width: 75%;}
+      input{ height: 40px;}
+      // input{ height: 35px; width: 75%;}
     }
   }
   @media (max-width: 375px) {
@@ -467,6 +484,6 @@
   }
   @media (max-width: 359px) {
     .page-header .header-collapse .phone-option-search .search-button{ display: none;}
-    .page-header .header-collapse .phone-option-search input{ width: 100%;}
+    // .page-header .header-collapse .phone-option-search input{ width: 100%;}
   }
 </style>

@@ -35,13 +35,8 @@
     },
     data () {
       return {
-        viewIndex: 3,
+        viewIndex: 0,
         filterView: undefined
-      }
-    },
-    computed: {
-      productDetail () {
-        return this.$store.state.productDetail
       }
     },
     watch: {
@@ -76,7 +71,9 @@
 
 <style lang="less" scoped>
   .product-detail{
+    width: 100%;
     padding-top: 4.166vw;
+    min-height: 70%;
   }
   .app-page-read .product-detail .product-detail-tabs{ top: 3.125vw; }
   @media (max-width: 1920px){

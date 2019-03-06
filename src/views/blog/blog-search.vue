@@ -143,11 +143,14 @@
         }
         .search-results-dec{
           font-size: 11px;
+          padding: 0 10px;
+          line-height: 1.4;
+          text-align: center;
         }
         .search-results-no p{
           font-size: 11px;
           line-height: 2;
-          span{border-width: 5px;}
+          span{border-width: 5px;margin-bottom: 2px;}
         }
       }
     }

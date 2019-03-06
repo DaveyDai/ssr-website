@@ -2,9 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
 // const createListView = id => () => import('../views/CreateListView').then(m => m.default(id))
-const Test = () => import('../views/product-view/product-list.vue')
 const IconTest = () => import('../views/test.vue')
 const HomePage = () => import('../views/home-page/index.vue') // 首页
+const AboutUs = () => import('../views/home-page/about-us.vue') // 首页
 const ErrorPage = () => import('../views/error/index.vue') // 404
 const LoginPage = () => import('../views/account/login.vue') // login
 const ForgotPassword = () => import('../views/account/forgot-password.vue') // 忘记密码
@@ -59,7 +59,7 @@ export function createRouter () {
       { path: '/blog', component: Blog, meta: {blog: true} },
       { path: '/blog/:label', component: BlogDetail, meta: {blog: true} },
       { path: '/blog/search/:key', component: BlogSearch, meta: {blog: true} },
-      {path: '/test', name: 'Test', component: Test},
+      {path: '/about-us', component: AboutUs},
       {path: '/', name: 'homePage', component: HomePage},
       {path: '/icontest', name: 'icontest', component: IconTest}
       // { path: '/', redirect: '/test' }

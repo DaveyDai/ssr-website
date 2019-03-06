@@ -16,14 +16,6 @@
 
 <script>
   export default {
-    asyncData ({ store, route }) { // 服务端渲染页面会等待次钩子执行完成
-      console.log('support', route.params.pId)
-      // return store.dispatch('queryCategory', {api: 'signIn', cId: route.params.cId})
-    },
-    data () {
-      return {
-      }
-    },
     methods: {
       routerLink (path) {
         this.$router.push(path)

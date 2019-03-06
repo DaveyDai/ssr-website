@@ -6,7 +6,7 @@
         <span slot="titleContent" class="private-policy-content-title">INTRODUCTION</span>
         <span slot="rightIcon" class="icon icon-right-slide"></span>
         <div class="private-policy-li">
-          <p>We Shenzhen Sunvalley E-commerce Company Limited including all affiliates and subsidiaries (hereinafter referred to as “Sunvalley Group”, “us” or “we”) are committed to protecting your privacy. Our goal is to provide you with a positive experience on our website www.vava.com (“Website”), while at the same time keeping your Personal Information secure.</p>
+          <p>We Shenzhen Sunvalley Innovation Technology Company Limited including all affiliates and subsidiaries (hereinafter referred to as “Sunvalley Group”, “us” or “we”) are committed to protecting your privacy. Our goal is to provide you with a positive experience on our website www.vava.com (“Website”), while at the same time keeping your Personal Information secure.</p>
           <p>Your privacy is important to us. Please read this Privacy Policy to learn about the information that we may collect from you and how we use and protect your information.</p>
           <p>BY VISITING THE WEBSITE, YOU ARE ACCEPTING AND CONSENTING TO THE PRACTICES, TERMS AND CONDITIONS DESCRIBED IN THIS PRIVACY POLICY.</p>
         </div>
@@ -15,8 +15,8 @@
         <span slot="titleContent" class="private-policy-content-title">INFORMATION COVERED BY THIS PRIVATE POLICY</span>
         <span slot="rightIcon" class="icon icon-right-slide"></span>
         <div class="private-policy-li">
-          <div>Personal Information.This means any information that can be used to identify a specific natural person directly or indirectly, either in isolation or in combination with other information. Some examples of Personal Information include a name, address, email address, phone number, any ID number or location data.</div>
-          <div>Aggregated Information.Information may be aggregated and/or anonymized. When information is aggregated, it is combined with information about other customers and users. Aggregated information that includes Personal Information is considered Personal Information until it has been anonymized.</div>
+          <div>Personal Information. This means any information that can be used to identify a specific natural person directly or indirectly, either in isolation or in combination with other information. Some examples of Personal Information include a name, address, email address, phone number, any ID number or location data.</div>
+          <div>Aggregated Information. Information may be aggregated and/or anonymized. When information is aggregated, it is combined with information about other customers and users. Aggregated information that includes Personal Information is considered Personal Information until it has been anonymized.</div>
           <div>Anonymized Information. When information is anonymized, the information can no longer be attributed to a specific natural person without the use of additional information, for example, how many users viewed a particular website video or advertisement, such information cannot be used to identify you. In general, usage data collected when you visit the Website is both aggregated and anonymized so it does not identify you personally and therefore is not Personal Information.</div>
           <div>Children’s Personal Information.The Website is not directed to, nor does Sunvalley Group knowingly collect Personal Information from children under the age of 16 (Sixteen), or equivalent minimum age in the relevant jurisdiction. If we are informed that we have collected the Personal Information of a child under the age of 16, we will delete that Personal Information from our systems. If you believe we might have inadvertently collected Personal Information from or about a child under the age of 16, please contact us at privacy@vava.com.</div>
         </div>

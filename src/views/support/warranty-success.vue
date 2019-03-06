@@ -3,11 +3,11 @@
     <div class="warranty-product">
       <h5>YOUR WARRANTY COVERAGE</h5>
       <div class="warranty-product-detail">
-        <div class="warranty-product-img"><img src="/static/vacuum/01-首图_VA-RV001.20211.jpg" alt=""><span>1</span></div>
+        <div class="warranty-product-img"><img :src="orderDetails.productImage" alt=""><span>{{orderDetails.productQuantity}}</span></div>
         <div class="warranty-p-order">
-          <p>VAVA DASH CAM</p>
-          <div class="warranty-p-order-price"><span>See clearly even at night</span><em>$119.99</em></div>
-          <div class="warranty-p-order-color">Color: Black</div>
+          <p>{{orderDetails.productTitle}}</p>
+          <div class="warranty-p-order-price"><span>price:&nbsp;&nbsp;<em>{{orderDetails.amountCur}} {{orderDetails.productPrice}}</em></span></div>
+          <!-- <div class="warranty-p-order-color">Color: Black</div> -->
         </div>
       </div>
     </div>
@@ -15,7 +15,7 @@
       <li>
         <div class="icon icon-selected"></div>
         <p>VALID PURCHASE DATE</p>
-        <p class="warranty-success-status">01 / 01 / 2019</p>
+        <p class="warranty-success-status">{{orderDetails.expirationTime?orderDetails.expirationTime.replace(/\//g, ' / '):''}}</p>
       </li>
       <li>
         <div class="icon icon-selected"></div>
@@ -35,7 +35,7 @@
 <script>
   export default {
     props: {
-      warrantyData: {
+      orderDetails: {
         type: Object,
         default () {
           return {}
@@ -95,6 +95,8 @@
           p{
             font-size: 1vw;
             font-family: 'avenir-next-demi';
+            max-width: 500px;
+            line-height: 1.4;
           }
           .warranty-p-order-price{
             display: flex;
