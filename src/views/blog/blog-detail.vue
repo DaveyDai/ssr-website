@@ -8,12 +8,12 @@
     <blog-tabs @click="handleClick" :label-data="blogData.labelData"></blog-tabs>
     <div class="blog-detail-content">
       <blog-item class="blog-img-home" :label="item.labelCode ? dicTreeList[item.labelCode] : ''" v-for="(item, index) of blogDetailData.records" :key="index">
-        <img @click="jumpUrl(item.jumpUrl)" slot="item-img" :src="item.imageUrl">
+        <img @click="jumpUrl(item.jumpUrl)" slot="item-img" v-lazy="item.imageUrl">
         <template slot="item-title">{{item.title}}</template>
         <template slot="item-describe">{{item.description}}</template>
       </blog-item>
     </div>
-    <vava-pagination v-if="blogDetailData.total>0" class="blog-detail-pagination" :total="blogDetailData.total" :display="pageSize" :current-page="blogDetailData.pageNum" @pagechange="handleClickPage"></vava-pagination>
+    <vava-pagination v-if="blogDetailData.total && blogDetailData.total>0" class="blog-detail-pagination" :total="blogDetailData.total" :display="pageSize" :current-page="blogDetailData.pageNum" @pagechange="handleClickPage"></vava-pagination>
     <vava-subscribe class="blog-detail-subscribe"></vava-subscribe>
   </div>
 </template>
@@ -23,7 +23,7 @@
   import BlogTabs from './blog-label-tabs.vue'
   import VavaPagination from '@/components/vava-pagination.vue'
   import VavaSwiper from '@/components/img-swiper.vue'
-  import { mapGetters } from "vuex"
+  // import { mapGetters } from "vuex"
   export default {
     async asyncData ({ store, route }) { // 服务端渲染页面会等待次钩子执行完成
       if (store.state.blogData.labelData.length === 0) {
@@ -68,13 +68,14 @@
       },
       getBlogModule (pageNo) {
         this.$bar.start()
+        this.$store.commit('setBlogDetailData', Object.assign({}, this.blogDetailData, {records: []}))
         this.$store.dispatch('postFetch', {api: 'getBlogModule', data: {pageNo: pageNo, pageSize: this.pageSize, condition: this.blogLabelId}}).then(data => {
           this.$store.commit('setBlogDetailData', data)
-          window.document.getElementById('app').scrollTo(0, 0)
+          if (typeof window !== 'undefined') window.document.getElementsByTagName('html')[0].scrollTop = 0
           this.$bar.finish()
         }).catch (error => {
           this.$store.commit('setBlogDetailData', {total: 0, records: []})
-          window.document.getElementById('app').scrollTo(0, 0)
+          if (typeof window !== 'undefined') window.document.getElementsByTagName('html')[0].scrollTop = 0
           this.$bar.finish()
         })
       },
@@ -82,7 +83,7 @@
         this.getBlogModule(page)
       },
       jumpUrl (path) {
-        window.open(path)
+        if (path) window.open(path)
       }
     }
   }

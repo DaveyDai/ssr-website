@@ -65,5 +65,8 @@ export default {
     } catch (err) {
       state.blogData = {bannerData: [], labelData: [], homeData: []}
     }
+  },
+  setSearchBlog (state, data) {
+    state.searchBlog = data
   }
 }

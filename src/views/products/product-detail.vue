@@ -1,6 +1,6 @@
 <template>
   <div class="product-detail">
-    <detail-tabs v-model="viewIndex"></detail-tabs>
+    <detail-tabs v-model="viewIndex" :over-data="overData"></detail-tabs>
     <keep-alive>
       <component :is="filterView"></component>
     </keep-alive>
@@ -16,7 +16,6 @@
   export default {
     components: { DetailTabs },
     async asyncData ({ store, route }) { // 服务端渲染页面会等待次钩子执行完成
-      console.log('产品详情asyncData', route.params.pId)
       let param = {pageNo: 1, pageSize: 1000, condition: route.params.pId}
       let productDetail = {
         overviewData: await store.dispatch('postFetch', {api: 'getProOverview', data: param}),
@@ -28,24 +27,27 @@
         buynow: await store.dispatch('getByUrl', {api: 'getProBuynow', data: route.params.pId}) // 获取产品buynow
       }
       return new Promise((resolve, reject) => {
-        console.log('产品详情数据:', productDetail)
         store.commit('setProductDetail', productDetail)
         resolve()
       })
     },
     data () {
       return {
-        viewIndex: 0,
-        filterView: undefined
+        viewIndex: !this.$store.state.productDetail.overviewData.total
+        ? 1 : !this.$store.state.productDetail.specs.productSpecsBos || this.$store.state.productDetail.specs.productSpecsBos.length === 0
+        ? 3 : 0,
+        filterView: undefined,
+        overData: [{dicValue: 'OVERVIEW', isHidden: false}, {dicValue: 'SPECIFICATIONS', isHidden: false}, {dicValue: 'SUPPORT', isHidden: false}, {dicValue: 'BUY NOW', isHidden: false}]
       }
     },
     watch: {
       viewIndex () {
         this.showView()
-        window.document.getElementById('app').scrollTo(0, 0)
+        if (typeof window !== 'undefined') window.document.getElementsByTagName('html')[0].scrollTop = 0
       }
     },
     created () {
+      if (this.viewIndex !== 0) this.overData[0].isHidden = true
       this.showView()
     },
     methods: {
@@ -75,7 +77,13 @@
     padding-top: 4.166vw;
     min-height: 70%;
   }
-  .app-page-read .product-detail .product-detail-tabs{ top: 3.125vw; }
+  .app-page-read .product-detail .product-detail-tabs{
+    top: 3.125vw;
+    background: rgba(255, 255, 255, 0.8);
+    &:hover{
+      background: #FFF;
+    }
+  }
   @media (max-width: 1920px){
     .app-page-read .product-detail .product-detail-tabs{ top: 58px; }
   }
@@ -89,6 +97,9 @@
       .product-detail-tabs{
         top: 60px;
       }
+    }
+    .app-page-read .product-detail .product-detail-tabs{
+      background: #FFF;
     }
   }
   // @media (max-width: 800px) {

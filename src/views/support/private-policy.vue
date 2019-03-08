@@ -173,30 +173,6 @@
   </div>
 </template>
 
-<script>
-  export default {
-    asyncData ({ store, route }) { // 服务端渲染页面会等待次钩子执行完成
-      console.log('产品首页asyncData', route.params.cId)
-      // (to.meta.scrollToTop) window.document.getElementById('app').scrollTo(0, 0)
-      // return store.dispatch('queryCategory', {api: 'signIn', cId: route.params.cId})
-    },
-    data () {
-      return {
-        imgData: ['/static/vacuum/01-首图_VA-DK001.241.png','/static/vacuum/01-首图_VA-DK001.241.png','/static/vacuum/01-首图_VA-RV001.202.png']
-      }
-    },
-    mounted () {
-    },
-    methods: {
-      callback (e) {
-      },
-      routerLink (path) {
-        this.$router.push(path)
-      }
-    }
-  }
-</script>
-
 <style lang="less" scoped>
   .private-policy{
     width: 100%;

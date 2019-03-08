@@ -1,23 +1,28 @@
 <template>
   <div class="blog-search">
     <div class="blog-search-results">
-        <p class="search-results-keyword">Search results for: new</p>
+        <p class="search-results-keyword">Search results for: {{searchBlog.keyword}}</p>
         <div class="search-results-line"></div>
-        <p class="search-results-dec" v-if="resultsData.length > 0">2 results for ‘ new ‘ found</p>
-        <p class="search-results-dec" v-if="resultsData.length === 0">Sorry, we couldn’t find a match for that. We suggest that you:</p>
-        <div class="search-results-no" v-if="resultsData.length === 0">
+        <p class="search-results-dec" v-if="searchBlog.records.length > 0">{{searchBlog.total}} results for ‘ {{searchBlog.keyword}} ‘ found</p>
+        <p class="search-results-dec" v-if="searchBlog.records.length === 0">Sorry, we couldn’t find a match for that. We suggest that you:</p>
+        <div class="search-results-no" v-if="searchBlog.length === 0">
           <p><span></span>Please check the spelling.</p>
           <p><span></span>Please use different keywords.</p>
         </div>
     </div>
     <div class="blog-search-content">
-      <blog-item class="blog-img-home" label="New">
+      <!-- <blog-item  class="blog-img-home" label="New">
         <img slot="item-img" src="/static/website-imgages/blog/Photo 11.jpg" alt="">
         <template slot="item-title">PC GAMES TO LOOK OUT FOR IN 2018</template>
         <template slot="item-describe">With the PC releases of 2017 officially in the rear view mirror, it’s time to look ahead to PC games in 2018 and what they bring to the table. 2018 promise to be a huge year for PC gaming as there are many different highly-anticipated releases coming.r for PC gaming as there are many different highly-anticipated releases coming</template>
+      </blog-item> -->
+      <blog-item class="blog-img-home" :label="item.labelCode ? dicTreeList[item.labelCode] : ''" v-for="(item, index) of searchBlog.records" :key="index">
+        <img @click="jumpUrl(item.jumpUrl)" slot="item-img" v-lazy="item.imageUrl">
+        <template slot="item-title">{{item.title}}</template>
+        <template slot="item-describe">{{item.description}}</template>
       </blog-item>
     </div>
-    <vava-pagination class="blog-search-pagination" :total="total" :current-page='current' @pagechange="handleClickPage"></vava-pagination>
+    <vava-pagination v-if="searchBlog.total && searchBlog.total>0" class="blog-search-pagination" :total="searchBlog.total" :display="pageSize" :current-page="searchBlog.pageNum" @pagechange="handleClickPage"></vava-pagination>
     <vava-subscribe class="blog-search-subscribe"></vava-subscribe>
   </div>
 </template>
@@ -27,26 +32,52 @@
   import VavaPagination from '@/components/vava-pagination.vue'
   export default {
     asyncData ({ store, route }) { // 服务端渲染页面会等待次钩子执行完成
-      console.log('blog详情:', route)
       return new Promise((resolve, reject) => {
-        resolve()
+        let param = {pageNo: 1, pageSize: 10, condition: route.params.keyword}
+        store.dispatch('postFetch', {api: 'getBlogSearch', data: param}).then(json => { // 获取分类产品
+          json.keyword = route.params.keyword
+          store.commit('setSearchBlog', json)
+          resolve()
+        }).catch(error => {
+          store.commit('setSearchBlog', {records: [], keyword: route.params.keyword})
+          reject(error)
+        })
       })
     },
     components: { BlogItem, VavaPagination },
+    computed: {
+      searchBlog () {
+        return this.$store.state.searchBlog
+      },
+      dicTreeList () {
+        return this.$store.state.dicTreeList
+      }
+    },
     data () {
       return {
-        bannerImg: ['/static/website-imgages/blog/Promotion Banner1.jpg', '/static/website-imgages/blog/Promotion Banner1.jpg', '/static/website-imgages/blog/Promotion Banner1.jpg'],
-        current: 1,
-        total: 150, // 记录总条数
-        resultsData: []
+        pageSize: 10
       }
     },
     methods: {
-      handleClick (item) {
-        console.log(item)
+      getBlogSearch (pageNo) {
+        this.$bar.start()
+        this.$store.commit('setSearchBlog', Object.assign({}, this.searchBlog, {records: []}))
+        this.$store.dispatch('postFetch', {api: 'getBlogSearch', data: {pageNo: pageNo, pageSize: this.pageSize, condition: this.$route.params.keyword}}).then(data => {
+         data.keyword = this.$route.params.keyword
+         this.$store.commit('setSearchBlog', data)
+          if (typeof window !== 'undefined') window.document.getElementsByTagName('html')[0].scrollTop = 0
+          this.$bar.finish()
+        }).catch (error => {
+          this.$store.commit('setSearchBlog', {total: 0, records: []})
+          if (typeof window !== 'undefined') window.document.getElementsByTagName('html')[0].scrollTop = 0
+          this.$bar.finish()
+        })
       },
       handleClickPage (page) {
-        console.log(page)
+        this.getBlogSearch(page)
+      },
+      jumpUrl (path) {
+        if (path) window.open(path)
       }
     }
   }

@@ -3,8 +3,8 @@
     <h5>QUESTIONS & ANSWERS</h5>
     <div v-swiper:mySwiper="swiperOption">
       <div class="swiper-wrapper">
-        <div class="swiper-slide" v-for="(list, index) of supportFaqData" :key="index">
-          <li style="cursor: grab;" v-for="(item, number) of list" :key="number">
+        <div class="swiper-slide" style="cursor: grab;" v-for="(list, index) of supportFaqData" :key="index">
+          <li v-for="(item, number) of list" :key="number">
             <p class="support-faq-aq"><em>Q:</em><span>{{item.question}}</span></p>
             <p class="support-faq-aq"><em>A:</em><span>{{item.answer}}</span></p>
             <!-- <p class="support-faq-time">By VAVA Support Team on July 27, 2018</p> -->
@@ -130,13 +130,13 @@
       display: none;
     }
     .swiper-button-prev, .swiper-button-next{
-      width: 3.5vw;
-      height: 4vw;
-      min-width: 30px;
-      min-height: 35px;
+      width: 2.5vw;
+      height: 3vw;
+      min-width: 25px;
+      min-height: 30px;
       background-size: 60% 100%;
       background-repeat: no-repeat;
-      transition: .25s all;
+      transition: background .25s;
       top: 40%;
     }
     .swiper-pagination{
@@ -166,16 +166,16 @@
         background: @base-button-back;
       }
     }
-    .swiper-button-prev,.swiper-button-next{
-      display: block;
-    }
+    // .swiper-button-prev,.swiper-button-next{
+    //   display: block;
+    // }
     .swiper-button-prev {
       left: 5vw;
-      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M0%2C22L22%2C0l2.1%2C2.1L4.2%2C22l19.9%2C19.9L22%2C44L0%2C22L0%2C22L0%2C22z'%20fill%3D'%23E3E3E3'%2F%3E%3C%2Fsvg%3E")
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIzOC44NjYiIHZpZXdCb3g9IjAgMCAyNCAzOC44NjYiPjxwYXRoIGQ9Ik0zMiwzOS44LDE3LjE2NiwyNC45MzMsMzIsMTAuMDY3LDI3LjQzMyw1LjUsOCwyNC45MzMsMjcuNDMzLDQ0LjM2NloiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC04IC01LjUpIiBmaWxsPSIjZTNlM2UzIi8+PC9zdmc+")
     }
     .swiper-button-next {
       right: 5vw;
-      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M27%2C22L27%2C22L5%2C44l-2.1-2.1L22.8%2C22L2.9%2C2.1L5%2C0L27%2C22L27%2C22z'%20fill%3D'%23E3E3E3'%2F%3E%3C%2Fsvg%3E")
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNS4wNSIgaGVpZ2h0PSI0MC41NjciIHZpZXdCb3g9IjAgMCAyNS4wNSA0MC41NjciPjxwYXRoIGQ9Ik04LjU5LDQxLjU1LDI0LjA3MywyNi4wMzQsOC41OSwxMC41MTcsMTMuMzU3LDUuNzUsMzMuNjQsMjYuMDM0LDEzLjM1Nyw0Ni4zMTdaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtOC41OSAtNS43NSkiIGZpbGw9IiNlM2UzZTMiLz48L3N2Zz4=")
     }
     .swiper-button-prev:hover{
       background-position: left;

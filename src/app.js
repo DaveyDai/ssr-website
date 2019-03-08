@@ -11,6 +11,7 @@ import l_en from '@/common/language/en'
 import l_zh_CN from '@/common/language/zh'
 import Utils from '@/common/utils/utils.js' // 工具方法
 import VavaUi from '@/components/components.js'
+// import '@/common/swiper/swiper.min.less'
 // mixin for handling title
 Vue.mixin(titleMixin)
 Vue.use(VueI18n)
@@ -56,6 +57,14 @@ export function createApp (language) {
     },
     render: h => h(App)
   })
-
+  router.beforeEach((to, from, next) => {
+    next()
+  })
+  router.afterEach((to, from, next) => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+      window.document.getElementsByTagName('html')[0].scrollTop = 0
+    }
+  })
   return { app, router, store }
 }

@@ -4,7 +4,11 @@
     <p>Get the latest VAVA news, giveaways, and helpful tips!</p>
     <vava-email-input class="subscribe-input" placeholder="Enter your e-mail" @click="enterEmail" v-model="subscribeParam.sendToEmail" maxlength="50"></vava-email-input>
     <div class="subscribe-madia-icon">
-      <i class="icon icon-facebook"></i><i class="icon icon-twitter"></i><i class="icon icon-instagram"></i>
+      <i @click="openMedia('https://www.facebook.com/letsvava')" class="icon icon-facebook"></i>
+      <i @click="openMedia('https://twitter.com/letsvava')" class="icon icon-twitter"></i>
+      <i @click="openMedia('https://www.instagram.com/letsvava')" class="icon icon-instagram"></i>
+      <!-- <i @click="openMedia('https://www.youtube.com/channel/UCQHsAs7QINSKNqOS5DtrcXQ')" class="icon icon-youtube"></i> -->
+      <!-- <i class="icon icon-facebook"></i><i class="icon icon-twitter"></i><i class="icon icon-instagram"></i> -->
     </div>
   </div>
 </template>
@@ -34,9 +38,15 @@
         }
         this.$store.dispatch('emailSubscribe', this.subscribeParam).then(data => {
           this.$utils.message('Subscribe Success.')
+          setTimeout(() => {
+            this.$utils.message.close()
+          }, 2000)
         }).catch(error => {
           this.$utils.message(error.message)
         })
+      },
+      openMedia (path) {
+        window.open(path)
       }
     }
   }
@@ -74,7 +84,8 @@
     .subscribe-madia-icon{
       margin-top: 1.7vw;
       padding-top: 10px;
-      i{margin: 0 1.75vw;font-size: 1.7vw;cursor: pointer;}
+      i{margin: 0 1.75vw;font-size: 1.7vw;cursor: pointer;color: @base-font-color;}
+      i:hover{color: @base-button-back;}
     }
   }
   @media (max-width: 1400px) {

@@ -2,7 +2,7 @@
 const scrollRevealFunction = function (scrollReveal, className, type) {
   let scrollRevealConfig = new scrollReveal.default()
   scrollRevealConfig.reveal(className, {
-    container: window.document.getElementById('app'), // 滚动容器
+    container: window.document.getElementsByTagName('html')[0], // 滚动容器
     origin: 'bottom', // 方向
     distance: '10%', // 距离
     duration: 800, // 动画持续时间，单位毫秒

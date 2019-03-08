@@ -52,7 +52,7 @@
         this.$bar.start()
         setTimeout(() => {
           this.submitStatus = true
-          window.document.getElementById('app').scrollTo(0, 0)
+          if (typeof window !== 'undefined') window.document.getElementsByTagName('html')[0].scrollTop = 0
           this.$bar.finish()
         }, 200)
       }

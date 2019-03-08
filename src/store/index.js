@@ -21,7 +21,8 @@ export function createStore () {
       searchProduct: {records: []}, // 产品搜索结果
       userManual: {}, // UserManual产品列表
       blogData: {bannerData: [], labelData: [], homeData: []}, // blog首页数据
-      blogDetailData: {}
+      blogDetailData: {},
+      searchBlog: {records: []}, // blog搜索结果
     },
     actions,
     mutations,

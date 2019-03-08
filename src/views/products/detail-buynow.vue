@@ -8,7 +8,7 @@
       <h5>{{buynowData.productName}}</h5>
       <!-- <h5><div>VAVA INTELLIGENT&nbsp;</div><div>ROBOTIC VACUUM</div></h5> -->
       <p class="product-detail-price">{{dicTreeList[buyProDetail.districtCode]}} {{buyProDetail.sellPrice}}</p>
-      <p class="product-Out-of-stock">Out of Stock</p>
+      <p class="product-Out-of-stock" v-show="buynowData.state">Out of Stock</p>
       <p class="product-detail-describe">{{buynowData.shortName}}</p>
       <div class="product-high-light">
         <li v-for="(item, index) of buynowData.highLights" :key="index" v-html="item"></li>

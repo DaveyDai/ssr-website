@@ -25,7 +25,7 @@
 <script>
   import VavaPagination from '@/components/vava-pagination.vue'
   export default {
-    asyncData ({ store, route }) { // 服务端渲染页面会等待次钩子执行完成
+    asyncData ({ store, route }) {
       return new Promise((resolve, reject) => {
         let param = {pageNo: 1, pageSize: 1000, condition: {searchName: route.params.keyword}}
         store.dispatch('postFetch', {api: 'getCategoryPro', data: param}).then(json => { // 获取分类产品

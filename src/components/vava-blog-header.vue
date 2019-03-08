@@ -10,7 +10,7 @@
         </nav>
         <!-- 搜索框 -->
         <form class="option-search-input" action="javascript:search();">
-          <vava-search class="header-search" type="search" v-model="searchValue" :is-show="showSearch" @close="val => showSearch = val"></vava-search>
+          <vava-search class="header-search" ref="headerSearch" type="search" v-model="searchValue" :is-show="showSearch" @close="val => showSearch = val"></vava-search>
         </form>
       </div>
       <!-- 头部右侧按钮 -->
@@ -21,8 +21,10 @@
     </div>
     <!-- 选择语言/地区 -->
     <div class="blog-header-country" ref="countryIsShow" :class="{'blog-header-country-show': countryIsShow}">
-      <img @click="setCountry('l_en')" src="@/assets/images/country-icon/us.png" alt=""><img @click="setCountry('l_de')" src="@/assets/images/country-icon/germany.png" alt="">
-      <img @click="setCountry('l_zh_CN')" src="@/assets/images/country-icon/china.png" alt=""><img @click="setCountry('l_jp')" src="@/assets/images/country-icon/japan.png" alt="">
+      <img @click="setCountry('l_en')" src="@/assets/images/country-icon/us.png" alt="">
+      <!-- <img @click="setCountry('l_de')" src="@/assets/images/country-icon/germany.png" alt="">
+      <img @click="setCountry('l_zh_CN')" src="@/assets/images/country-icon/china.png" alt="">
+      <img @click="setCountry('l_jp')" src="@/assets/images/country-icon/japan.png" alt=""> -->
     </div>
     <!-- 遮罩层 -->
     <div class="page-content-mask" @click="countryIsShow=isShowMask=false" :class="{'content-mask-show': isShowMask}"></div>
@@ -46,14 +48,16 @@
     },
     watch: {
       isShowMask (newValue) {
-        document.getElementById('app').style.overflowY = newValue ? 'hidden' : 'scroll'
+        window.document.getElementsByTagName('html')[0].style.overflowY = newValue ? 'hidden' : 'scroll'
+        newValue ? document.addEventListener('touchmove', this.listenerPage, { passive: false })
+        : document.removeEventListener('touchmove', this.listenerPage, { passive: false })
       }
     },
     mounted () {
       this.$nextTick(() => {
-        document.getElementById('app').addEventListener("scroll", e => {
-          this.isSeecontent = e.target.scrollTop > 10
-          e.target.className = this.isSeecontent ? 'app-page-read' : ''
+        document.addEventListener("scroll", e => {
+          this.isSeecontent = window.document.getElementsByTagName('html')[0].scrollTop > 10
+          e.target.getElementById('app').className = this.isSeecontent ? 'app-page-read' : ''
         })
         window.search = () => {
           this.startSearch()
@@ -64,21 +68,20 @@
       linkLogo () {
         window.location.href = '/'
       },
-      setHeaderPanel () { // 头部面板切换操作（防止重叠显示）
-        
+      listenerPage (e) {
+        e.preventDefault() // 移动端弹出模态框禁止滚动
       },
       closeMask () {
         this.countryIsShow = this.isShowMask = false
       },
       openSearch () {
-        console.log('打开搜索')
         this.countryIsShow = this.isShowMask = false
         this.showSearch = !this.showSearch
       },
       routerLink (path) {
         this.showSearch = this.countryIsShow = this.isShowMask = false
         this.$router.push(path)
-        // window.document.getElementById('app').scrollTo(0, 0)
+        if (typeof window !== 'undefined') window.document.getElementsByTagName('html')[0].scrollTop = 0
       },
       setCountry (type) { // 设置语言/地区
         this.$refs.vavaCountryImgPc.setCountry(type)
@@ -89,8 +92,10 @@
         this.isShowMask = this.countryIsShow = !this.countryIsShow
       },
       startSearch () {
-        console.log(111, this.searchValue)
-        // this.$router.push('/blog/search/' + this.$refs.blogSearch.searchValue)
+        if (this.$utils.trim(this.searchValue)) {
+          this.$refs.headerSearch.$el.getElementsByTagName('input')[0].blur()
+          this.$router.push('/blog/search/' + this.searchValue)
+        }
       }
     }
   }
@@ -192,7 +197,7 @@
       height: 3.125vw;
       min-height: 60px;
       box-shadow: 0 0 15px rgba(0,0,0,.15);
-      background: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 1);
       .header-left-logo{
         height: 1.56vw;
         width: 6.25vw;

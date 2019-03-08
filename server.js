@@ -48,12 +48,13 @@ app.use(microcache.cacheSeconds(1, req => useMicroCache && req.originalUrl)) // 
 function render (req, res) { // 兼容旧地址进行重定向
   // http://www.vava.com/downloads-VA-AH015-CE-Cert.html重定向到根据VA-AH015关键字获取到的访问地址http://www.vava.com/product/VAVA%205%20L%20170%20oz%20Cool%20Mist%20Humidifier-p-44.html
   if (req.url.match(/downloads-(\S*)-CE-Cert/)) {
-    const getRedirectUrlByModelUrl = 'https://api.vava.com/brand-gateway/brand-product-vava/support/getRedirectUrlByModel?model=' + req.url.match(/downloads-(\S*)-CE-Cert/)[1]
-    request.get(getRedirectUrlByModelUrl, {}).then(function (response) {
-      res.redirect(response.data.resCode === 0 ? '/product' + response.data.data + '.html' : "/")
-    }).catch(function (error) {
-      renderStart(req, res)
-    })
+    // const getRedirectUrlByModelUrl = 'https://api.vava.com/brand-gateway/brand-product-vava/support/getRedirectUrlByModel?model=' + req.url.match(/downloads-(\S*)-CE-Cert/)[1]
+    // request.get(getRedirectUrlByModelUrl, {}).then(function (response) {
+    //   res.redirect(response.data.resCode === 0 ? '/product' + response.data.data + '.html' : "/")
+    // }).catch(function (error) {
+    //   renderStart(req, res)
+    // })
+    res.redirect('/p/' + req.url.match(/downloads-(\S*)-CE-Cert/)[1])
   } else { renderStart(req, res) }
 }
 
@@ -93,7 +94,7 @@ function renderStart (req, res) { // 开始render
 app.get('*', isProd ? render : (req, res) => {
   readyPromise.then(() => render(req, res))
 })
-
-app.listen(8888, () => {
-  console.log(`server started at localhost:8888`)
+const port = 4003
+app.listen(port, () => {
+  console.log(`server started at localhost:${port}`)
 })

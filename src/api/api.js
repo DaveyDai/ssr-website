@@ -31,4 +31,5 @@ export default {
   getBlogHomeData: '/vava-pc-user/index/findIndexBlogManagerModuleVoByLanguageCode', // 获取blog首页分组数据
   getBlogLabel: '/vava-pc-user/index/findIndexBlogManagerModuleTitleVoByLanguageCode', // 获取blog标题数据
   getBlogModule: '/vava-pc-user/index/findBlogManagerModuleDetailVoByManagerId', // 获取blog标题板块详情
+  getBlogSearch: '/vava-pc-user/index/findBlogManagerModuleDetailVo' // 获取blog搜索信息
 }

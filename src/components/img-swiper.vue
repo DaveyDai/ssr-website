@@ -57,12 +57,7 @@
           },
         }
       }
-    },
-    created () {
-    },
-    mounted () {
-    },
-    methods: {}
+    }
   }
 </script>
 

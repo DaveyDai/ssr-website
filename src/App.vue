@@ -39,19 +39,19 @@
 
 <style lang="less">
   @import '~@/common/styles/base.less';
-  @import '/static/style/swiper.min.css';
+  @import '~@/common/swiper/swiper.min.less';
   #app {
-    position: fixed;
-    top: 0;
-    left: 0;
+    // position: fixed;
+    // top: 0;
+    // left: 0;
     height: 100%;
     width: 100%;
     background: #FFF;
-    overflow-y:scroll;
-    overflow-x:hidden;
+    // overflow-y:scroll;
+    // overflow-x:hidden;
+    overflow: hidden;
     padding-top: 10.4vw;
     min-width: 320px;
-    -webkit-overflow-scrolling: touch;
     .vava-page-content{
       position: relative;
       width: 100%;

@@ -30,7 +30,7 @@ export function createRouter () {
     mode: 'history',
     fallback: false,
     scrollBehavior (to, from, savedPosition) {
-      if (typeof window !== 'undefined') window.document.getElementById('app').scrollTo(0, 0)
+      if (typeof window !== 'undefined') window.document.getElementsByTagName('html')[0].scrollTop = 0
     },
     routes: [
       // { path: '/top/:page(\\d+)?', component: createListView('top') },

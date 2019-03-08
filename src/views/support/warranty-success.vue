@@ -16,6 +16,7 @@
         <div class="icon icon-selected"></div>
         <p>VALID PURCHASE DATE</p>
         <p class="warranty-success-status">{{orderDetails.expirationTime?orderDetails.expirationTime.replace(/\//g, ' / '):''}}</p>
+        <p class="warranty-success-date">Warranty Coverage:<em>{{orderDetails.warrantyTime}} Months</em></p>
       </li>
       <li>
         <div class="icon icon-selected"></div>
@@ -141,6 +142,9 @@
           color: @base-button-back;
           text-align: center;
         }
+        .warranty-success-date{
+          white-space: nowrap;
+        }
       }
     }
     .warranty-success-footer{
@@ -236,6 +240,9 @@
           padding: 1vw;
           div.icon{
             font-size: 10px;
+          }
+          .warranty-success-date em{
+            display: block;
           }
         }
       }

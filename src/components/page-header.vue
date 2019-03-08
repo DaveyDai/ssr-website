@@ -25,8 +25,10 @@
     </div>
     <!-- 选择语言/地区 -->
     <div class="page-header-country" ref="countryIsShow" :class="{'page-header-country-show': countryIsShow}">
-      <img @click="setCountry('l_en')" src="@/assets/images/country-icon/us.png" alt=""><img @click="setCountry('l_de')" src="@/assets/images/country-icon/germany.png" alt="">
-      <img @click="setCountry('l_zh_CN')" src="@/assets/images/country-icon/china.png" alt=""><img @click="setCountry('l_jp')" src="@/assets/images/country-icon/japan.png" alt="">
+      <img @click="setCountry('l_en')" src="@/assets/images/country-icon/us.png" alt="">
+      <!-- <img @click="setCountry('l_de')" src="@/assets/images/country-icon/germany.png" alt="">
+      <img @click="setCountry('l_zh_CN')" src="@/assets/images/country-icon/china.png" alt="">
+      <img @click="setCountry('l_jp')" src="@/assets/images/country-icon/japan.png" alt=""> -->
     </div>
     <!--移动端菜单选择面板-->
 	  <transition name="menu-fade">
@@ -90,14 +92,16 @@
     },
     watch: {
       isShowMask (newValue) {
-        document.getElementById('app').style.overflowY = newValue ? 'hidden' : 'scroll'
+        window.document.getElementsByTagName('html')[0].style.overflow = newValue ? 'hidden' : 'visible'
+        newValue ? document.body.addEventListener('touchmove', this.listenerPage, { passive: false })
+        : document.body.removeEventListener('touchmove', this.listenerPage, { passive: false })
       }
     },
     mounted () {
       this.$nextTick(() => {
-        document.getElementById('app').addEventListener("scroll", e => {
-          this.isSeecontent = e.target.scrollTop > 10
-          e.target.className = this.isSeecontent ? 'app-page-read' : ''
+        document.addEventListener("scroll", e => {
+          this.isSeecontent = window.document.getElementsByTagName('html')[0].scrollTop > 10
+          e.target.getElementById('app').className = this.isSeecontent ? 'app-page-read' : ''
         })
         window.search = () => {
           this.startSearch()
@@ -107,7 +111,9 @@
     methods: {
       linkLogo () {
         window.location.href = '/'
-        // this.$router.push('/')
+      },
+      listenerPage (e) { 
+        e.preventDefault() // 移动端弹出模态框禁止滚动
       },
       setHeaderPanel (type, status) { // 头部面板切换操作（防止重叠显示）
         switch (type) {
@@ -133,14 +139,13 @@
         this.isShowPhoneOption = this.isShowPhoneMenu = this.countryIsShow = this.isShowMask = false
       },
       openSearch () {
-        console.log('打开搜索')
+        this.closeMask()
         this.showSearch = !this.showSearch
       },
       routerLink (path) {
-        console.log('路由:', path)
-        this.isShowPhoneOption = this.isShowPhoneMenu = this.isShowMask = false
+        this.closeMask()
         this.$router.push(path)
-        // window.document.getElementById('app').scrollTo(0, 0)
+        if (typeof window !== 'undefined') window.document.getElementsByTagName('html')[0].scrollTop = 0
       },
       setCountry (type) { // 设置语言/地区
         this.$refs.vavaCountryImgPc.setCountry(type)
@@ -152,9 +157,10 @@
       	console.log('显示语言地区选择')
       },
       startSearch () {
-        if (!this.searchValue) return false
+        if (!this.$utils.trim(this.searchValue)) return false
         this.isShowPhoneOption = this.isShowPhoneMenu = this.isShowMask = false
         this.$router.push('/product/search/' + this.searchValue)
+        if (typeof window !== 'undefined') window.document.getElementsByTagName('html')[0].scrollTop = 0
       //   if (this.$route.path.indexOf('/product/search/') !== -1) {
       //     console.log(this.$route)
       //     this.$router.push('/product/search/' + this.searchValue)
@@ -174,7 +180,7 @@
 	}
 	.menu-fade-enter, .menu-fade-leave-to{
 	  transform: translateY(-100%);
-	}
+  }
   .page-header{
     position: fixed;
     width: 100%;
@@ -269,7 +275,7 @@
       height: 3.125vw;
       min-height: 60px;
       box-shadow: 0 0 15px rgba(0,0,0,.15);
-      background: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 1);
       .header-left-logo{
         height: 1.56vw;
         width: 6.25vw;
@@ -318,7 +324,10 @@
       background: #000;
       transition: .35s opacity ease-out;
     }
-    .content-mask-show{width: 100vw;height: 100vh;opacity: .6;}
+    .content-mask-show{
+      width: 100vw;height: 100vh;opacity: .6;
+      overflow: hidden;
+    }
     .header-collapse{
     	position: relative;
     	width: 100%;

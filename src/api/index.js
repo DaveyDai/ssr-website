@@ -34,7 +34,7 @@ export function requestPost (url, params, state) {
   return new Promise((resolve, reject) => {
     axios.post(api[url], params).then(response => {
       response.data.code === 200 ? resolve(response.data.data) : reject(response.data)
-      console.log('post请求:' + api[url], response.data)
+      if (typeof window === 'undefined') console.log('post请求:' + api[url], response.data)
     }).catch(error => {
       console.log('server is error:', error.response)
       try{
@@ -56,7 +56,7 @@ export function requestGet (url, params, state) {
     let getUrl = api[url]
     axios.get(getUrl).then(response => {
       response.data.code === 200 ? resolve(response.data.data) : reject(response.data)
-      console.log('get请求:' + getUrl, response.data)
+      if (typeof window === 'undefined') console.log('get请求:' + getUrl, response.data)
     }).catch(error => {
       console.log('server is error:', error.response)
       try{
@@ -78,7 +78,7 @@ export function fetchGet (url, params, state) {
     let getUrl = api[url] + params
     axios.get(getUrl).then(response => {
       response.data.code === 200 ? resolve(response.data.data) : reject(response.data)
-      console.log('get请求:' + getUrl, response.data)
+      if (typeof window === 'undefined') console.log('get请求:' + getUrl, response.data)
     }).catch(error => {
       console.log('server is error:', error.response)
       try{

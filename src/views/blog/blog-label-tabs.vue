@@ -61,6 +61,9 @@
           border-radius: 5vw;
           cursor: pointer;
           transition: background .3s;
+          // &:hover{
+          //   color: @base-button-back;
+          // }
         }
         span.active{
           background-color: @base-button-back;

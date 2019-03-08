@@ -58,9 +58,10 @@
     methods: {
       handleClick (item) {
         this.$router.push('/blog/' + item.id)
+        if (typeof window !== 'undefined') window.document.getElementsByTagName('html')[0].scrollTop = 0
       },
       jumpUrl (path) {
-        window.open(path)
+        if (path) window.open(path)
       }
     }
   }

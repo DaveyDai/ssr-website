@@ -8,6 +8,15 @@
         <p>Enter your product serial number | order number | tracking number</p>
         <vava-input v-model="warrantyNumber" class="warranty-input"></vava-input>
         <vava-button class="warranty-submit-button" @click="queryErpOrder">CONTINUE</vava-button>
+        <div class="warranty-coverage">
+          <p class="warranty-coverage-title">Warranty Coverage</p>
+          <p>VAVA 150” 4K Laser Projector — 18 Months</p>
+          <p>VAVA Dash Cam — 12 Months</p>
+          <p>VAVA 2K Dash Cam — 12 Months</p>
+          <p>VAVA Home Cam — 12 Months</p>
+          <p>VAVA Intelligent Robotic Vacuum — 12 Months</p>
+          <p>VAVA USB Hub — 6 Months</p>
+        </div>
       </div>
     </div>
     <warranty-success v-else :order-details="orderDetails"></warranty-success>
@@ -27,7 +36,11 @@
     },
     methods: {
       queryErpOrder () {
-        if (!this.warrantyNumber || this.$bar.show) return // 防止重复点击提交
+        if (!this.warrantyNumber) {
+          this.$utils.message('Please enter your product serial number or order number or tracking number.')
+          return
+        }
+        if (this.$bar.show) return // 防止重复点击提交
         this.$bar.start()
         this.$store.dispatch('getByUrl', {api: 'queryErpOrder', data: this.warrantyNumber}).then(data => { // 先查询erp是否有该订单
           this.submitWarranty()
@@ -41,7 +54,7 @@
           data.expirationTime = this.formatDate(new Date(data.expirationTime), 'MM/dd/yyyy')
           this.orderDetails = data
           this.warrantySuccess = true
-          window.document.getElementById('app').scrollTo(0, 0)
+          if (typeof window !== 'undefined') window.document.getElementsByTagName('html')[0].scrollTop = 0
           this.$bar.finish()
         }).catch(error => {
           error && error.message ? this.$utils.message(error.message) : this.$utils.message('warranty failure!')
@@ -101,7 +114,21 @@
         input{min-height: 35px;text-align: center;}
       }
       .warranty-submit-button{
-        margin: 5vw 0;
+        margin: 2vw 0 4vw 0;
+      }
+      .warranty-coverage{
+        width: 100%;
+        text-align: center;
+        p{
+          font-size: 1.56vw;
+          color: @un-font-color;
+          margin-bottom: 0;
+          line-height: 1.5;
+        }
+        p.warranty-coverage-title{
+          font-family: 'avenir-next-demi';
+          color: @base-font-color;
+        }
       }
     }
   }
@@ -111,6 +138,7 @@
         padding: 7.55vw 3vw;
         h5{font-size: 20px;}
         p{font-size: 12.5px;}
+        .warranty-coverage p{font-size: 12px;}
       }
     }
   }
@@ -120,6 +148,7 @@
         padding: 7.55vw 3vw;
         h5{font-size: 14px;}
         p{font-size: 9px;}
+        .warranty-coverage p{font-size: 9px;}
       }
     }
   }

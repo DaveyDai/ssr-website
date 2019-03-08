@@ -1,23 +1,23 @@
 <template>
   <div class="vava-home-page">
-    <div v-if="homePageData.bannerType === 0">
+    <div v-if="homePageData.bannerType === 2">
       <div class="home-page-banner" v-for="(item,index) of homePageData.bannerImages" :key="index">
-        <img v-lazy="item.imageUrl">
+        <img v-lazy="item.imageUrl" @click="jumpUrl(item.jumpUrl)" style="cursor: pointer;">
       </div>
     </div>
     <vava-swiper v-else :swiper-type="0">
       <div class="swiper-slide home-page-banner" v-for="(item, index) of homePageData.bannerImages" :key="index">
-        <img style="cursor: grab;" :src="item.imageUrl">
+        <img style="cursor: pointer;" :src="item.imageUrl" @click="jumpUrl(item.jumpUrl)">
       </div>
     </vava-swiper>
     <h5 class="home-page-content-title">PRODUCTS</h5>
     <div class="home-page-products">
-      <div class="home-products-left"><img v-lazy="homePageData.productImages[0]&&homePageData.productImages[0].imageUrl"></div>
+      <div class="home-products-left"><img v-lazy="homePageData.productImages[0]&&homePageData.productImages[0].imageUrl" @click="jumpUrl(item.jumpUrl)"></div>
       <div class="home-products-right">
-        <img v-lazy="homePageData.productImages[1]&&homePageData.productImages[1].imageUrl">
-        <img v-lazy="homePageData.productImages[2]&&homePageData.productImages[2].imageUrl">
-        <img v-lazy="homePageData.productImages[3]&&homePageData.productImages[3].imageUrl">
-        <img v-lazy="homePageData.productImages[4]&&homePageData.productImages[4].imageUrl">
+        <img v-lazy="homePageData.productImages[1]&&homePageData.productImages[1].imageUrl" @click="jumpUrl(item.jumpUrl)">
+        <img v-lazy="homePageData.productImages[2]&&homePageData.productImages[2].imageUrl" @click="jumpUrl(item.jumpUrl)">
+        <img v-lazy="homePageData.productImages[3]&&homePageData.productImages[3].imageUrl" @click="jumpUrl(item.jumpUrl)">
+        <img v-lazy="homePageData.productImages[4]&&homePageData.productImages[4].imageUrl" @click="jumpUrl(item.jumpUrl)">
       </div>
     </div>
     <h5 class="home-page-content-title home-page-content-title-sales">SOCIAL MEDIA</h5>
@@ -56,7 +56,8 @@
       }
     },
     methods: {
-      callback (e) {
+      jumpUrl (path) {
+        if (path) window.open(path)
       }
     }
   }

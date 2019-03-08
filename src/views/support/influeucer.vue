@@ -27,7 +27,8 @@
             <div class="influeucer-from-p"><p>FIRST NAME</p><vava-input class="influeucer-from-input" v-model="submitData.firstName"></vava-input></div>
             <div class="influeucer-from-p"><p>LAST NAME</p><vava-input class="influeucer-from-input" v-model="submitData.lastName"></vava-input></div>
             <div class="influeucer-from-p"><p>EMAIL ADDRESS</p><vava-input class="influeucer-from-input1" v-model="submitData.emailAddress"></vava-input></div>
-            <div class="influeucer-from-p"><p>COUNTRY</p><vava-input class="influeucer-from-input1" v-model="submitData.countryCode"></vava-input></div>
+            <!-- <div class="influeucer-from-p"><p>COUNTRY</p><vava-input class="influeucer-from-input1" v-model="submitData.countryCode"></vava-input></div> -->
+            <div class="influeucer-from-p"><p>COUNTRY</p><vava-select class="influeucer-from-input1" v-model="submitData.countryCode" :select-data="selectData"></vava-select></div>
           </div>
         </div>
       </div>
@@ -65,17 +66,22 @@
           countryCode: '',
           interestCode: '',
           channelsCode: ''
-        }
+        },
+        selectData: ['UNITED STATES', 'CHINA', 'JAPAN', 'GERMANY']
       }
     },
     methods: {
       submitInformation () {
+        if (!this.$utils.trim(this.submitData.firstName) || !this.$utils.trim(this.submitData.lastName)) {
+          this.$utils.message('Please enter your user Name.')
+          return
+        }
         if (!this.$utils.trim(this.submitData.emailAddress)) {
           this.$utils.message('Please enter your user Email address.')
           return
         }
-        if (!this.$utils.trim(this.submitData.firstName) || !this.$utils.trim(this.submitData.lastName)) {
-          this.$utils.message('Please enter your user Name.')
+        if (!this.$utils.validateEmail(this.submitData.emailAddress)) {
+          this.$utils.message('This email address is incorrect.')
           return
         }
         if (!this.$utils.trim(this.submitData.countryCode)) {
@@ -92,6 +98,9 @@
         this.$store.dispatch('postFetch', {api: 'saveTouristsInfoVo', data: this.submitData}).then(data => {
           this.$utils.message('Submit Success.')
           this.$bar.finish()
+          setTimeout(() => {
+            this.$utils.message.close()
+          }, 2000)
         }).catch (error => {
           this.$utils.message(error.message || 'Fail')
           this.$bar.finish()
@@ -109,6 +118,7 @@
     width: 100%;
     .support-influeucer-img{
       width: 100%;
+      min-height: 35vw;
     }
     h5{font-size: 2.6vw;color: @base-font-color;margin-bottom: 1vw;text-align: center;}
     p{
@@ -188,12 +198,12 @@
               .influeucer-from-input{
                 width: 19.8vw;
                 min-width: 140px;
-                min-height: 35px;
+                input{padding: 0 20px;}
               }
               .influeucer-from-input1{
                 width: 41.66vw;
                 min-width: 280px;
-                min-height: 35px;
+                input{padding: 0 20px;}
               }
             }
           }

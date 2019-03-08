@@ -1,13 +1,16 @@
 <template>
   <div class="product-detail-tabs">
-    <li v-for="(item, index) of overData" :key="index" :class="changeValue === index ? 'active' : ''" @click="tabsSelect(index)" v-show="index !== 3 || changeValue !== 3">{{item}}</li>
+    <li v-for="(item, index) of overData" :key="index" :class="changeValue === index ? 'active' : ''" @click="tabsSelect(index)"
+      v-show="(index !== 3 || changeValue !== 3) && !item.isHidden"
+    >{{item.dicValue}}</li>
   </div>
 </template>
 
 <script>
   export default {
     props: {
-      value: Number
+      value: Number,
+      overData: Array
     },
     computed: {
       categoryData () {
@@ -16,15 +19,10 @@
     },
     data () {
       return {
-        changeValue: this.value,
-        overData: ['OVERVIEW', 'SPECIFICATIONS', 'SUPPORT', 'BUY NOW']
+        changeValue: this.value
       }
     },
-    mounted () {
-    },
     methods: {
-      callback (e) {
-      },
       routerLink (path) {
         this.$router.push(path)
       },
@@ -64,6 +62,9 @@
       transition: all 0.2s;
       padding-top: 2px;
       white-space: nowrap;
+      &:hover{
+        color: @base-button-back;
+      }
     }
     li.active{
       padding-left: 2.81vw;
@@ -72,16 +73,16 @@
       border-radius: 5vw;
       color: #FFF;
     }
-    li::after{
-      content: " ";
-      position: absolute;
-      bottom: 5px;
-      left: 10%;
-      width: 0;
-      height: 2px;
-      background-color: @base-button-back;
-      transition: all 0.25s;
-    }
+    // li::after{
+    //   content: " ";
+    //   position: absolute;
+    //   bottom: 5px;
+    //   left: 10%;
+    //   width: 0;
+    //   height: 2px;
+    //   background-color: @base-button-back;
+    //   transition: all 0.25s;
+    // }
   }
   @media (max-width: 1200px) {
     .product-detail-tabs{

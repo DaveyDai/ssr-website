@@ -18,7 +18,7 @@
         <div class="left-footer-column">
           <h5>OTHERS</h5>
           <li @click="routerLink('/about-us')">About us</li>
-          <li>Subscribe</li>
+          <!-- <li>Subscribe</li> -->
         </div>
         <div class="left-footer-column">
           <h5>COMMUNITY</h5>
@@ -31,8 +31,10 @@
         <vava-email-input class="subscribe-input" placeholder="Enter your e-mail" @click="enterEmail" v-model="subscribeParam.sendToEmail" maxlength="50"></vava-email-input>
         <h5 class="footer-right-media-h5">SOCIAL MEDIA</h5>
         <div class="footer-right-media">
-          <i class="icon icon-facebook"></i><i class="icon icon-twitter"></i>
-          <i class="icon icon-instagram"></i><i class="icon icon-youtube"></i>
+          <i @click="openMedia('https://www.facebook.com/letsvava')" class="icon icon-facebook"></i>
+          <i @click="openMedia('https://twitter.com/letsvava')" class="icon icon-twitter"></i>
+          <i @click="openMedia('https://www.instagram.com/letsvava')" class="icon icon-instagram"></i>
+          <i @click="openMedia('https://www.youtube.com/channel/UCQHsAs7QINSKNqOS5DtrcXQ')" class="icon icon-youtube"></i>
         </div>
       </div>
     </div>
@@ -55,7 +57,8 @@
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">OTHERS</span>
         <span slot="rightIcon" class="icon icon-right-slide"></span>
-        <li @click="routerLink('/about-us')">About us</li><li>Subscribe</li>
+        <li @click="routerLink('/about-us')">About us</li>
+        <!-- <li>Subscribe</li> -->
       </vava-collapse-item>
       <vava-collapse-item>
         <span slot="titleContent" class="footer-collapse-title">COMMUNITY</span>
@@ -73,8 +76,10 @@
         <span slot="titleContent" class="footer-collapse-title">SOCIAL MEDIA</span>
         <span slot="rightIcon" class="icon icon-right-slide"></span>
         <li class="phone-media-icon">
-          <i class="icon icon-facebook"></i><i class="icon icon-twitter"></i>
-          <i class="icon icon-instagram"></i><i class="icon icon-youtube"></i>
+          <i @click="openMedia('https://www.facebook.com/letsvava')" class="icon icon-facebook"></i>
+          <i @click="openMedia('https://twitter.com/letsvava')" class="icon icon-twitter"></i>
+          <i @click="openMedia('https://www.instagram.com/letsvava')" class="icon icon-instagram"></i>
+          <i @click="openMedia('https://www.youtube.com/channel/UCQHsAs7QINSKNqOS5DtrcXQ')" class="icon icon-youtube"></i>
         </li>
       </vava-collapse-item>
     </div>
@@ -115,6 +120,10 @@
       },
       routerLink (path) {
         this.$router.push(path)
+        if (typeof window !== 'undefined') window.scrollTo(0, 0)
+      },
+      openMedia (path) {
+        window.open(path)
       }
     }
   }
@@ -158,8 +167,9 @@
       .footer-right-media{
         display: flex;
         flex-wrap: nowrap;
-        i{font-size: 1.5vw;color: #FFF;margin: 0 1vw;cursor: pointer;}
+        i{font-size: 1.5vw;color: #FFF;margin: 0 1vw;cursor: pointer;color: #FFF;}
         i.icon-facebook{margin-left: -0.1vw;}
+        i:hover{color: @base-button-back;}
       }
     }
   }
