@@ -86,7 +86,7 @@ function renderStart (req, res) { // 开始render
     }
   }
   res.setHeader('Set-Cookie', 'language=' + cookiesLang) // 设置cookie默认值
-  renderer.renderToString({title: 'VAVA', url: req.url, language: cookiesLang, token: cookiesToken}, (err, html) => {
+  renderer.renderToString({title: 'VAVA Official Website', url: req.url, language: cookiesLang, token: cookiesToken}, (err, html) => {
     if (err) {
       return handleError(err)
     }
