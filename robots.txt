@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: https://vava.com/sitemap.xml
