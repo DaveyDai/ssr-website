@@ -10,6 +10,7 @@ export function createStore () {
   return new Vuex.Store({
     state: {
       dicTreeList: {}, // 数据字典
+      saleCountry: [], // 国家列表
       homePageData: {bannerImages: [], productImages: {leftImges: {}, imagesList: []}, socialMediaImages: []}, // 首页数据
       categoryList: [], // 产品分类
       categoryData: {}, // 产品首页数据分类信息---按分类ID保存，避免重复请求
@@ -22,6 +23,7 @@ export function createStore () {
       blogData: {bannerData: [], labelData: [], homeData: []}, // blog首页数据
       blogDetailData: {},
       searchBlog: {records: []}, // blog搜索结果
+      cartList: {productList: [], totalAmount: 0, totalNum: 8} // 购物车列表
     },
     actions,
     mutations,

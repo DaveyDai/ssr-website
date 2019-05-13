@@ -39,10 +39,61 @@ const showErrorMes = (that, error) => { // 错误提示需统一处理的
   }
 }
 
+const setScroll = (scrollHeight) => { // 设置滚动条位置 注意只能在浏览器客户端调用
+  try {
+    let tahtScrollTop = window.document.getElementsByTagName('html')[0].scrollTop
+    window.document.getElementsByTagName('html')[0].scrollTop = scrollHeight
+    if (window.document.getElementsByTagName('html')[0].scrollTop === tahtScrollTop) window.scrollTo(0, scrollHeight)
+  }catch(e){console.log(e)}
+}
+
+const browserRedirect = () => { // 判断当前浏览器终端类型
+  let browser = {
+    versions () {
+      let u = navigator.userAgent
+      return { //移动终端浏览器版本信息
+        trident: u.indexOf('Trident') > -1, // IE内核
+        presto: u.indexOf('Presto') > -1, // opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, // 苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, // 火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), // 是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, // android终端或uc浏览器
+        iPhone: u.indexOf('iPhone') > -1, // 是否为iPhone或者QQHD浏览器
+        iPad: u.indexOf('iPad') > -1, // 是否iPad
+        webApp: u.indexOf('Safari') == -1 // 是否web应该程序，没有头部与底部
+      }
+    },
+    language: (navigator.browserLanguage || navigator.language).toLowerCase()
+  }
+  return browser.versions().mobile
+}
+
+const toDecimal = x => { // 转换金额函数
+  var f = parseFloat(x);
+  if (isNaN(f)) {
+      return false;
+  }
+  var f = Math.round(x*100)/100;
+  var s = f.toString();
+  var rs = s.indexOf('.');
+  if (rs < 0) {
+      rs = s.length;
+      s += '.';
+  }
+  while (s.length <= rs + 2) {
+      s += '0';
+  }
+  return s;
+}
+
 export default {
   validateEmail,
   message,
   trim,
   formatDate,
-  showErrorMes
+  showErrorMes,
+  setScroll,
+  browserRedirect,
+  toDecimal
 }

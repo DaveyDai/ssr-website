@@ -24,8 +24,10 @@
           </li>
         </div>
       </div>
-      <!-- <vava-button>ADD TO CART</vava-button> -->
-      <vava-button class="product-buy-now" v-if="buyProDetail.asin" ref="buyNowA" @click="buyNowAZ">BUY ON AMAZON</vava-button>
+      <div class="buy-now-button">
+        <vava-button class="product-buy-now" v-if="buyProDetail.asin" @click="buyNow">ADD TO CART</vava-button>
+        <vava-button class="product-buy-now" v-if="buyProDetail.asin" @click="buyNowAZ" noActive>BUY ON AMAZON</vava-button>
+      </div>
     </div>
   </div>
 </template>
@@ -57,35 +59,18 @@
     created () {
       this.buyProDetail = this.buynowData.productSkuDetailBos[this.colorIndex] // 获取颜色对应的sku详情
     },
-    // mounted () {
-    //   this.$nextTick(() => {
-    //     if (this.$refs.buyNowA && typeof window !== 'undefined') {
-    //       let scrollTop = this.$refs.buyNowA.$el.offsetTop || document.getElementsByClassName('page-footer')[0].offsetTop
-    //       window.document.getElementsByTagName('html')[0].scrollTop = scrollTop - 600
-    //       try {
-    //         if (window.document.getElementsByTagName('html')[0].scrollTop === 0) window.scrollTo(0, scrollTop - 600)
-    //       }catch(e){console.log(e)}
-    //     }
-    //   })
-    // },
-    // activated () {
-    //   if (this.$refs.buyNowA && typeof window !== 'undefined') {
-    //     let scrollTop = this.$refs.buyNowA.$el.offsetTop || document.getElementsByClassName('page-footer')[0].offsetTop
-    //     window.document.getElementsByTagName('html')[0].scrollTop = scrollTop - 600
-    //     try {
-    //       if (window.document.getElementsByTagName('html')[0].scrollTop === 0) window.scrollTo(0, scrollTop - 600)
-    //     }catch(e){console.log(e)}
-    //   }
-    // },
     methods: {
       handlColor (index) { // 选择颜色
         this.colorIndex = index
         this.buyProDetail = this.buynowData.productSkuDetailBos[index] //  获取颜色对应的sku详情
       },
-      buyNowAZ () {
+      buyNowAZ () { // 去亚马逊购买
         let url = 'https://www.amazon.com/gp/product/' +
         this.buyProDetail.asin + '?keywords=' + this.buynowData.amazonKeyword
         window.open(url)
+      },
+      buyNow () { // 添加购物车
+        
       }
     }
   }
@@ -198,6 +183,13 @@
           }
         }
       }
+      .buy-now-button{
+        display: flex;
+        flex-direction: column;
+        .product-buy-now{
+          margin-bottom: 2vw;
+        }
+      }
     }
   }
   @media (max-width: 1200px) {
@@ -252,9 +244,12 @@
         .product-detail-color{
           padding: 20px 0;
         }
-        .product-buy-now{
-          padding: 0 18px;
+        .buy-now-button{
           margin-bottom: 30px;
+          .product-buy-now{
+            padding: 0 18px;
+            margin-bottom: 20px;
+          }
         }
       }
     }

@@ -1,89 +1,174 @@
-
 @font-face {
   font-family: 'icomoon';
-  src:  url('/src/assets/fonts/icomoon.eot?9xzlf3');
-  src:  url('/src/assets/fonts/icomoon.eot?9xzlf3#iefix') format('embedded-opentype'),
+  src        : url('/src/assets/fonts/icomoon.eot?9xzlf3');
+  src        : url('/src/assets/fonts/icomoon.eot?9xzlf3#iefix') format('embedded-opentype'),
     url('/src/assets/fonts/icomoon.ttf?9xzlf3') format('truetype'),
     url('/src/assets/fonts/icomoon.woff?9xzlf3') format('woff'),
     url('/src/assets/fonts/icomoon.svg?9xzlf3#icomoon') format('svg');
   font-weight: normal;
-  font-style: normal;
+  font-style : normal;
 }
-
+@font-face { // 引入element-ui iocn
+  font-family: element-icons;
+  src        : url(/src/assets/fonts/element-icons.woff) format("woff"), url(/src/assets/fonts/element-icons.ttf) format("truetype");
+  font-weight: 400;
+  font-style : normal
+}
+[class*=" el-icon-"],
+[class^=el-icon-] {
+  font-family            : element-icons !important;
+  speak                  : none;
+  font-style             : normal;
+  font-weight            : 400;
+  font-variant           : normal;
+  text-transform         : none;
+  line-height            : 1;
+  vertical-align         : baseline;
+  display                : inline-block;
+  -webkit-font-smoothing : antialiased;
+  -moz-osx-font-smoothing: grayscale
+}
 .icon {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'icomoon' !important;
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
+  font-family   : 'icomoon' !important;
+  speak         : none;
+  font-style    : normal;
+  font-weight   : normal;
+  font-variant  : normal;
   text-transform: none;
-  line-height: 1;
-
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
+  line-height   : 1;
+  -webkit-font-smoothing : antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: @base-icon-color;
+  color                  : @base-icon-color;
 }
 
 .icon-single-check:before {
   content: "\e912";
 }
+
 .icon-close:before {
   content: "\e904";
 }
+
 .icon-facebook:before {
   content: "\e905";
 }
+
 .icon-turned:before {
   content: "\e906";
 }
+
 .icon-down:before {
   content: "\e907";
 }
+
 .icon-menu:before {
   content: "\e908";
 }
+
 .icon-instagram:before {
   content: "\e909";
 }
+
 .icon-log-in:before {
   content: "\e90a";
 }
+
 .icon-right-slide:before {
   content: "\e90b";
 }
+
 .icon-search:before {
   content: "\e90c";
 }
+
 .icon-shopping-cart:before {
   content: "\e90d";
 }
+
 .icon-twitter:before {
   content: "\e90e";
 }
+
 .icon-youtube:before {
   content: "\e90f";
 }
+
 .icon-selected:before {
   content: "\e910";
 }
+
 .icon-download:before {
   content: "\e911";
 }
+
 .icon-account-user:before {
   content: "\e900";
-  color: rgba(98, 68, 187, 0.2);
+  color  : rgba(98, 68, 187, 0.2);
 }
+
 .icon-account-position:before {
   content: "\e901";
-  color: rgba(98, 68, 187, 0.2);
+  color  : rgba(98, 68, 187, 0.2);
 }
+
 .icon-account-card:before {
   content: "\e902";
-  color: rgba(98, 68, 187, 0.2);
+  color  : rgba(98, 68, 187, 0.2);
 }
+
 .icon-account-lock:before {
   content: "\e903";
-  color: rgba(98, 68, 187, 0.2);
+  color  : rgba(98, 68, 187, 0.2);
+}
+// 下面是element-ui icon
+.el-icon-arrow-up:before {
+  content: "\e605"
+}
+.el-icon-close:before {
+  content: "\e60f"
+}
+.el-icon-minus:before {
+  content: "\e621"
+}
+.el-icon-plus:before {
+  content: "\e62b"
+}
+.el-icon-delete:before {
+  content: "\e612"
+}
+.el-icon-loading {
+  -webkit-animation: rotating 2s linear infinite;
+  animation        : rotating 2s linear infinite
+}
+
+.el-icon--right {
+  margin-left: 5px
+}
+
+.el-icon--left {
+  margin-right: 5px
+}
+
+@-webkit-keyframes rotating {
+  0% {
+    -webkit-transform: rotateZ(0);
+    transform        : rotateZ(0)
+  }
+
+  100% {
+    -webkit-transform: rotateZ(360deg);
+    transform        : rotateZ(360deg)
+  }
+}
+
+@keyframes rotating {
+  0% {
+    -webkit-transform: rotateZ(0);
+    transform        : rotateZ(0)
+  }
+
+  100% {
+    -webkit-transform: rotateZ(360deg);
+    transform        : rotateZ(360deg)
+  }
 }

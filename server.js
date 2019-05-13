@@ -50,11 +50,6 @@ function render (req, res) { // 兼容旧地址进行重定向
   // http://www.vava.com/downloads-VA-AH015-CE-Cert.html重定向到根据VA-AH015关键字获取到的访问地址http://www.vava.com/product/VAVA%205%20L%20170%20oz%20Cool%20Mist%20Humidifier-p-44.html
   if (req.url.match(/downloads-(\S*)-CE-Cert/)) {
     // const getRedirectUrlByModelUrl = 'https://api.vava.com/brand-gateway/brand-product-vava/support/getRedirectUrlByModel?model=' + req.url.match(/downloads-(\S*)-CE-Cert/)[1]
-    // request.get(getRedirectUrlByModelUrl, {}).then(function (response) {
-    //   res.redirect(response.data.resCode === 0 ? '/product' + response.data.data + '.html' : "/")
-    // }).catch(function (error) {
-    //   renderStart(req, res)
-    // })
     res.redirect('/p/' + req.url.match(/downloads-(\S*)-CE-Cert/)[1])
   } else { renderStart(req, res) }
 }
@@ -86,7 +81,9 @@ function renderStart (req, res) { // 开始render
     }
   }
   res.setHeader('Set-Cookie', 'language=' + cookiesLang) // 设置cookie默认值
-  renderer.renderToString({title: 'VAVA Official Website', url: req.url, language: cookiesLang, token: cookiesToken}, (err, html) => {
+  // 判断PC还是移动端
+  let deviceAgent = req.headers["user-agent"].toLowerCase()
+  renderer.renderToString({title: 'VAVA Official Website', url: req.url, language: cookiesLang, token: cookiesToken, isMobile: !!deviceAgent.match(/(iphone|ipod|ipad|android)/)}, (err, html) => {
     if (err) {
       return handleError(err)
     }

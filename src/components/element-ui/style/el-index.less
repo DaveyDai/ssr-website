@@ -1,0 +1,92 @@
+@import './el-input.less';
+@import './el-select.less';
+@import './el-form.less';
+@import './el-form-item.less';
+@import './el-option.less';
+@import './el-dialog.less';
+@import './el-message-box.less';
+@import './el-input-number.less';
+// element-ui vava自定义样式
+
+// message-box
+body .el-button--small, .el-button--small.is-round{
+  padding: 9px 30px;
+}
+.el-message-box--center{
+  width: 44.8vw;
+  min-width: 300px;
+  margin: 0 10px;
+  border-radius: 20px;
+  .el-icon-close{
+    color: @base-font-color;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .el-message-box__btns{
+    display: flex;
+    justify-content: center;
+    flex-direction: row-reverse;
+    button:nth-child(1){
+      margin-left: 50px;
+    }
+  }
+}
+// input-number 暂时放这里
+.shopping-list{
+  .el-input-number__decrease,.el-input-number__increase{
+    background-color: #FFF;
+    border-width: 0;
+    height: 90%;
+    top: 1px;
+    width: 2vw;
+    min-width: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .el-input-number__decrease{
+    border-bottom-left-radius: 20px;
+    border-top-left-radius: 20px;
+    left: 2px;
+  }
+  .el-input-number__increase{
+    border-bottom-right-radius: 20px;
+    border-top-right-radius: 20px;
+    right: 2px;
+  }
+  .el-input-number{
+    width: auto;
+    line-height: 2vw;
+    width: 7.3vw;
+    min-width: 100px;
+    .el-input__inner{
+      height: 2.08vw;
+      line-height: 2.08vw;
+      min-height: 30px;
+      min-width: 100px;
+      border-radius: 22px;
+      padding: 0 2vw;
+      border-color: #E0E0E0;
+      color: #333;
+    }
+  }
+}
+@media (max-width: 1350px) {
+  .shopping-list .el-input__inner{
+    padding: 0 27px;
+  }
+}
+@media (max-width: 650px) {
+  .shopping-list .el-input-number{
+    min-width: 80px;
+    .el-input__inner{
+      min-width: 80px;
+    }
+  }
+}
+// el-input自定义
+body{
+  .el-input__inner{
+    border-radius: 20px;
+  }
+}

@@ -8,10 +8,9 @@ import VueI18n from 'vue-i18n'
 import l_en from '@/common/language/en'
 import l_zh_CN from '@/common/language/zh'
 import Utils from '@/common/utils/utils.js' // 工具方法
-import VavaUi from '@/components/components.js'
+import VavaUi from '@/components/components.js' // 全局公共组件
 import * as filters from '@/common/utils/filters'
-import Element from '@/components/element-ui'
-Vue.prototype.$ELEMENT = { size: 'small' }
+import Element from '@/components/element-ui' // 引入部分element-ui组件
 Object.keys(Element).forEach(key => {
   Vue.component(Element[key].name, Element[key])
 })
@@ -40,7 +39,7 @@ if (process.browser) {
   })
 }
 // 创建vue实例
-export function createApp (language, token) {
+export function createApp (language, token, isMobile) {
   const store = createStore()
   const router = createRouter()
   sync(store, router)

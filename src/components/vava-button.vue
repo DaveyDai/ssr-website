@@ -1,9 +1,13 @@
 <template>
-  <button class="vava-button" @click="handleClick"><slot></slot></button>
+  <button class="vava-button" @click="handleClick" :class="{'is-disable': disable, 'no-active': noActive}"><slot></slot></button>
 </template>
 
 <script>
   export default {
+    props: {
+      disable: Boolean,
+      noActive: Boolean
+    },
     name: 'VavaButton',
     componentName: 'VavaButton',
     methods: {
@@ -26,6 +30,15 @@
     color: #FFF;
     padding: 0 2.8vw;
     border: none;
+  }
+  .is-disable{
+    background-color: #DDDDDD;
+    color: #FFF;
+  }
+  .no-active{
+    border: 1px solid @base-color;
+    background: none;
+    color: @base-color;
   }
   @media (max-width: 1350px) {
     .vava-button{

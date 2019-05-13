@@ -3,11 +3,11 @@
     <page-header v-if="!isBlogHeader"></page-header>
     <blog-header v-else></blog-header>
     <transition name="fade" mode="out-in">
-      <router-view class="vava-page-content"></router-view>
+      <router-view class="vava-page-content" :class="isMobileShow ? 'is-mobile':''"></router-view>
     </transition>
-    <page-footer v-if="!isBlogHeader"></page-footer>
+    <page-footer v-if="!isBlogHeader" v-show="!isHideFooter"></page-footer>
     <blog-footer v-else></blog-footer>
-    <div class="footer-reserved"><span></span><p>© 2019 VAVA All rights reserved.</p></div>
+    <div class="footer-reserved" v-if="!isHideFooter"><span></span><p>© 2019 VAVA All rights reserved.</p></div>
   </div>
 </template>
 
@@ -16,13 +16,14 @@
   import PageFooter from '@/components/page-footer.vue'
   const BlogHeader = () => import('@/components/vava-blog-header.vue') // blog-头部
   const BlogFooter = () => import('@/components/blog-page-footer.vue') // blog-尾部
-  // import { mapGetters } from 'vuex'
+  import Utils from '@/common/utils/utils.js' // 工具方法
   export default {
-    // computed: { ...mapGetters(['catalogList']) },
     components: { PageHeader, PageFooter, BlogHeader, BlogFooter },
     data () {
       return {
-        isBlogHeader: false // 是否显示blog页面的头部
+        isBlogHeader: false, // 是否显示blog页面的
+        isHideFooter: false, // 是否隐藏footer
+        isMobileShow: false // 是否响应小屏幕显示
       }
     },
     watch: {
@@ -32,6 +33,14 @@
     },
     created () {
       this.isBlogHeader = !!this.$route.meta.blog
+    },
+    mounted () {
+      this.isMobileShow = Utils.browserRedirect() // 判断当前是否移动设备
+      this.isHideFooter = this.$route.meta.isShoppingcart && (this.isMobileShow || document.body.clientWidth < 875)  // 购物车页面 且是移动端设备或显示区域小于875不显示footer
+      window.onresize = () => { // 监听浏览器显示区域变化
+        this.isHideFooter = this.$route.meta.isShoppingcart && (document.body.clientWidth < 875 || this.isMobileShow)
+      }
+      window.localStorage.setItem('shoppingCarts', JSON.stringify({"totalAmount":"37.98","totalNum":2,"productList":[{"productId":7,"productName":"Portable Charger 6700mAh Power Bank","colorId":2,"productQty":1,"price":17.99,"imgUrl":"http://apiimage.vava.com/prod/2018/10/31/6e819de9ed.jpg","urlKey":"ravpower-ace-6700mah-power-bank-with-ismart-technology","sku":"65-02060-001","model":"RP-PB060-B","unit":"$","categoryName":4},{"productId":1,"productName":"Battery Pack 6700mAh Power Bank (aka Portable Charger)","colorId":8,"productQty":1,"price":19.99,"imgUrl":"http://apiimage.vava.com/prod/2018/10/30/97d2909427.jpg","urlKey":"Ravpower-6700mAh-Portable-Charger","sku":"65-80000-356","model":"RP-PB17-Pink","unit":"$","categoryName":4}]}))
     },
     methods: {
     }

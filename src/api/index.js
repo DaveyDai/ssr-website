@@ -90,6 +90,28 @@ export function fetchGet (url, params, state) {
   })
 }
 
+// post请求 url拼接的
+export function fetchPost (url, params, state) {
+  axios.defaults.headers['token'] = state.token || ''
+  axios.defaults.headers['accept-language'] = state.language || 'l_en'
+  axios.defaults.timeout = typeof window === 'undefined' ? 5000 : 10000
+  return new Promise((resolve, reject) => {
+    let getUrl = api[url] + params
+    axios.post(getUrl).then(response => {
+      response.data.code === 200 ? resolve(response.data.data) : reject(response.data)
+      if (typeof window === 'undefined') console.log('get请求:' + getUrl, response.data)
+    }).catch(error => {
+      console.log('server is error:', error)
+      try{
+        error.response && error.response.status ? reject(Object.assign(error.response.data, {status: error.response.status})) : reject(error.response.data)
+      } catch (err) {
+        console.log('后台服务请求异常:', error)
+        reject(error)
+      }
+    })
+  })
+}
+
 // 文件服务
 export function uploadFile (fileData, state) {
   axios.defaults.headers['token'] = state.token || ''

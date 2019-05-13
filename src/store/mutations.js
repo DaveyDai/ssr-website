@@ -76,5 +76,8 @@ export default {
   },
   setSearchBlog (state, data) {
     state.searchBlog = data
+  },
+  setSaleCountry (state, data) {
+    state.saleCountry = data
   }
 }

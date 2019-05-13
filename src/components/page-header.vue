@@ -23,6 +23,7 @@
         <span class="header-icon-pc icon icon-search" @click="openSearch"></span>
         <vava-country-img class="header-icon-pc" ref="vavaCountryImgPc" @click="setHeaderPanel"></vava-country-img>
         <span @click="routerLink('/account')" class="header-icon-pc icon icon-log-in" :class="$store.state.accountData.emailAddress?'active':''"></span>
+        <span class="header-icon-pc header-shopping-cart" @click="routerLink('/shopping-cart')"><i class="icon icon-shopping-cart"></i><em>{{cartList.totalNum}}</em></span>
         <span @click="setHeaderPanel(2)" class="phone-header-icon icon icon-turned"></span>
       </div>
     </div>
@@ -51,6 +52,10 @@
           <span class="icon icon-search"></span>
           <!-- <vava-button class="search-button">Search</vava-button> -->
         </div>
+	    	<vava-collapse-item @click="routerLink('/shopping-cart')">
+          <span slot="leftIcon" class="collapse-title-left header-shopping-cart"><i class="icon icon-shopping-cart"></i><em>{{cartList.totalNum}}</em></span>
+	    		<span slot="titleContent" class="phone-account-name">CART</span>
+	    	</vava-collapse-item>
 	    	<vava-collapse-item @click="routerLink('/account')">
 	    		<span slot="leftIcon" class="icon icon-log-in collapse-title-left"></span>
 	    		<span slot="titleContent" class="phone-account-name">{{accountName}}</span>
@@ -83,10 +88,13 @@
       }
     },
     computed: {
-      categoryList () {
+      categoryList () { // 分类列表
         return this.$store.state.categoryList
       },
-      accountName () {
+      cartList () { // 购物车列表
+        return this.$store.state.cartList
+      },
+      accountName () { // 用户名
         let name = 'SIGN IN'
         if  (this.$store.state.accountData.emailAddress) {
           name = (this.$store.state.accountData.firstName || this.$store.state.accountData.lastName)
@@ -168,6 +176,7 @@
       routerCLink (item) {
         // this.routerLink(item.state && item.model ? '/p/' + item.model : '/c/' + item.id)
         // window.location.href = item.state && item.model ? '/p/' + item.model : '/c/' + item.id
+        this.$bar.start()
         item.state && item.model ? window.location.href = '/p/' + item.model : this.routerLink('/c/' + item.id)
       },
       startSearch () {
@@ -211,6 +220,7 @@
       min-width: 280px;
       position: relative;
       z-index: 1001;
+      box-shadow: rgba(0, 0, 0, 0.05) 2px 2px 5px;
       .header-left-logo{
         height: 1.56vw;
         min-height: 25px;
@@ -284,9 +294,31 @@
         span{font-size: @icon-size; color: @base-icon-color; margin: 0 0.88vw; cursor: pointer;transition: all .5s;}
         span:hover{
           color: @base-color;
+          i{color: @base-color;}
         }
         span.active{color: @base-color;}
         .phone-header-icon{display: none;}
+        span.header-shopping-cart{
+          position: relative;
+          em{
+            position: absolute;
+            right: 0;
+            top: 0;
+            transform: translate(50%, -50%);
+            display: flex;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: @base-color;
+            color: white;
+            font-style: normal;
+            text-align: center;
+            // padding: 1px 0;
+            line-height: 16px;
+            font-size: 10px;
+          }
+        }
       }
     }
     .page-header-country{
@@ -338,7 +370,29 @@
         color: #FFF;
         width: 21px;
         height: 21px;
-    	}
+      }
+      span.header-shopping-cart{
+        position: relative;
+        i{color: #FFF;}
+        em{
+          position: absolute;
+          right: 0;
+          top: 0;
+          transform: translate(50%, -50%);
+          display: flex;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: @base-color;
+          color: white;
+          font-style: normal;
+          text-align: center;
+          padding: 1px 0;
+          line-height: 16px;
+          font-size: 10px;
+        }
+      }
     	.header-collapse-title{
     		width: 100%;
     		text-align: center;

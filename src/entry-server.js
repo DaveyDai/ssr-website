@@ -6,7 +6,7 @@ const isDev = process.env.NODE_ENV !== 'production'
 export default context => {
   return new Promise((resolve, reject) => {
     const s = isDev && Date.now()
-    const { app, router, store } = createApp(context.language, context.token)
+    const { app, router, store } = createApp(context.language, context.token, context.isMobile)
 
     const { url } = context
     const { fullPath } = router.resolve(url).route

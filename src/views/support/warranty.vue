@@ -5,7 +5,7 @@
       <img class="support-warranty-banner" src="/static/website-imgages/support/Services.jpg" alt="">
       <div class="support-warranty-submit">
         <h5>CHECK YOUR WARRANTY COVERAGE</h5>
-        <p>Enter your order number</p>
+        <p>Enter your Amazon order number</p>
         <!-- <p>Enter your product serial number | order number | tracking number</p> -->
         <vava-input v-model="warrantyNumber" class="warranty-input" :error="isNotExist"></vava-input>
         <p v-show="isNotExist" class="feedback-submit-error">{{notExistMessage}}</p>

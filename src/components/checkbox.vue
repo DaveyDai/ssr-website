@@ -1,5 +1,5 @@
 <template>
-  <div class="vava-checkbox"><span @click="handleCheck" class="vava-checkbox-select" :class="{active: currentValue}"><i class="icon icon-selected"></i></span><slot></slot></div>
+  <div class="vava-checkbox" :class="{'is-round': round}"><span @click="handleCheck" class="vava-checkbox-select" :class="{active: currentValue}"><i class="icon icon-selected"></i></span><slot></slot></div>
 </template>
 
 <script>
@@ -7,7 +7,8 @@
     name: 'VavaCheckbox',
     componentName: 'VavaCheckbox',
     props: {
-      value: Boolean
+      value: Boolean,
+      round: Boolean
     },
     watch: {
       value (newValue) {
@@ -59,12 +60,28 @@
       background-color: @base-button-back;
     }
   }
+  .is-round{
+    .vava-checkbox-select{
+      background-color: #FFF;
+      border: 1px solid #666;
+      width: 1.25vw;
+      height: 1.25vw;
+      border-radius: 50%;
+    }
+  }
   @media (max-width: 1350px) {
     .vava-checkbox{
       .vava-checkbox-select{
         margin-right: 15px;
         i{
           font-size: 10px;
+        }
+      }
+    }
+    .is-round{
+      .vava-checkbox-select{
+        i{
+          font-size: 9px;
         }
       }
     }

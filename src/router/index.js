@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
-// const createListView = id => () => import('../views/CreateListView').then(m => m.default(id))
+
 const IconTest = () => import('../views/test.vue')
 const HomePage = () => import('../views/home-page/index.vue') // 首页
 const AboutUs = () => import('../views/home-page/about-us.vue') // 首页
@@ -24,6 +24,14 @@ const Feedback = () => import('../views/support/feedback.vue') // feedback首页
 const Blog = () => import('../views/blog/index.vue') // blog首页
 const BlogDetail = () => import('../views/blog/blog-detail.vue') // blog-detail
 const BlogSearch = () => import('../views/blog/blog-search.vue') // blog-search
+const ShoppingCart = () => import('../views/shopping-cart/index.vue') // 购物车列表
+const ShoppingCustomer = () => import('../views/shopping-order/payment-pc/shopping-customer.vue') // 购物车判断登陆
+const ShoppingOrder = () => import('../views/shopping-order/index.vue') // pc下单
+const CustomerEmail = () => import('../views/shopping-order/payment-mobile/shopping-customer.vue') // 未登陆下单输入邮箱
+const PayMobile = () => import('../views/shopping-order/payment-mobile/shopping-edit.vue') // 移动端下单
+const PayAddrDetail = () => import('../views/shopping-order/payment-mobile/pay-addressdetail.vue') // 移动端编辑收货地址
+const PayAddrList = () => import('../views/shopping-order/payment-mobile/pay-addresslist.vue') // 移动端收货地址列表
+const PayCoupon = () => import('../views/shopping-order/payment-mobile/pay-coupon.vue') // 移动端优惠码
 
 export function createRouter () {
   return new Router({
@@ -36,13 +44,6 @@ export function createRouter () {
       }
     },
     routes: [
-      // { path: '/top/:page(\\d+)?', component: createListView('top') },
-      // { path: '/new/:page(\\d+)?', component: createListView('new') },
-      // { path: '/show/:page(\\d+)?', component: createListView('show') },
-      // { path: '/ask/:page(\\d+)?', component: createListView('ask') },
-      // { path: '/job/:page(\\d+)?', component: createListView('job') },
-      // { path: '/item/:id(\\d+)', component: ItemView },
-      
       { path: '/login', name: 'login', component: LoginPage },
       { path: '/forgot-password', component: ForgotPassword },
       { path: '/create-account', component: CreateAccount },
@@ -62,10 +63,17 @@ export function createRouter () {
       { path: '/blog', component: Blog, meta: {blog: true} },
       { path: '/blog/:label(\\d+)', component: BlogDetail, meta: {blog: true} },
       { path: '/blog/search', component: BlogSearch, meta: {blog: true} },
-      {path: '/about.html', component: AboutUs},
-      {path: '/', name: 'homePage', component: HomePage, meta: {sourceCode: 'SUB_INDEX_SOURCE'} },
-      {path: '/icontest', name: 'icontest', component: IconTest}
-      // { path: '/', redirect: '/test' }
+      { path: '/about.html', component: AboutUs},
+      { path: '/shopping-cart', component: ShoppingCart, meta: {isShoppingcart: true} },
+      { path: '/shopping-customer', component: ShoppingCustomer },
+      { path: '/customer-email', component: CustomerEmail, meta: {isShoppingcart: true} },
+      {path: '/pay', component: ShoppingOrder, meta: {isShoppingcart: true} },
+      {path: '/pay-m', component: PayMobile, meta: {isShoppingcart: true} },
+      {path: '/pay-addressdetail', component: PayAddrDetail, meta: {isShoppingcart: true} },
+      {path: '/pay-addrList', component: PayAddrList, meta: {isShoppingcart: true} },
+      {path: '/pay-coupon', component: PayCoupon, meta: {isShoppingcart: true} },
+      { path: '/', name: 'homePage', component: HomePage, meta: {sourceCode: 'SUB_INDEX_SOURCE'} },
+      { path: '/icontest', name: 'icontest', component: IconTest } // 测试页面
     ]
   })
 }

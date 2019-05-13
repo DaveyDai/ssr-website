@@ -1,0 +1,540 @@
+<template>
+  <div class="shopping-list">
+    <div class="shopping-slide-left">
+      <div class="shopping-box-title">
+        <span>Shopping Cart</span><span class="updata-shopping">Update Shopping Cart</span><span class="updata-shopping-item">6 items</span>
+      </div>
+      <li class="product-list-li" v-for="index of 5" :key="index">
+        <vava-checkbox round></vava-checkbox>
+        <div class="li-product-img"><img src="@/assets/images/country-icon/CNY-font.png" alt=""></div>
+        <div class="li-product-name">
+          <p class="product-d-title">Ravpower 6700mAh Portable Charger Ravpower 6700mAh Portable Charger Ravpower 6700mAh Portable Charger</p>
+          <p class="product-d-model">Model: RP-PB052-Black</p>
+          <p class="product-d-color">Color: Black</p>
+          <p class="product-d-price">$16.89<span>$20.89</span></p>
+        </div>
+        <div class="li-product-number">
+          <el-input-number v-model="num" :min="1" :max="999"></el-input-number>
+        </div>
+        <div class="li-product-right">
+          <div class="li-product-total">$100000.89</div>
+          <i class="li-product-delete el-icon-delete"></i>
+        </div>
+      </li>
+      <li class="product-list-li is-disabled">
+        <vava-checkbox round></vava-checkbox>
+        <div class="li-product-img"><img src="@/assets/images/country-icon/CNY-font.png" alt=""></div>
+        <div class="li-product-name">
+          <p class="product-d-title">Ravpower 6700mAh Portable Charger</p>
+          <p class="product-d-model">Model: RP-PB052-Black</p>
+          <p class="product-d-color">Color: Black<span>Out of Stock</span></p>
+          <p class="product-d-price">$16.89<span>$20.89</span></p>
+        </div>
+        <div class="li-product-number">
+          <el-input-number v-model="num" :min="1" :max="999"></el-input-number>
+        </div>
+        <div class="li-product-right">
+          <div class="li-product-total">$100000.89</div>
+          <i class="li-product-delete el-icon-delete"></i>
+        </div>
+      </li>
+    </div>
+    <div class="shopping-slide-right">
+      <div class="shopping-box-title">
+        <span>Summary</span><span class="shopping-items">4 item</span>
+      </div>
+      <div class="shopping-right-subtotal">
+        <li><span>Subtotal: </span><span class="right-subtotal-price">$30.00</span></li>
+        <li><span>Shipping: </span><span class="right-subtotal-price">$0.00</span></li>
+      </div>
+      <div class="shopping-box-title pretax-total">
+        <span>Pre-Tax total: </span><span class="shopping-items">$30.00</span>
+      </div>
+      <div class="checkout-button"><vava-button class="button-standard no-wrap" @click="cartCheckOut">Proceed to Checkout</vava-button></div>
+      <p class="use-coupon-tips">*Use your coupon in the next step.</p>
+    </div>
+    <div class="shopping-lit-footer">
+      <span class="pretax-total-price">Pre-Tax total: <em>$100000.89</em></span>
+      <vava-button class="cart-check-out no-wrap">Check Out</vava-button>
+    </div>
+  </div>
+</template>
+<script>
+  export default {
+    data () {
+      return {
+        num: 8
+      }
+    },
+    methods: {
+      cartCheckOut () {
+        this.$router.push('/shopping-customer')
+      }
+    }
+  }
+</script>
+<style lang="less" scoped>
+  .shopping-list{
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    .shopping-slide-left{
+      margin-top: 24px;
+      margin-bottom: 40px;
+      width: 57.3vw;
+      min-width: 700px;
+      background-color: #FFF;
+      .shopping-box-title{
+        width: 100%;
+        height: 4.16vw;
+        min-height: 60px;
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        span{
+          font-family: 'avenir-next-demi';
+          font-size: 1.25vw;
+          color: #333333;
+        }
+        span.updata-shopping, span.updata-shopping-item{
+          font-family: 'avenir-next-regular';
+          font-size: 0.73vw;
+          color: #5D45B4;
+        }
+        span.updata-shopping-item{
+          display: none;
+          color: #333333;
+        }
+      }
+      .product-list-li{
+        position: relative;
+        border-top: 1px solid #EEE;
+        padding: 0.83vw 24px;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        .li-product-img{
+          margin-right: 1.04vw;
+          img{
+            width: 8.07vw;
+            height: 8.07vw;
+            min-width: 80px;
+            min-height: 80px;
+          }
+        }
+        .li-product-name{
+          line-height: 1.8;
+          max-width: 35%;
+          .product-d-title{
+            font-family: 'avenir-next-demi';
+            font-size: 0.9375vw;
+            color: #333333;
+            line-height: 1.3;
+            margin-bottom: .5vw;
+            word-break: break-all;
+            cursor: pointer;
+            &:hover{
+              color: @base-color;
+            }
+          }
+          .product-d-model, .product-d-color{
+            font-size: 0.73vw;
+            color: #666;
+            // span{
+            //   font-family: 'avenir-next-demi';
+            //   margin-left: 0.73vw;
+            //   color: #D0021B;
+            // }
+            white-space: nowrap;
+          }
+          .product-d-price{
+            font-size: 1.15vw;
+            color: #333333;
+            margin-top: 10px;
+            span{
+              margin-left: 1vw;
+              font-size: 0.83vw;
+              color: #666;
+              text-decoration: line-through;
+            }
+          }
+        }
+        .li-product-number{
+          margin: 0 2.6vw;
+          min-width: 100px;
+        }
+        .li-product-right{
+          position: absolute;
+          top: 50%;
+          right: 2.8vw;
+          transform: translateY(-50%);
+          display: flex;
+          align-items: center;
+          .li-product-total{
+            font-size: 1.04vw;
+            color: #333;
+          }
+          .li-product-delete{
+            margin-left: 2.5vw;
+            font-size: 1.2vw;
+            cursor: pointer;
+          }
+        }
+      }
+      .is-disabled{
+        .li-product-img, .li-product-name, .li-product-number, .vava-checkbox, .li-product-total{
+          opacity: 0.4;
+        }
+      }
+    }
+    .shopping-slide-right{
+      margin-top: 24px;
+      margin-bottom: 40px;
+      margin-left: 1.04vw;
+      width: 24vw;
+      background-color: #FFF;
+      .shopping-box-title{
+        padding: 0 24px;
+        width: 100%;
+        height: 4.16vw;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        span{
+          font-family: 'avenir-next-demi';
+          font-size: 1.25vw;
+          color: #333333;
+        }
+        span.shopping-items{
+          font-size: 0.83vw;
+        }
+      }
+      .shopping-right-subtotal{
+        border-top: 1px solid #EEEEEE;
+        border-bottom: 1px solid #EEEEEE;
+        padding: 1vw 24px;
+        line-height: 1.8;
+        min-height: 65px;
+        li{
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.83vw;
+          color: #666;
+          .right-subtotal-price{
+            color: #333;
+            font-size: 0.73vw;
+            font-family: 'avenir-next-demi';
+          }
+        }
+
+      }
+      .pretax-total{
+        span{font-size: 0.9375vw;}
+        span.shopping-items{
+          font-size: 1.25vw;
+        }
+      }
+      .checkout-button{
+        margin-top: 1vw;
+        width: 100%;
+        padding: 0 24px;
+        .button-standard{
+          width: 100%;
+          text-align: center;
+          padding: 0;
+        }
+      }
+      .use-coupon-tips{
+        margin-top: 16px;
+        font-size: 0.73vw;
+        color: #999;
+        padding-left: 40px;
+      }
+    }
+    .shopping-lit-footer{
+      display: none;
+    }
+  }
+  @media (max-width: 1450px){
+    .shopping-list{
+      .shopping-slide-left{
+        .shopping-box-title{
+          span{
+            font-size: 18px;
+          }
+          span.updata-shopping{
+            font-size: 12px;
+          }
+        }
+        .product-list-li{
+          .li-product-name{
+            .product-d-title{
+              font-size: 13px;
+            }
+            .product-d-model, .product-d-color{
+              font-size: 12px;
+              span{
+                margin-left: 12px;
+              }
+            }
+            .product-d-price{
+              font-size: 16px;
+              span{
+                font-size: 13px;
+              }
+            }
+          }
+          .li-product-right .li-product-total{
+            font-size: 15px;
+          }
+          .li-product-right .li-product-delete{
+            font-size: 17px;
+          }
+        }
+      }
+      .shopping-slide-right{
+        .shopping-box-title{
+          span{
+            font-size: 18px;
+          }
+          span.shopping-items{
+            font-size: 12px;
+          }
+        }
+        .shopping-right-subtotal{
+          li{
+            font-size: 13px;
+            .right-subtotal-price{
+              font-size: 12px;
+            }
+          }
+
+        }
+        .pretax-total{
+          span{font-size: 13.5px;}
+          span.shopping-items{
+            font-size: 18px;
+          }
+        }
+        .use-coupon-tips{
+          font-size: 12px;
+        }
+      }
+    }
+  }
+  @media (max-width: 1350px) {
+    .shopping-list{
+      .shopping-slide-left{
+        .shopping-box-title{
+          padding: 0 20px;
+        }
+        .product-list-li{
+          padding: 10px 20px;
+        }
+      }
+      .shopping-slide-right{
+        .shopping-box-title{
+          padding: 0 20px;
+        }
+        .shopping-right-subtotal{
+          padding: 1vw 20px;
+        }
+        .pretax-total{
+          padding: 0 20px;
+        }
+        .checkout-button{
+          padding: 0 20px;
+        }
+        .use-coupon-tips{
+          padding-left: 25px;
+        }
+      }
+    }
+  }
+  @media (max-width: 980px) {
+    .shopping-list{
+      .shopping-slide-left{
+        min-width: 630px;
+        .shopping-box-title{
+          padding: 0 10px;
+        }
+        .product-list-li{
+          padding: 10px 10px;
+          .li-product-number{
+            margin: 0 1.5vw;
+          }
+          .is-round .vava-checkbox-select{
+            margin-right: 10px;
+          }
+          .li-product-delete{
+            right: 2vw;
+          }
+        }
+      }
+      .shopping-slide-right{
+        min-width: 200px;
+        .shopping-box-title{
+          padding: 0 10px;
+        }
+        .shopping-right-subtotal{
+          padding: 0 10px;
+        }
+        .pretax-total{
+          padding: 0 10px;
+        }
+        .checkout-button{
+          padding: 0 10px;
+        }
+        .use-coupon-tips{
+          padding-left: 20px;
+        }
+      }
+    }
+  }
+  @media (max-width: 875px) {
+    .shopping-list{
+      padding-bottom: 60px;
+      .shopping-slide-left{
+        min-width: 600px;
+        width: 90%;
+        .shopping-box-title{
+          padding: 0 10px;
+          span{
+            font-size: 18px;
+          }
+          span.updata-shopping{
+            display: none;
+          }
+          span.updata-shopping-item{
+            display: inline-block;
+            font-size: 13px;
+          }
+        }
+        .product-list-li{
+          padding: 10px 10px;
+          .is-round .vava-checkbox-select{
+            margin-right: 10px;
+          }
+          .li-product-name{
+            line-height: 1.4;
+            .product-d-title{
+              font-size: 13px;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+            .product-d-model, .product-d-color{
+              font-size: 12px;
+              span{
+                margin-left: 12px;
+              }
+            }
+            .product-d-price{
+              font-size: 16px;
+              span{
+                font-size: 13px;
+              }
+            }
+          }
+        }
+      }
+      .shopping-slide-right{
+        display: none;
+      }
+      .shopping-lit-footer{
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        z-index: 199;
+        width: 100%;
+        height: 60px;
+        background-color: #FFF;
+        padding: 0 3%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .pretax-total-price{
+          font-family: SFCompactDisplay-Regular;
+          font-size: 14px;
+          color: #666;
+          display: flex;
+          align-items: center;
+          em{
+            font-size: 18px;
+            color: #333;
+            margin-left: 5px;
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: 650px) {
+    .shopping-list{
+      .shopping-slide-left{
+        min-width: 320px;
+        width: 95%;
+        .shopping-box-title{
+          span{
+            font-size: 18px;
+          }
+        }
+        .product-list-li{
+          padding: 10px 10px;
+          .is-round .vava-checkbox-select{
+            margin-right: 10px;
+          }
+          .li-product-name{
+            .product-d-title{
+              font-size: 13px;
+              margin-bottom: 6px
+            }
+            .product-d-model, .product-d-color{
+              font-size: 12px;
+              span{
+                margin-left: 12px;
+              }
+            }
+            .product-d-price{
+              font-size: 14px;
+              span{
+                font-size: 12px;
+              }
+            }
+          }
+          .li-product-number{
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            min-width: 80px;
+          }
+          .li-product-right .li-product-total{
+            font-size: 13px;
+          }
+          .li-product-right .li-product-delete{
+            margin-left: 20px;
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: 400px) {
+    .shopping-list .shopping-slide-left .product-list-li .li-product-right{
+      top: 10px;
+      transform: translateY(0);
+      .li-product-delete{
+        margin-left: 10px;
+      }
+    }
+  }
+  @media (max-width: 360px) {
+    .shopping-list .shopping-slide-left .product-list-li .li-product-right .li-product-total{
+      display: none;
+    }
+  }
+</style>
