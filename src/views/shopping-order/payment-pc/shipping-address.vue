@@ -54,25 +54,21 @@
         <el-form-item label="Phone Number" prop="telephone">
           <el-input v-model="ruleForm.telephone" ></el-input>
         </el-form-item>
-
-        <el-form-item style="width: 100%;">
-          <div class="btn-add">
-            <div class="btnWrap bg-gradient">
-              <vava-button class="btn-cancel" @click="cancel">Cancel</vava-button>
-            </div>
-            <vava-button class="bg-gradient btn-save" @click="saveAddress">Save</vava-button>
-          </div>
-        </el-form-item>
    </el-form>
+   <div style="width: 100%;" class="btn-add">
+     <vava-button class="bg-gradient btn-save" @click="saveAddress">Save</vava-button>
+   </div>
   </div>
 </template>
 <script>
-  import { mapGetters } from 'vuex'
   export default {
     computed: {
-      ...mapGetters([
-        'userList'
-      ]),
+      countryList () {
+        return this.$store.state.saleCountry
+      },
+      payEmail () { // 邮箱
+        return this.$store.state.shoppingCart.payEmail
+      }
     },
     // 定义变量
     data () {
@@ -90,7 +86,6 @@
         }
       };
       return {
-        countryList: [], // 国家下拉列表
         regionList: [], // region下拉列表
         ruleForm: {
           active: 0,
@@ -154,7 +149,7 @@
       },
       emailLock: {
         type: Boolean,
-        default: false
+        default: true
       }
     },
     watch: {
@@ -165,11 +160,12 @@
         deep: true
       }
     },
-    mounted: function () {
+    created () {
+      if (this.countryList.length === 0) this.selectShopCountryVo()
       // this.getCountry();
       // this.setRultForm();
       // 没有登录时候赋值给email
-      // this.ruleForm.email = this.$route.query.email || this.userList.email;
+      this.ruleForm.email = this.payEmail
     },
     // 方法
     methods: {
@@ -196,49 +192,44 @@
         }
         
       },
-      getCountry () {
-        let obj = {
-          api: 'getAddressCountry',
-          data: {}
-        };
-        this.$store.dispatch('FETCH_GET_ALL', obj).then(json => {
-          this.countryList = json.payload.data
-        });
-        // 获取地区
-        let regionObj = {
-          api: 'getRegionbyCid',
-          data: {
-            countryId: 1
-          }
-        };
-        this.$store.dispatch('FETCH_GET_ALL', regionObj).then(json => {
-          // this.sitekey = json.siteKey;
-          this.regionList = json.payload.data
-        });
+      selectShopCountryVo () { // 获取国家列表
+        this.$store.dispatch('postFetch', {api: 'selectShopCountryVo'}).then(data => {
+          this.$store.commit('setSaleCountry', data)
+        }).catch(error => {
+          this.$utils.showErrorMes(this, error)
+        })
       },
-      /**
-       * [saveAddress 保存地址]
-       * @author luke 2018-12-12
-       */
-      saveAddress () {
-        this.$refs['ruleForm'].validate((valid) => {
-          if (valid) {
-            this.verify();
-            // 跳转支付页面
-            // 没有登录直接折叠
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+      // getCountry () {
+      //   let obj = {
+      //     api: 'getAddressCountry',
+      //     data: {}
+      //   };
+      //   this.$store.dispatch('FETCH_GET_ALL', obj).then(json => {
+      //     this.countryList = json.payload.data
+      //   });
+      //   // 获取地区
+      //   let regionObj = {
+      //     api: 'getRegionbyCid',
+      //     data: {
+      //       countryId: 1
+      //     }
+      //   };
+      //   this.$store.dispatch('FETCH_GET_ALL', regionObj).then(json => {
+      //     // this.sitekey = json.siteKey;
+      //     this.regionList = json.payload.data
+      //   });
+      // },
+      saveAddress () { // 编辑地址点击保存地址
+        this.$emit('newAddress', this.ruleForm)
+        // this.$refs['ruleForm'].validate((valid) => {
+        //   if (valid) {
+        //     this.verify();
+        //   } else {
+        //     return false;
+        //   }
+        // });
       },
-      /**
-       * [verify 效验地址]
-       * @author luke 2018-12-19
-       * @return {[type]} [description]
-       */
       async verify () {
-        console.log(1111);
         let ths = this;
         let regObj = this.regionList.find(function(x) { 
           if (x.id === ths.ruleForm.regionId) {
@@ -263,10 +254,10 @@
         };
         let json = await this.$store.dispatch('FETCH_GET_ALL', obj);
         if (json.code !== 200) {
-          this.$message(json.message);
+          this.$message(json.message) // 州市地址邮编不匹配提示
           return false;
         }
-        this.$emit('newAddress', this.ruleForm);
+        this.$emit('newAddress', this.ruleForm)
         // 清空值
         this.updateRess = '';
         this.setRultForm();
@@ -274,9 +265,6 @@
       cancel () {
         this.$emit('cancelAddress', true);
       }
-      // 您的城市和州不匹配
-    },
-    components: {
     }
   }
 </script>

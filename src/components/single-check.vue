@@ -20,6 +20,7 @@
       hanldClick () {
         this.changeValue = !this.changeValue
         this.$emit('input', this.changeValue)
+        this.$emit('change', this.changeValue)
       }
     }
   }

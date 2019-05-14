@@ -3,18 +3,18 @@
     <div class="box-title rel">
       Order Summary
       <div class="abs-quantity">
-        {{ cartList.totalNum }} item{{ cartList.totalNum > 1 ? 's' : ''}}
+        {{ shoppingCart.productList.length }} item{{ shoppingCart.productList.length > 1 ? 's' : ''}}
       </div>
     </div>
     <!-- 产品列表 -->
     <div class="product-list">
-      <div class="item" v-for="(item,index) in cartList.productList" :key="index">
-        <img :src="item.imgUrl" :alt="item.productName" >
+      <div class="item" v-for="(item,index) in shoppingCart.productList" :key="index">
+        <img :src="item.skuProductMainUrl" :alt="item.productName" >
         <div class="right-desc">
-          <span class="name">{{ item.productName }}</span>
+          <span class="name" :title="item.productName">{{ item.shortName }}</span>
           <div class="box-price">
-            <p class="price">${{ item.price.toFixed(2) }}<span>X</span><em>{{ item.productQty }}</em></p>
-            <p class="total">${{ (item.totalPrice || item.price * item.productQty).toFixed(2) }}</p>
+            <p class="price">${{ item.sellPrice.toFixed(2) }}<span>X</span><em>{{ item.totalQtyOrdered }}</em></p>
+            <p class="total">${{ (item.sellPrice * item.totalQtyOrdered).toFixed(2) }}</p>
           </div>
         </div>
       </div>
@@ -23,7 +23,7 @@
     <div class="detail">
       <div class="item">
         <label>Subtotal:</label>
-        <p>${{ cartList.totalAmount }}</p>
+        <p>${{ shoppingCart.totalAmount }}</p>
       </div>
       <div class="item">
         <label>Shipping:</label>
@@ -34,9 +34,9 @@
     <div class="box-checkout">
       <div class="item">
         <label>Order Total:</label>
-        <p>${{ cartList.totalAmount }}</p>
+        <p>${{ shoppingCart.totalAmount }}</p>
       </div>
-      <vava-button style="width: 100%;margin: 27px 0;" disable>PLACE ORDER</vava-button>
+      <vava-button style="width: 100%;margin: 27px 0;max-height: 45px;" :disable="!isActive" @click="placeOrder">PLACE ORDER</vava-button>
       <p class="tip">*Use your coupon in the next step.</p>
     </div>
 
@@ -44,13 +44,22 @@
 </template>
 <script>
   export default {
+    props: {
+      isActive: Boolean // 是否高亮下单结算按钮
+    },
     data () {
       return {
-        cartList: {productList: []}
       }
     },
-    beforeMount () {
-      this.cartList = JSON.parse(window.localStorage.getItem('shoppingCarts') || {})
+    computed: {
+      shoppingCart () { // 购物车列表
+        return this.$utils.calculationCart(this.$store.state.shoppingCart.productList, this.$store.state.shoppingCart.shoppingCartId, true)
+      }
+    },
+    methods: {
+      placeOrder () { // 下单
+        if (this.isActive) this.$emit('click')
+      }
     }
   }
 </script>

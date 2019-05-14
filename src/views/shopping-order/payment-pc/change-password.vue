@@ -204,7 +204,7 @@
   padding: 26px 32px;
   h2{
     font-family: SFCompactDisplay-Thin, Arial, Helvetica, sans-serif;
-    font-size: 40px;
+    font-size: 2.08vw;
     color: #666666;
     font-weight: normal;
     text-align: center;

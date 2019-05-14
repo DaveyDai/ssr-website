@@ -1,24 +1,27 @@
 <template>
   <div class="shopping-list">
+    <!-- 左边产品详情 -->
     <div class="shopping-slide-left">
+      <!-- 头部 -->
       <div class="shopping-box-title">
-        <span>Shopping Cart</span><span class="updata-shopping">Update Shopping Cart</span><span class="updata-shopping-item">6 items</span>
+        <span>Shopping Cart</span><span class="updata-shopping" @click="reData">Update Shopping Cart</span><span class="updata-shopping-item">{{shoppingCart.productList.length}} items</span>
       </div>
-      <li class="product-list-li" v-for="index of 5" :key="index">
-        <vava-checkbox round></vava-checkbox>
-        <div class="li-product-img"><img src="@/assets/images/country-icon/CNY-font.png" alt=""></div>
+      <!-- 商品列表 -->
+      <li class="product-list-li" v-for="(item, index) of shoppingCart.productList" :key="index">
+        <vava-checkbox round v-model="item.isSelect" @change="removeShop"></vava-checkbox>
+        <div class="li-product-img"><img :src="item.skuProductMainUrl" alt=""></div>
         <div class="li-product-name">
-          <p class="product-d-title">Ravpower 6700mAh Portable Charger Ravpower 6700mAh Portable Charger Ravpower 6700mAh Portable Charger</p>
-          <p class="product-d-model">Model: RP-PB052-Black</p>
-          <p class="product-d-color">Color: Black</p>
-          <p class="product-d-price">$16.89<span>$20.89</span></p>
+          <p class="product-d-title" :title="item.productName">{{item.shortName}}</p>
+          <p class="product-d-model">Model: {{item.model}}</p>
+          <p class="product-d-color">Color: {{item.colourCode}}</p>
+          <p class="product-d-price">${{item.sellPrice}}<span>${{item.listingPrice}}</span></p>
         </div>
         <div class="li-product-number">
-          <el-input-number v-model="num" :min="1" :max="999"></el-input-number>
+          <el-input-number v-model="item.totalQtyOrdered" :min="1" :max="999" @change="upShoppingTotal(item)"></el-input-number>
         </div>
         <div class="li-product-right">
-          <div class="li-product-total">$100000.89</div>
-          <i class="li-product-delete el-icon-delete"></i>
+          <div class="li-product-total">${{(item.totalQtyOrdered * item.sellPrice).toFixed(2)}}</div>
+          <i class="li-product-delete el-icon-delete" @click="deleteShoppingData(item)"></i>
         </div>
       </li>
       <li class="product-list-li is-disabled">
@@ -31,7 +34,6 @@
           <p class="product-d-price">$16.89<span>$20.89</span></p>
         </div>
         <div class="li-product-number">
-          <el-input-number v-model="num" :min="1" :max="999"></el-input-number>
         </div>
         <div class="li-product-right">
           <div class="li-product-total">$100000.89</div>
@@ -39,36 +41,58 @@
         </div>
       </li>
     </div>
+    <!-- 右边结算预览 -->
     <div class="shopping-slide-right">
       <div class="shopping-box-title">
-        <span>Summary</span><span class="shopping-items">4 item</span>
+        <span>Summary</span><span class="shopping-items">{{shoppingCart.productList.length}} item</span>
       </div>
       <div class="shopping-right-subtotal">
-        <li><span>Subtotal: </span><span class="right-subtotal-price">$30.00</span></li>
+        <li><span>Subtotal: </span><span class="right-subtotal-price">${{shoppingCart.totalAmount}}</span></li>
         <li><span>Shipping: </span><span class="right-subtotal-price">$0.00</span></li>
       </div>
       <div class="shopping-box-title pretax-total">
-        <span>Pre-Tax total: </span><span class="shopping-items">$30.00</span>
+        <span>Pre-Tax total: </span><span class="shopping-items">${{shoppingCart.totalAmount}}</span>
       </div>
       <div class="checkout-button"><vava-button class="button-standard no-wrap" @click="cartCheckOut">Proceed to Checkout</vava-button></div>
       <p class="use-coupon-tips">*Use your coupon in the next step.</p>
     </div>
     <div class="shopping-lit-footer">
-      <span class="pretax-total-price">Pre-Tax total: <em>$100000.89</em></span>
+      <span class="pretax-total-price">Pre-Tax total: <em>${{shoppingCart.totalAmount}}</em></span>
       <vava-button class="cart-check-out no-wrap">Check Out</vava-button>
     </div>
   </div>
 </template>
 <script>
   export default {
+    computed: {
+      shoppingCart () { // 购物车列表
+        return this.$store.state.shoppingCart
+      }
+    },
     data () {
       return {
-        num: 8
+        // shoppingPayList: {}
       }
+    },
+    mounted () {
+      // this.shoppingPayList = JSON.parse(JSON.stringify(this.shoppingCart))
     },
     methods: {
       cartCheckOut () {
-        this.$router.push('/shopping-customer')
+        this.$router.push(this.$store.state.accountData.isLogin ? '/pay' : '/shopping-customer')
+      },
+      upShoppingTotal (item) { // 改变商品数量
+        this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(this.shoppingCart.productList, this.shoppingCart.shoppingCartId))
+      },
+      deleteShoppingData (item) {
+        this.shoppingCart.productList = this.shoppingCart.productList.filter(ii => ii.productSkuId !== item.productSkuId)
+        this.upShoppingTotal()
+      },
+      removeShop () { // 取消购买
+        this.upShoppingTotal()
+      },
+      reData () { // 刷新购物车
+        this.$emit('refresh')
       }
     }
   }
@@ -102,6 +126,7 @@
           font-family: 'avenir-next-regular';
           font-size: 0.73vw;
           color: #5D45B4;
+          cursor: pointer;
         }
         span.updata-shopping-item{
           display: none;

@@ -70,7 +70,39 @@
         window.open(url)
       },
       buyNow () { // 添加购物车
-        
+        let isLogin = !!this.$cookies.get('token') // 是否已登陆
+        this.$store.state.shoppingCart.totalNum > 0 ? this.shoppingCartAdd() : this.createCartId()
+      },
+      createCartId () { // 申请购物车id
+        this.$utils.setShoppingCart(this.$store.commit, { // 模拟数据
+          totalNum: 1,
+          shoppingCartId: 12345,
+          productList: [{productSkuId: this.buyProDetail.skuId, totalQtyOrdered: 1}]
+        })
+        // this.$utils.setShoppingCart(this.$store.commit, { // 模拟数据
+        //   "skuProductMainUrl":"https://dqqvg67sziwi8.cloudfront.net/prod/2018/09/28/11f59b5914.jpg",
+        //   "productName":"VAVA Dash Cam 2K-VD005",
+        //   "shortName":"VAVA Dash Cam 2K-VD005",
+        //   "description":"",
+        //   "colourCode":"Black",
+        //   "colourName":"#000000",
+        //   "listingPrice":149.99,
+        //   "sellPrice":139.99,
+        //   "model":"VA-VD005",
+        //   "state":true,
+        //   "productSkuId":"83-05000-018",
+        //   "totalQtyOrdered":1
+        // })
+        // let productData = { productSkuId: this.buyProDetail.skuId, totalQtyOrdered: 1, source: 2}
+        // this.$store.dispatch('postFetch', {api: 'applyForShopCartId', data: productData}).then(data => {
+        //   this.$utils.setShoppingCart(this.$store.commit, data) // 保存购物车信息到本地和store
+        // }).catch(error => {
+        //   this.$utils.showErrorMes(this, error)
+        // })
+      },
+      shoppingCartAdd () { // 添加购物车
+        let newData = this.$utils.totalShoppingCart(JSON.parse(JSON.stringify(this.$store.state.shoppingCart)), {productSkuId: this.buyProDetail.skuId, totalQtyOrdered: 1})
+        this.$utils.setShoppingCart(this.$store.commit, newData)
       }
     }
   }

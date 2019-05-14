@@ -23,7 +23,7 @@
         <span class="header-icon-pc icon icon-search" @click="openSearch"></span>
         <vava-country-img class="header-icon-pc" ref="vavaCountryImgPc" @click="setHeaderPanel"></vava-country-img>
         <span @click="routerLink('/account')" class="header-icon-pc icon icon-log-in" :class="$store.state.accountData.emailAddress?'active':''"></span>
-        <span class="header-icon-pc header-shopping-cart" @click="routerLink('/shopping-cart')"><i class="icon icon-shopping-cart"></i><em>{{cartList.totalNum}}</em></span>
+        <span class="header-icon-pc header-shopping-cart" @click="routerLink('/shopping-cart')"><i class="icon icon-shopping-cart"></i><em v-if="shoppingCart.totalNum">{{shoppingCart.totalNum}}</em></span>
         <span @click="setHeaderPanel(2)" class="phone-header-icon icon icon-turned"></span>
       </div>
     </div>
@@ -53,7 +53,7 @@
           <!-- <vava-button class="search-button">Search</vava-button> -->
         </div>
 	    	<vava-collapse-item @click="routerLink('/shopping-cart')">
-          <span slot="leftIcon" class="collapse-title-left header-shopping-cart"><i class="icon icon-shopping-cart"></i><em>{{cartList.totalNum}}</em></span>
+          <span slot="leftIcon" class="collapse-title-left header-shopping-cart"><i class="icon icon-shopping-cart"></i><em>{{shoppingCart.totalNum}}</em></span>
 	    		<span slot="titleContent" class="phone-account-name">CART</span>
 	    	</vava-collapse-item>
 	    	<vava-collapse-item @click="routerLink('/account')">
@@ -91,8 +91,8 @@
       categoryList () { // 分类列表
         return this.$store.state.categoryList
       },
-      cartList () { // 购物车列表
-        return this.$store.state.cartList
+      shoppingCart () { // 购物车列表
+        return this.$store.state.shoppingCart
       },
       accountName () { // 用户名
         let name = 'SIGN IN'

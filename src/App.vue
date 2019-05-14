@@ -36,13 +36,18 @@
     },
     mounted () {
       this.isMobileShow = Utils.browserRedirect() // 判断当前是否移动设备
+      this.$store.commit('setMediaDevices', this.isMobileShow)
       this.isHideFooter = this.$route.meta.isShoppingcart && (this.isMobileShow || document.body.clientWidth < 875)  // 购物车页面 且是移动端设备或显示区域小于875不显示footer
       window.onresize = () => { // 监听浏览器显示区域变化
         this.isHideFooter = this.$route.meta.isShoppingcart && (document.body.clientWidth < 875 || this.isMobileShow)
       }
-      window.localStorage.setItem('shoppingCarts', JSON.stringify({"totalAmount":"37.98","totalNum":2,"productList":[{"productId":7,"productName":"Portable Charger 6700mAh Power Bank","colorId":2,"productQty":1,"price":17.99,"imgUrl":"http://apiimage.vava.com/prod/2018/10/31/6e819de9ed.jpg","urlKey":"ravpower-ace-6700mah-power-bank-with-ismart-technology","sku":"65-02060-001","model":"RP-PB060-B","unit":"$","categoryName":4},{"productId":1,"productName":"Battery Pack 6700mAh Power Bank (aka Portable Charger)","colorId":8,"productQty":1,"price":19.99,"imgUrl":"http://apiimage.vava.com/prod/2018/10/30/97d2909427.jpg","urlKey":"Ravpower-6700mAh-Portable-Charger","sku":"65-80000-356","model":"RP-PB17-Pink","unit":"$","categoryName":4}]}))
+      this.getShoppingCart()
     },
     methods: {
+      getShoppingCart () { // 获取本地缓存购物车列表
+        let shoppingCartData = localStorage.getItem('shoppingCarts') ? JSON.parse(localStorage.getItem('shoppingCarts')) : {totalNum: 0, shoppingCartId: '', cartList: []}
+        this.$store.commit('setShoppingCart', shoppingCartData)
+      }
     }
   }
 </script>

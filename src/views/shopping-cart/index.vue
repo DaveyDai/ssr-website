@@ -1,9 +1,10 @@
 <template>
   <div class="shoppint-cart">
     <shopping-cart-header></shopping-cart-header>
-    <shopping-list v-if="cartList.length > 0"></shopping-list>
+    <!-- 购物车列表组件 -->
+    <shopping-list v-if="shoppingCart.totalNum > 0" @refresh="getShoppingCart"></shopping-list>
     <!-- 购物车为空时 -->
-    <shopping-no-commodity v-if="cartList.length === 0"></shopping-no-commodity>
+    <shopping-no-commodity v-else></shopping-no-commodity>
   </div>
 </template>
 <script>
@@ -13,9 +14,8 @@
   export default {
     components: { ShoppingCartHeader, ShoppingNoCommodity, ShoppingList },
     computed: {
-      cartList () {
-        // return this.$store.state.cartList.productList
-        return [{}]
+      shoppingCart () { // 购物车列表
+        return this.$store.state.shoppingCart
       }
     },
     data () {
@@ -24,13 +24,47 @@
         loading: true
       }
     },
-    props: {},
+    beforeMount () {
+      this.getShoppingCart()
+    },
     methods: {
-      isLength (val) {
-        return val && val.length > 0
-      },
-      refresh () {
-        this.loading = false;
+      getShoppingCart () { // 获取购物车列表， 未登陆时根据购物车ID
+        // this.$store.dispatch('postByUrl', {api: 'getShopCartListNl', data: this.shoppingCart.shoppingCartId}).then(data => {
+        //   this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data)) // 保存购物车信息到本地和store
+        // }).catch(error => {
+        //   this.$utils.showErrorMes(this, error)
+        // })
+        setTimeout(() => {
+          this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(
+          [{ // 模拟数据
+            "skuProductMainUrl":"https://dqqvg67sziwi8.cloudfront.net/prod/2018/09/28/11f59b5914.jpg",
+            "productName":"VAVA Dash Cam 2K-VD005",
+            "shortName":"VAVA Dash Cam 2K-VD005",
+            "description":"",
+            "colourCode":"Black",
+            "colourName":"#000000",
+            "listingPrice":149.99,
+            "sellPrice":139.99,
+            "model":"VA-VD005",
+            "state":true,
+            "productSkuId":"83-05000-018",
+            "totalQtyOrdered":8
+          }, { // 模拟数据
+            "skuProductMainUrl":"https://dqqvg67sziwi8.cloudfront.net/prod/2018/09/28/11f59b5914.jpg",
+            "productName":"VAVA Dash Cam 2K-VD005",
+            "shortName":"VAVA Dash Cam 2K-VD005",
+            "description":"",
+            "colourCode":"Black",
+            "colourName":"#000000",
+            "listingPrice":149.99,
+            "sellPrice":139.99,
+            "model":"VA-VD005",
+            "state":true,
+            "productSkuId":"83-05000-0188",
+            "totalQtyOrdered":8
+          }], this.shoppingCart.shoppingCartId || 1234))
+        }, 100)
+        console.log(this.$store.state);
       }
     }
   }

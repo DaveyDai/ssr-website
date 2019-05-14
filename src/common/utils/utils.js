@@ -69,7 +69,7 @@ const browserRedirect = () => { // 判断当前浏览器终端类型
   return browser.versions().mobile
 }
 
-const toDecimal = x => { // 转换金额函数
+const toDecimal = x => { // 转换金额函数保存2位小数
   var f = parseFloat(x);
   if (isNaN(f)) {
       return false;
@@ -87,6 +87,29 @@ const toDecimal = x => { // 转换金额函数
   return s;
 }
 
+const setShoppingCart = (commit, data) => { // 设置购物车
+  commit('setShoppingCart', data)
+  if (typeof window !== 'undefined') window.localStorage.setItem('shoppingCarts', JSON.stringify(data))
+}
+
+const totalShoppingCart = (data, obj) => { // 继续添加购物车
+  data.totalNum += obj.totalQtyOrdered
+  data.productList.push(obj)
+  return data
+}
+
+const calculationCart = (data, shoppingCartId, isPay) => { // 计算购物车数量和总价 isPay 是否是最终支付商品
+  let cartData = {totalNum: 0, totalAmount: 0, shoppingCartId: shoppingCartId}
+  if (data.length === 0) return Object.assign(cartData, {productList: []})
+  data.forEach(item => {
+    cartData.totalNum += item.totalQtyOrdered // 累计总数
+    item.isSelect = typeof item.isSelect !== 'undefined' ? item.isSelect : true // 默认购买
+    if (item.isSelect) cartData.totalAmount += item.totalQtyOrdered * item.sellPrice // 累计总金额
+  })
+  cartData.totalAmount = toDecimal(cartData.totalAmount)
+  cartData.productList = data.filter(item => isPay ? item.isSelect : true)
+  return cartData
+}
 export default {
   validateEmail,
   message,
@@ -95,5 +118,8 @@ export default {
   showErrorMes,
   setScroll,
   browserRedirect,
-  toDecimal
+  toDecimal,
+  setShoppingCart,
+  totalShoppingCart,
+  calculationCart
 }

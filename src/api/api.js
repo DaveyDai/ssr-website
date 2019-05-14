@@ -57,5 +57,9 @@ export default {
   getShopCartList: apiBaseUrl + '/vava-pc-order/cart/findCartInfoListVo', // 购物车商品列表-分页(已登录)(token)
   deleteShopCartNl: apiBaseUrl + '/vava-pc-order/cart/deleteByUuidsNoLogin/', // 删除购物车商品(未登录)
   deleteShopCart: apiBaseUrl + '/vava-pc-order/cart/deleteByUuids', // 删除购物车商品(已登录)(token)
+  // 创建订单
+  getOrderInfoPriceVo: apiBaseUrl + '/vava-pc-order/shop/getOrderInfoPriceVo', // 查询订单税费、总价
+  checkCompletePay: apiBaseUrl + '/vava-pc-order/shop/checkCompletePay', // 查询订单是否完成支付
+  submitOrderInfo: apiBaseUrl + '/vava-pc-order/shop/submitOrderInfo', // 提交订单信息
   
 }

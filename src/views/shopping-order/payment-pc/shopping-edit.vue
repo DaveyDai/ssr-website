@@ -1,5 +1,5 @@
 <template>
-  <div class="shopping-order-pay center-main">
+  <div class="shopping-order-pay center-main" v-loading.fullscreen.lock="fullscreenLoading">
     <shopping-step :active="2" class="shopping-step"></shopping-step>
     <div class="order-pay-edit">
       <div class="slide-left ">
@@ -7,7 +7,7 @@
         <div class="box-address">
           <div class="title"  v-bind:class="{ 'active' : isOrder }">1.Shipping Address</div>
           <!-- 未登录的地址优化 -->
-          <shipping-address  @newAddress="showAddress" v-if="!isLogin" v-show="!isNew" @cancelAddress="cancelRess" :updateRess="updateRess" :emailLock='emailLock'></shipping-address>
+          <shipping-address  @newAddress="showAddress" v-if="!isLogin" v-show="!isNew" @cancelAddress="cancelRess" :updateRess="updateRess"></shipping-address>
           <!-- 登录情况地址 添加 如果没有登录就不要显示-->
           <div class="box-list" v-if="isLogin" v-show="!isOrder">
             <div class="list" >
@@ -74,7 +74,7 @@
         </div>
       </div>
       <!-- 右边结算预览 -->
-      <order-summary class="order-pay-summary"></order-summary>
+      <order-summary class="order-pay-summary" :isActive="isOrder" @click="saveOrder"></order-summary>
     </div>
   </div>
 </template>
@@ -85,17 +85,19 @@
   export default {
     components: { ShoppingStep, ShippingAddress, OrderSummary },
     computed: {
-      isLogin () {
+      isLogin () { // 判断是否登陆 缺少接口
         return false
       },
       totalPrice () {
-        let total = this.$utils.toDecimal(Number(this.cartList.totalAmount) + this.objTax.tax - this.couponAmount);
+        let total = this.$utils.toDecimal(Number(this.shoppingCart.totalAmount) + this.objTax.tax - this.couponAmount);
         return total;
+      },
+      shoppingCart () { // 最终需要购买的商品
+        return this.$utils.calculationCart(this.$store.state.shoppingCart.productList, this.$store.state.shoppingCart.shoppingCartId, true)
       }
     },
     data () {
       return {
-        shoppingCart: [],
         isNew: false, // 是否显示地址
         isAdd: false, // 是否登录新增地址
         email: '', // 用户操作邮箱
@@ -122,27 +124,18 @@
       }
     },
     mounted () {
-      // await this.$store.dispatch('fetchIsLogin');
       // this.userAuthToken = this.$cookie.get('userAuthToken');
       // this.init()
     },
-    beforeMount () {
-      console.log(this.$utils)
-      this.cartList = JSON.parse(window.localStorage.getItem('shoppingCarts') || {})
-    },
     methods: {
-      async showAddress (form) {
+      async showAddress (form) { // 编辑地址点击保存处理方法
         // 登陆了才保存地址
         if (this.isLogin) {
           form.active = 0;
           // 保存地址
-          await this.saveAddress(form);
+          // await this.saveAddress(form);
           // 添加进去
           if (this.isAdd) {
-            // 等于‘’ 等于新增
-            // if (form.id === '' || form.id === undefined || form.id === null) {
-            //   this.inAddressList.push(form);
-            // }
             this.dialogVisible = false;
             this.isAdd = false;
           }
@@ -172,7 +165,7 @@
           api: api,
           data: form
         }
-        await this.$store.dispatch('FETCH_POST_ALL', obj);
+        await this.$store.dispatch('requestPost', obj);
       },
       /**
        * [addAddress 添加地址展开]
@@ -190,8 +183,8 @@
       async getOrderTax () {
         // 获取税费接口
         let productList = [];
-        for (let i = 0; i < this.cartList.productList.length; i++) {
-          let ths = this.cartList.productList[i];
+        for (let i = 0; i < this.shoppingCart.productList.length; i++) {
+          let ths = this.shoppingCart.productList[i];
           productList.push({
             pid: ths.productId,
             colorId: ths.colorId,
@@ -212,7 +205,7 @@
           return false;
         }
         let obj = {
-          api: 'getOrderTax',
+          api: 'getOrderInfoPriceVo',
           data: {
             'brand': 'rp',
             'lang': 'en',
@@ -220,7 +213,7 @@
             'rqShopOrderAddress': this.selAddress
           }
         }
-        let taxList = await this.$store.dispatch('FETCH_POST_ALL', obj);
+        let taxList = await this.$store.dispatch('requestPost', obj);
         this.objTax = taxList.payload.data;
       },
       /**
@@ -240,19 +233,16 @@
             'originalSource': 'shopOrder'
           }
         }
-        let account = await this.$store.dispatch('FETCH_POST_ALL', accountObj)
+        let account = await this.$store.dispatch('requestPost', accountObj)
         this.userAuthToken = account.payload.data.userAuthToken;
       },
-      /**
-       * [saveOrder 根据地址保存订单]
-       * @author luke 2018-12-14
-       * @return {[type]} [description]
-       */
-      async saveOrder () {
+      // 下单
+      saveOrder () {
+        this.fullscreenLoading = true
         // 获取商品信息列表
         let productList = [];
-        for (let i = 0; i < this.cartList.productList.length; i++) {
-          let ths = this.cartList.productList[i];
+        for (let i = 0; i < this.shoppingCart.productList.length; i++) {
+          let ths = this.shoppingCart.productList[i];
           productList.push({
             pid: ths.productId,
             colorId: ths.colorId,
@@ -264,7 +254,7 @@
         let coupon = this.isCoupon ? this.couponCode : '';
         // 先保存订单然后调用支付按钮
         let obj = {
-          api: 'saveOrder',
+          api: 'submitOrderInfo',
           data: {
             'brand': 'rp',
             'lang': 'en',
@@ -272,24 +262,22 @@
             'orderSource': 'RAVPower',
             'purchaseType': '0',
             'couponCode': coupon,
-            'amountTotal': this.cartList.totalAmount,
-            'qtyTotal': this.cartList.totalNum,
+            'amountTotal': this.shoppingCart.totalAmount,
+            'qtyTotal': this.shoppingCart.totalNum,
             'qtyItem': productList.length,
             'items': productList,
             'userAuthToken': this.userAuthToken,
             "rqShopOrderAddress": this.selAddress
           }
         }
-
-        let orderList = await this.$store.dispatch('FETCH_POST_ALL', obj).catch(error => {
+        this.$store.dispatch('postFetch', obj).then(orderList => { // 调用下单接口
+          // this.$seoFn.onCheckoutOption(3, 'Pay')
+          // 提交给pp支付并跳转
+          if (orderList) this.palpal(orderList) // 下单成功后调用PP支付
+        }).catch(error => {
           this.fullscreenLoading = false
           this.$message.error(error && error.message || 'Server Error' )
         })
-        if (!(orderList.resCode === 200 || orderList.code === 200)) {
-          this.fullscreenLoading = false
-          this.$message.error(orderList.resDes || orderList.message)
-        }
-        return orderList.resCode === 200 || orderList.code === 200 ? orderList.payload.data.orderList[0] : false
       },
       /**
        * [palpal 支付页面]
@@ -299,8 +287,8 @@
       palpal (orderList) {
         // 提交给pp支付
         let arrExList = [];
-        for(let i = 0 ; i < this.cartList.productList.length; i++){
-          let orderItemExList = this.cartList.productList[i];
+        for(let i = 0 ; i < this.shoppingCart.productList.length; i++){
+          let orderItemExList = this.shoppingCart.productList[i];
           let json = {
             'sku': orderItemExList.sku,
             'shortName': orderItemExList.productName,
@@ -318,7 +306,7 @@
           data: {
             'orderId': orderList.id,
             'orderTotal': this.totalPrice,
-            'subTotal': this.cartList.totalAmount,
+            'subTotal': this.shoppingCart.totalAmount,
             'discountAmount': orderList.discountAmount,
             'tax': this.objTax.tax,
             'description': '',
@@ -340,7 +328,7 @@
         // 清除购物车数据
         this.clearCarts();
         // 跳转pp
-        this.$store.dispatch('FETCH_POST_ALL', pObj).then(json => {
+        this.$store.dispatch('requestPost', pObj).then(json => {
           let data = json.payload.data
           if (data) {
             // window.open(data.approvalUrl);
@@ -363,7 +351,7 @@
        */
       clearCarts () {
         let newArr = [];
-        let pList = this.cartList.productList;
+        let pList = this.shoppingCart.productList;
         for (let i = 0; i < pList.length; i++) {
           let ths = pList[i];
           newArr.push({
@@ -385,25 +373,6 @@
         }).catch(error => {
           this.$message.error(error);
         });
-      },
-      /**
-       * [pay 最终支付]
-       * @author luke 2018-12-13
-       */
-      async pay () {
-        // 没有登录获取token
-        if (!this.isLogin) {
-          await this.getAccountToken();
-        }
-        // loading
-        this.fullscreenLoading = true;
-
-        // 获取订单信息
-        let orderList = await this.saveOrder();
-        this.$seoFn.onCheckoutOption(3, 'Pay');
-        // 提交给pp支付并跳转
-        if (orderList) this.palpal(orderList);
-
       },
       /**
        * [init 初始化方法]
@@ -435,7 +404,7 @@
           }
         }
         let ths = this;
-        this.$store.dispatch('FETCH_ADDRESS_ALL', obj).then(json => {
+        this.$store.dispatch('postFetch', {api: 'findAddressInfoListVo', data: {pageNo: 1, pageSize: 20}}).then(json => {
           this.inAddressList = json.payload.data;
           // 默认选中第一个
           this.selAddress = this.inAddressList[0];
@@ -461,9 +430,9 @@
           }
         };
         this.$store.dispatch('fetchGetAll', obj).then(json => {
-          this.cartList.productList = json.brandShopCartItems;
-          this.cartList.totalAmount = json.brandShopCart[0].amountTotal;
-          this.cartList.totalNum = json.brandShopCart[0].qtyTotal
+          this.shoppingCart.productList = json.brandShopCartItems;
+          this.shoppingCart.totalAmount = json.brandShopCart[0].amountTotal;
+          this.shoppingCart.totalNum = json.brandShopCart[0].qtyTotal
           this.loading = false;
         }).catch(error => {
           this.$message.error(error);
@@ -567,7 +536,7 @@
           data: {
             token: this.userAuthToken,
             couponCode: this.couponCode,
-            subTotal: this.cartList.totalAmount
+            subTotal: this.shoppingCart.totalAmount
           }
         };
         this.$store.dispatch('FETCH_GET_ALL', obj).then(json => {
@@ -584,8 +553,8 @@
           // 获取价格
           var totPrice = 0;
           var discount = 1;
-          for (let i = 0; i < this.cartList.productList.length; i++) {
-            let ths = this.cartList.productList[i];
+          for (let i = 0; i < this.shoppingCart.productList.length; i++) {
+            let ths = this.shoppingCart.productList[i];
             let qty = ths.productQty;
             let price = ths.price;
             if (this.directDiscount !== '') {
@@ -594,7 +563,7 @@
             totPrice += this.$common.toDecimal(price * discount) * qty;
             ths.discountPrice = this.$common.toDecimal(price * discount);
           }
-          this.couponAmount = this.$common.toDecimal(this.cartList.totalAmount - totPrice);
+          this.couponAmount = this.$common.toDecimal(this.shoppingCart.totalAmount - totPrice);
           // 获取税率
           this.getOrderTax();
         }).catch(error => {
@@ -784,6 +753,7 @@
           padding: 20px;
           background: #FFFFFF;
           .item {
+            position: relative;
             padding: 20px;
             .right-block {
               position: absolute;

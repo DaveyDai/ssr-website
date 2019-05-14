@@ -11,6 +11,7 @@ import Utils from '@/common/utils/utils.js' // 工具方法
 import VavaUi from '@/components/components.js' // 全局公共组件
 import * as filters from '@/common/utils/filters'
 import Element from '@/components/element-ui' // 引入部分element-ui组件
+
 Object.keys(Element).forEach(key => {
   Vue.component(Element[key].name, Element[key])
 })
@@ -22,6 +23,7 @@ VavaUi.map(component => {
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
+Vue.prototype.$utils = Utils
 if (process.browser) {
   Vue.use(require('vue-awesome-swiper/dist/ssr'))
   Vue.use(require('vue-lazyload'), {
@@ -32,7 +34,6 @@ if (process.browser) {
   })
   Vue.use({
     install: function (Vue) {
-      Vue.prototype.$utils = Utils
       Vue.prototype.isIphone = navigator.userAgent.indexOf('iPhone') !== -1 // 是否是ios设备 true 是 false 不是
       Vue.prototype.$scrollReveal = require('scrollreveal') // 滚动动画插件
     }

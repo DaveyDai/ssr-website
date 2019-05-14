@@ -79,5 +79,11 @@ export default {
   },
   setSaleCountry (state, data) {
     state.saleCountry = data
+  },
+  setMediaDevices (state, data) {
+    state.mediaDevices = data
+  },
+  setShoppingCart (state, data) {
+    state.shoppingCart = data
   }
 }

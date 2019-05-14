@@ -7,30 +7,28 @@
           <!-- 登录界面 -->
          <div class="slide-login ">
             <h3 class="title">Account Checkout</h3>
-            <el-form :model="sign" ref="sign" class="demo-ruleForm">
+            <el-form :model="loginParam" ref="sign" class="demo-ruleForm">
               <el-form-item
-                prop="email"
+                prop="userName"
                 :rules="[
                   { required: true, message: 'Please enter the Email'},
                   { type: 'email', message: 'Please enter a valid Email', trigger: ['blur', 'change'] }
                 ]"
               >
-                <el-input type="email" class="login-input" placeholder="Email Address" v-model="sign.email"></el-input>
+                <el-input type="email" class="login-input" placeholder="Email Address" v-model="loginParam.userName"></el-input>
               </el-form-item>
               <el-form-item
-                prop="pwd"
+                prop="password"
                 :rules="[
                   { required: true, message: 'Please enter the password'}
                 ]"
               >
-                <el-input type="password" class="login-input" placeholder="Password" v-model="sign.pwd"></el-input>
-              </el-form-item>
-              <el-form-item>
-                <vava-button @click="login" style="width: 100%;">LOGIN IN</vava-button>
+                <el-input type="password" class="login-input" placeholder="Password" v-model="loginParam.password"></el-input>
               </el-form-item>
             </el-form>
+            <vava-button @click="login" style="width: 100%;margin-bottom: 22px;">LOGIN IN</vava-button>
             <div class="box-tip">
-              <a href="/register" target="_blank" alt="sign up">
+              <a href="/create-account" target="_blank" alt="sign up">
                 <span class="sign">Sign up></span>
               </a>
               <span class="account" @click='dialogVisible = true'>
@@ -55,10 +53,8 @@
               >
                 <el-input  class="login-input" placeholder="Email Address" v-model="unSign.email"></el-input>
               </el-form-item>
-              <el-form-item>
-                <vava-button @click="guestLogin" style="width: 100%;">CONTINUE AS GUEST</vava-button>
-              </el-form-item>
           </el-form>
+          <vava-button @click="guestLogin" style="width: 100%;">CONTINUE AS GUEST</vava-button>
         </div>
         <!-- 右边结算预览 -->
         <order-summary></order-summary>
@@ -83,49 +79,45 @@
     },
     data () {
       return {
-        cartList: {productList: []},
-        sign: {email: '', pwd: ''},
+        loginParam: { userName: '', password: '' },
         unSign: {email: ''},
         dialogVisible: false,
         userAuthToken: ''
       }
     },
-    beforeMount () {
-      this.cartList = JSON.parse(window.localStorage.getItem('shoppingCarts') || {})
-    },
     methods: {
-      getCart1 () {
-        this.userAuthToken = this.$cookie.get('userAuthToken');
-        let obj = {
-          api: 'getCartList',
-          data: {
-            token: this.userAuthToken
-          }
-        };
-        this.$store.dispatch('fetchGetAll', obj).then(json => {
-          if (json === '[]') {
-            this.updateCart([]);
-          } else {
-            this.updateCart(json.brandShopCartItems);
-          }
-        }).catch(error => {
-          this.$message.error(error);
-        });
-      },
       login () {
-        let data = this.sign;
-        this.$store.dispatch('fetchLogin', data).then(json => {
-          // 是否记住密码
-          if (this.remember) {
-            this.$cookie.set('uname', this.sign.email)
+        this.$refs['sign'].validate((valid) => {
+          if (valid) {
+            this.$store.dispatch('postFetch', {api: 'signIn', data: this.loginParam}).then(data => {
+              this.$store.commit('setToken', data.token)
+              // 登陆成功后保存用户邮箱
+              this.$utils.setShoppingCart(this.$store.commit, Object.assign(this.$store.state.shoppingCart, {payEmail: this.loginParam.userName}))
+              this.$router.push('/pay')
+            }).catch(error => {
+              this.$utils.showErrorMes(this, error)
+            })
           }
-          // 处理购物车逻辑
-          this.getCart1();
-          // 跳转首页
-          // this.$router.push('/pay')
-        }).catch(error => {
-          this.$message.error(error);
-        });
+        })
+        // let data = this.sign;
+        // this.$store.dispatch('fetchLogin', this.sign).then(json => {
+        //   // 是否记住密码
+        //   if (this.remember) {
+        //     this.$cookie.set('uname', this.sign.email)
+        //   }
+        //   // 处理购物车逻辑
+        //   this.getCart1();
+        //   // 跳转首页
+        //   // this.$router.push('/pay')
+        // }).catch(error => {
+        //   this.$message.error(error);
+        // });
+        // this.$store.dispatch('postFetch', {api: 'signIn', data: this.loginParam}).then(data => {
+        //   this.$store.commit('setToken', data.token)
+        //   this.getCart1()
+        // }).catch(error => {
+        //   this.$utils.showErrorMes(this, error)
+        // })
       },
       updateCart (pList) {
         let newArr = [];
@@ -164,27 +156,18 @@
           this.$message.error(error);
         });
       },
-      /**
-       * [guestLogin 游客登陆]
-       * @author luke 2018-12-12
-       */
       guestLogin () {
         this.$refs['unSign'].validate((valid) => {
           if (valid) {
             // 跳转支付页面
-            this.$router.push('/pay/?email=' + this.unSign.email);
-          } else {
-            console.log('error submit!!');
-            return false;
+            this.$utils.setShoppingCart(this.$store.commit, Object.assign(this.$store.state.shoppingCart, {payEmail: this.unSign.email}))
+            this.$router.push('/pay')
           }
-        });
-      },
-      isLength (val) {
-        return val && val.length > 0
+        })
       },
       changeSuccess () {
         this.dialogVisible = false;
-      },
+      }
     }
   }
 </script>

@@ -24,6 +24,7 @@
       handleCheck () {
         this.currentValue = !this.currentValue
         this.$emit('input', this.currentValue)
+        this.$emit('change', this.changeValue)
       }
     }
   }
