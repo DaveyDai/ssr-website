@@ -14,7 +14,10 @@
     <!-- 再次输入密码 -->
     <vava-input v-if="verificationShow" v-model="confirmPassword" type="password" maxlength="50" class="create-account-input" placeholder="Confirm Password"></vava-input>
     <!-- 选择国家 -->
-    <vava-select v-if="verificationShow" class="create-account-input create-account-select" v-model="createPram.countryCode" :select-data="countryList"></vava-select>
+    <!-- <vava-select class="create-account-input create-account-select" v-model="createPram.countryCode" :select-data="countryList"></vava-select> -->
+    <el-select v-if="verificationShow" v-model="createPram.countryCode" class="create-account-input create-account-select" placeholder="Please Choose" no-data-text="No Data">
+      <el-option v-for="(item, index) of countryList" :value="item.dicCode" :label="item.dicExtra" :key="index"></el-option>
+    </el-select>
     <!-- 发送邮箱验证码按钮 -->
     <vava-button v-if="!verificationShow" class="create-account-button" @click="sendCode">SEND CODE</vava-button>
     <!-- 勾选法律文件信息 -->
@@ -59,7 +62,7 @@
       }
     },
     mounted () {
-      this.createPram.countryCode = this.countryList[0].dicExtra
+      this.createPram.countryCode = this.countryList[0].dicCode
     },
     methods: {
       sendCode () {
@@ -158,8 +161,17 @@
         padding: 0 3vw;
       }
     }
-    .create-account-select .vava-select-input{
-      padding: 0 3vw;
+    .create-account-select{
+      min-height: 40px;
+      .el-input{
+        height: 100%;
+        .el-input__inner{
+          height: 100%;
+          border-radius: 5vw;
+          padding: 0 3vw;
+          color: #717375;
+        }
+      }
     }
     .create-input-email{
       width: 26vw;

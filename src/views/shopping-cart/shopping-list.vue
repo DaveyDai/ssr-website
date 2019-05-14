@@ -7,8 +7,8 @@
         <span>Shopping Cart</span><span class="updata-shopping" @click="reData">Update Shopping Cart</span><span class="updata-shopping-item">{{shoppingCart.productList.length}} items</span>
       </div>
       <!-- 商品列表 -->
-      <li class="product-list-li" v-for="(item, index) of shoppingCart.productList" :key="index">
-        <vava-checkbox round v-model="item.isSelect" @change="removeShop"></vava-checkbox>
+      <li class="product-list-li" :class="{'is-disabled': !item.state}" v-for="(item, index) of shoppingCart.productList" :key="index">
+        <vava-checkbox round v-model="item.isSelect" @change="removeShop" :disable="!item.state"></vava-checkbox>
         <div class="li-product-img"><img :src="item.skuProductMainUrl" alt=""></div>
         <div class="li-product-name">
           <p class="product-d-title" :title="item.productName">{{item.shortName}}</p>
@@ -17,27 +17,11 @@
           <p class="product-d-price">${{item.sellPrice}}<span>${{item.listingPrice}}</span></p>
         </div>
         <div class="li-product-number">
-          <el-input-number v-model="item.totalQtyOrdered" :min="1" :max="999" @change="upShoppingTotal(item)"></el-input-number>
+          <el-input-number v-model="item.totalQtyOrdered" :disabled="!item.state" :min="1" :max="999" @change="upShoppingTotal(item)"></el-input-number>
         </div>
         <div class="li-product-right">
           <div class="li-product-total">${{(item.totalQtyOrdered * item.sellPrice).toFixed(2)}}</div>
           <i class="li-product-delete el-icon-delete" @click="deleteShoppingData(item)"></i>
-        </div>
-      </li>
-      <li class="product-list-li is-disabled">
-        <vava-checkbox round></vava-checkbox>
-        <div class="li-product-img"><img src="@/assets/images/country-icon/CNY-font.png" alt=""></div>
-        <div class="li-product-name">
-          <p class="product-d-title">Ravpower 6700mAh Portable Charger</p>
-          <p class="product-d-model">Model: RP-PB052-Black</p>
-          <p class="product-d-color">Color: Black<span>Out of Stock</span></p>
-          <p class="product-d-price">$16.89<span>$20.89</span></p>
-        </div>
-        <div class="li-product-number">
-        </div>
-        <div class="li-product-right">
-          <div class="li-product-total">$100000.89</div>
-          <i class="li-product-delete el-icon-delete"></i>
         </div>
       </li>
     </div>

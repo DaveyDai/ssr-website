@@ -1,5 +1,9 @@
 <template>
-  <div class="vava-checkbox" :class="{'is-round': round}"><span @click="handleCheck" class="vava-checkbox-select" :class="{active: currentValue}"><i class="icon icon-selected"></i></span><slot></slot></div>
+  <div class="vava-checkbox" :class="{'is-round': round, 'is-disabled': disable}">
+    <span @click="handleCheck" class="vava-checkbox-select" :class="{active: currentValue && !disable}">
+      <i class="icon icon-selected"></i></span>
+      <slot></slot>
+  </div>
 </template>
 
 <script>
@@ -8,7 +12,8 @@
     componentName: 'VavaCheckbox',
     props: {
       value: Boolean,
-      round: Boolean
+      round: Boolean, // 是否为圆形
+      disable: Boolean // 是否禁用
     },
     watch: {
       value (newValue) {
@@ -22,9 +27,11 @@
     },
     methods: {
       handleCheck () {
-        this.currentValue = !this.currentValue
-        this.$emit('input', this.currentValue)
-        this.$emit('change', this.changeValue)
+        if (!this.disable) {
+          this.currentValue = !this.currentValue
+          this.$emit('input', this.currentValue)
+          this.$emit('change', this.changeValue)
+        }
       }
     }
   }
@@ -56,9 +63,15 @@
         font-size: 0.6vw;
       }
       &:hover{border: 0.052vw solid @base-button-back}
+      span.icon{
+        display: none;
+      }
     }
     span.active{
       background-color: @base-button-back;
+      span.icon{
+        display: inline-block;
+      }
     }
   }
   .is-round{
@@ -70,6 +83,11 @@
       border-radius: 50%;
     }
   }
+  // .is-disabled{
+  //   span.vava-checkbox-select{
+  //     background-color: #999;
+  //   }
+  // }
   @media (max-width: 1350px) {
     .vava-checkbox{
       .vava-checkbox-select{

@@ -59,7 +59,7 @@
             "listingPrice":149.99,
             "sellPrice":139.99,
             "model":"VA-VD005",
-            "state":true,
+            "state":false,
             "productSkuId":"83-05000-0188",
             "totalQtyOrdered":8
           }], this.shoppingCart.shoppingCartId || 1234))

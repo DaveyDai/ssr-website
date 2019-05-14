@@ -298,27 +298,6 @@
         }
         span.active{color: @base-color;}
         .phone-header-icon{display: none;}
-        span.header-shopping-cart{
-          position: relative;
-          em{
-            position: absolute;
-            right: 0;
-            top: 0;
-            transform: translate(50%, -50%);
-            display: flex;
-            justify-content: center;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: @base-color;
-            color: white;
-            font-style: normal;
-            text-align: center;
-            // padding: 1px 0;
-            line-height: 16px;
-            font-size: 10px;
-          }
-        }
       }
     }
     .page-header-country{
@@ -371,28 +350,6 @@
         width: 21px;
         height: 21px;
       }
-      span.header-shopping-cart{
-        position: relative;
-        i{color: #FFF;}
-        em{
-          position: absolute;
-          right: 0;
-          top: 0;
-          transform: translate(50%, -50%);
-          display: flex;
-          justify-content: center;
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: @base-color;
-          color: white;
-          font-style: normal;
-          text-align: center;
-          padding: 1px 0;
-          line-height: 16px;
-          font-size: 10px;
-        }
-      }
     	.header-collapse-title{
     		width: 100%;
     		text-align: center;
@@ -440,6 +397,28 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+      }
+    }
+    // 购物车图标商品数量标签
+    span.header-shopping-cart{
+      position: relative;
+      em{
+        position: absolute;
+        right: 0;
+        top: 0;
+        transform: translate(50%, -50%);
+        display: flex;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: @base-color;
+        color: white;
+        font-style: normal;
+        text-align: center;
+        // padding: 1px 0;
+        line-height: 18px;
+        font-size: 10px;
       }
     }
   }
