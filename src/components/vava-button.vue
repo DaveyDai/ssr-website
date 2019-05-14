@@ -12,7 +12,7 @@
     componentName: 'VavaButton',
     methods: {
       handleClick (el) {
-        this.$emit('click', el)
+        if (!this.disable) this.$emit('click', el)
       }
     }
   }

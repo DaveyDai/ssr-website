@@ -79,7 +79,7 @@
     },
     methods: {
       cartCheckOut () {
-        this.$router.push(this.$store.state.accountData.isLogin ? '/pay' : '/shopping-customer')
+        this.$router.push(this.$cookies.get('token') ? '/pay' : '/shopping-customer')
       },
       upShoppingTotal (item) { // 改变商品数量
         this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(this.shoppingCart.productList, this.shoppingCart.shoppingCartId))

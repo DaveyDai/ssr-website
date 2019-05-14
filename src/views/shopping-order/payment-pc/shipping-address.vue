@@ -196,7 +196,8 @@
         this.$store.dispatch('postFetch', {api: 'selectShopCountryVo'}).then(data => {
           this.$store.commit('setSaleCountry', data)
         }).catch(error => {
-          this.$utils.showErrorMes(this, error)
+          let messageStr = error.code === 'ECONNABORTED' ? 'The system is busy. Please try to refresh it.' : error && error.message || 'The system is busy. Please try to refresh it.'
+          this.$message.error(messageStr)
         })
       },
       // getCountry () {

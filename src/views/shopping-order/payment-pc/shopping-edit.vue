@@ -33,11 +33,7 @@
               </div>
             </div>
             <!-- 按钮下一步 -->
-            <vava-button v-if="inAddressList.length > 0" style="margin-top: 20px;width: 180px;" @click="clickCont" class="bg-gradient">
-              Continue
-            </vava-button>
-            <!-- 没有显示地址的情况 -->
-            <vava-button v-else style="margin-top: 20px;width: 180px;" class="btn-gray">Continue</vava-button>
+            <vava-button :disable="inAddressList.length === 0" @click="clickCont" class="bg-gradient check-address">Continue</vava-button>
           </div>
           <!-- 折叠内容展示 -->
           <div class="detail" v-if="isOrder">
@@ -85,9 +81,6 @@
   export default {
     components: { ShoppingStep, ShippingAddress, OrderSummary },
     computed: {
-      isLogin () { // 判断是否登陆 缺少接口
-        return false
-      },
       totalPrice () {
         let total = this.$utils.toDecimal(Number(this.shoppingCart.totalAmount) + this.objTax.tax - this.couponAmount);
         return total;
@@ -120,26 +113,26 @@
         fullscreenLoading: false,
         isTips: false, // 优惠错误提示
         emailLock: false, // 是否锁定邮箱禁止编辑
-        cartList: {productList: []}
+        cartList: {productList: []},
+        isLogin: false // 是否登陆
       }
     },
     mounted () {
-      // this.userAuthToken = this.$cookie.get('userAuthToken');
-      // this.init()
+      // 如果登陆就获取地址列表 未登陆直接显示地址编辑表单
+       if (this.$cookies.get('token')) {
+         this.isLogin = true
+         this.getInAddress()
+       }
     },
     methods: {
       async showAddress (form) { // 编辑地址点击保存处理方法
         // 登陆了才保存地址
         if (this.isLogin) {
-          form.active = 0;
-          // 保存地址
-          // await this.saveAddress(form);
-          // 添加进去
+          this.saveAddress(form, this.isAdd) // 保存地址
           if (this.isAdd) {
             this.dialogVisible = false;
             this.isAdd = false;
           }
-          await this.getInAddress();
         } else {
           // 没有登录
           this.selAddress = form;
@@ -151,21 +144,29 @@
           this.getOrderTax();
         }
       },
-      /**
-       * [saveAddress 登陆之后要保存地址]
-       * @author luke 2018-12-14
-       */
-      async saveAddress (form) {
-        form.userAuthToken = this.userAuthToken;
-        let api = 'editAddress'
-        if (form.id === '' || form.id === undefined || form.id === null) {
-          api = 'addAddress'
-        }
-        let obj = {
-          api: api,
-          data: form
-        }
-        await this.$store.dispatch('requestPost', obj);
+      saveAddress (form, isAdd) { // 登陆状态下 编辑地址保存 isAdd 为true表示登陆下新增地址
+        this.$store.dispatch('postFetch', {api: isAdd ? 'addressAdd' : 'addressEdit', data: form}).then(data => {
+          this.$message.success('success')
+          this.getInAddress() // 保存成功后重新获取地址列表
+        }).catch(error => {
+          let messageStr = error.code === 'ECONNABORTED' ? 'The system is busy. Please try to refresh it.' : error && error.message || 'The system is busy. Please try to refresh it.'
+          this.$message.error(messageStr)
+        })
+      },
+      getInAddress () { // 获取地址列表
+        this.$store.dispatch('postFetch', {api: 'findAddressInfoListVo', data: {pageNo: 1, pageSize: 20}}).then(json => {
+          this.inAddressList = json.payload.data;
+          // 默认选中第一个
+          this.selAddress = this.inAddressList[0];
+          this.isSelect = this.selAddress.id;
+          // 获取税费
+          this.selAddress.country = this.selAddress.countryCode;
+          this.selAddress.region = this.selAddress.regionCode;
+          this.selAddress.email = this.userList.email;
+          ths.getOrderTax();
+        }).catch(error => {
+          this.$message.error(error)
+        })
       },
       /**
        * [addAddress 添加地址展开]
@@ -374,54 +375,6 @@
           this.$message.error(error);
         });
       },
-      /**
-       * [init 初始化方法]
-       * @author luke 2018-12-07
-       * @return {[type]} [description]
-       */
-      init () {
-        if (this.isLogin) {
-          // 获取登录用户的地址
-          this.getInAddress();
-          this.email = this.userList.email;
-        } else {
-          if (this.$route.query.email) {
-            this.email = this.$route.query.email;
-            this.emailLock = true
-          }
-        }
-      },
-      /**
-       * [getInAddress 获取登陆]
-       * @author luke 2018-12-15
-       */
-      getInAddress () {
-        // 获取地址列表
-        let obj = {
-          api: 'getAddressList',
-          data: {
-            userAuthToken: this.userAuthToken
-          }
-        }
-        let ths = this;
-        this.$store.dispatch('postFetch', {api: 'findAddressInfoListVo', data: {pageNo: 1, pageSize: 20}}).then(json => {
-          this.inAddressList = json.payload.data;
-          // 默认选中第一个
-          this.selAddress = this.inAddressList[0];
-          this.isSelect = this.selAddress.id;
-          // 获取税费
-          this.selAddress.country = this.selAddress.countryCode;
-          this.selAddress.region = this.selAddress.regionCode;
-          this.selAddress.email = this.userList.email;
-          ths.getOrderTax();
-        }).catch(error => {
-          this.$message.error(error);
-        });
-      },
-      /**
-       * [getCart 获取购物车数据]
-       * @author luke 2018-12-07
-       */
       getCart () {
         let obj = {
           api: 'getCartList',
@@ -451,7 +404,7 @@
           }
         };
         await this.$store.dispatch('FETCH_ADDRESS_ALL', obj);
-        // 获取新的地址
+        // 获取新的地址列表
         this.getInAddress();
         let inObj = {
           api: 'getAddressList',
@@ -597,7 +550,7 @@
     .shopping-step{
       background-color: #FFF;
       margin-bottom: 20px;
-      padding: 0 11vw;
+      padding: 0 150px;
     }
     .order-pay-edit{
       display: flex;
@@ -707,6 +660,9 @@
               border-image-slice: 1;
             }
           }
+          .check-address{
+            margin-top: 20px;width: 180px;max-height: 45px;
+          }
         }
         .detail {
           font-family: SFCompactDisplay-Regular;
@@ -728,7 +684,7 @@
             right: 20px;
             font-family: SFCompactDisplay-Regular;
             font-size: 14px;
-            color: #13BED3;
+            color: @base-color;
             line-height: 20px;
             cursor: pointer;
           }
