@@ -42,7 +42,7 @@
     </div>
     <div class="shopping-lit-footer">
       <span class="pretax-total-price">Pre-Tax total: <em>${{shoppingCart.totalAmount}}</em></span>
-      <vava-button class="cart-check-out no-wrap">Check Out</vava-button>
+      <vava-button class="cart-check-out no-wrap" @click="cartCheckOut">Check Out</vava-button>
     </div>
   </div>
 </template>

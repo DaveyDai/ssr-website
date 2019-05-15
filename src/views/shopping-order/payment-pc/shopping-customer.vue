@@ -31,9 +31,7 @@
               <a href="/create-account" target="_blank" alt="sign up">
                 <span class="sign">Sign up></span>
               </a>
-              <span class="account" @click='dialogVisible = true'>
-                Forgot your password?
-              </span>
+              <span class="account" @click='dialogVisible = true'>Forgot your password?</span>
             </div>
          </div>
 
@@ -61,15 +59,16 @@
       </div>
     </div>
     <!-- 忘记密码弹出框 -->
-    <el-dialog :visible.sync="dialogVisible" width="40%">
-      <change-password @change-success='changeSuccess'></change-password>
+    <el-dialog :visible.sync="dialogVisible">
+      <change-password @change-success="changeSuccess" isDialog></change-password>
     </el-dialog>
   </div>
 </template>
 <script>
   import ShoppingStep from './shopping-step.vue'
   import OrderSummary from './order-summary.vue'
-  import ChangePassword from './change-password.vue'
+  // import ChangePassword from './change-password.vue'
+  import ChangePassword from '../../account/forgot-password.vue'
   export default {
     components: { ShoppingStep, OrderSummary, ChangePassword },
     computed: {
@@ -91,9 +90,9 @@
           if (valid) {
             this.$store.dispatch('postFetch', {api: 'signIn', data: this.loginParam}).then(data => {
               this.$store.commit('setToken', data.token)
-              // 登陆成功后保存用户邮箱
+              // 登陆成功后保存用户邮箱 但是不要去刷新用户原来购物车的数据了 以免用户发现购物车结算面板不对 退出继续支付
               this.$utils.setShoppingCart(this.$store.commit, Object.assign(this.$store.state.shoppingCart, {payEmail: this.loginParam.userName}))
-              this.$router.push('/pay')
+              this.$router.push({path: '/pay', query: {email: this.loginParam.userName}})
             }).catch(error => {
               this.$utils.showErrorMes(this, error)
             })
@@ -119,54 +118,18 @@
         //   this.$utils.showErrorMes(this, error)
         // })
       },
-      updateCart (pList) {
-        let newArr = [];
-        for (let i = 0; i < pList.length; i++) {
-          let ths = pList[i];
-          newArr.push({
-            pid: ths.productId,
-            num: 0,
-            colorId: ths.colorId,
-            sku: ths.sku,
-            model: ths.model
-          })
-        }
-        // 从缓存更新到购物车
-        let list = JSON.parse(localStorage.getItem('shoppingCarts'));
-        for (let i = 0; i < list.productList.length; i++) {
-          let ths =list.productList[i];
-          newArr.push({
-            'pid': ths.productId,
-            'colorId': ths.colorId,
-            'num': ths.productQty,
-            'sku': ths.sku,
-            'model': ths.model
-          })
-        }
-        let obj = {
-          countryId: 1,
-          brand: this.brand,
-          lang: this.lang,
-          items: newArr
-        };
-        this.$store.dispatch('UPDATE_CART_LIST', obj).then(json => {
-          localStorage.removeItem('shoppingCarts');
-          this.$router.push('/pay/');
-        }).catch(error => {
-          this.$message.error(error);
-        });
-      },
       guestLogin () {
         this.$refs['unSign'].validate((valid) => {
           if (valid) {
             // 跳转支付页面
             this.$utils.setShoppingCart(this.$store.commit, Object.assign(this.$store.state.shoppingCart, {payEmail: this.unSign.email}))
-            this.$router.push('/pay')
+            this.$router.push({path: '/pay', query: {email: this.unSign.email}})
           }
         })
       },
       changeSuccess () {
         this.dialogVisible = false;
+        this.$message.success('success!')
       }
     }
   }
@@ -174,6 +137,17 @@
 <style lang='less' scoped >
   .shopping-customer-pc{
     min-height: auto;
+    .forgot-password{
+      padding-top: 0;
+      .forgot-password-button, .forgot-password-input{
+        height: 45px;
+        max-width: 350px;
+        font-size: 14px;
+      }
+      .create-input-email input{
+        height: 45px;
+      }
+    }
   }
   .shopping-customer-pc .shopping-customer-content{
     padding: 20px 0px;

@@ -20,7 +20,6 @@
     },
     data () {
       return {
-        inCartList: [], // 已经登录
         loading: true
       }
     },

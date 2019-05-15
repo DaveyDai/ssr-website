@@ -7,7 +7,7 @@
           <el-input v-model="ruleForm1.email"></el-input>
         </el-form-item>
         <div class='btnNextWrap'>
-          <el-button class='btnNext bg-gradient' type="primary" @click="submitForm1('ruleForm1')">Next</el-button>
+          <vava-button class='btnNext bg-gradient' type="primary" @click="submitForm1('ruleForm1')">Next</vava-button>
         </div>
       </el-form>
       <el-form v-if="active == 1" :model="ruleForm2" :rules="rules2" ref="ruleForm2" class="demo-ruleForm" autocomplete="off">
@@ -23,17 +23,16 @@
         <el-form-item label="Vertification Code" prop="verificationCode" autocomplete="off">
           <div class='vertifyCode'>
             <el-input autocomplete="off" v-model="ruleForm2.verificationCode" placeholder="please enter verification code">
-              
             </el-input>
             <div class="btnWrap bg-gradient" v-if='!isLeaveNoTime'>
-              <el-button  class="btn-border w170">{{leaveTimeText}}</el-button>
+              <vava-button  class="btn-border w170">{{leaveTimeText}}</vava-button>
             </div>
-            <el-button style='border: none;' v-if='isLeaveNoTime' class='btnWrap bg-gradient' type="primary" @click="resendCode()">ReSend</el-button>
+            <vava-button style='border: none;' v-if='isLeaveNoTime' class='btnWrap bg-gradient' type="primary" @click="resendCode()">ReSend</vava-button>
           </div>
           <p class='notice'>*Enter verification code from your email</p>
         </el-form-item>
         <div class='btnNextWrap'>
-          <el-button class='btnNext bg-gradient' type="primary" @click="submitForm2('ruleForm2')">Next</el-button>
+          <vava-button class='btnNext bg-gradient' type="primary" @click="submitForm2('ruleForm2')">Next</vava-button>
         </div>
       </el-form>
     </div>

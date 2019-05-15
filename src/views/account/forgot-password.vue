@@ -13,15 +13,18 @@
     <vava-input v-if="verificationShow" v-model="createPram.password" type="password" maxlength="50" class="forgot-password-input" placeholder="Password"></vava-input>
     <!-- 再次输入密码 -->
     <vava-input v-if="verificationShow" v-model="confirmPassword" type="password" maxlength="50" class="forgot-password-input" style="margin-top: 0;" placeholder="Confirm Password"></vava-input>
-    <vava-button v-if="!verificationShow" @click="sendCode">NEXT</vava-button>
-    <vava-button v-if="verificationShow" @click="forgotPassword">RESET MY PASSWORD</vava-button>
-    <p class="forgotpaw-option-account">Or <span @click="routerLink('/create-account')">Create a new account</span>  |  <span @click="routerLink('/login')">Sign in</span>?</p>
+    <vava-button v-if="!verificationShow" @click="sendCode" class="forgot-password-button">NEXT</vava-button>
+    <vava-button v-if="verificationShow" @click="forgotPassword" class="forgot-password-button">RESET MY PASSWORD</vava-button>
+    <p class="forgotpaw-option-account" v-if="!isDialog">Or <span @click="routerLink('/create-account')">Create a new account</span>  |  <span @click="routerLink('/login')">Sign in</span>?</p>
   </div>
 </template>
 
 <script>
   import CountTime from '@/components/count-time.vue'
   export default {
+    props: {
+      isDialog: Boolean
+    },
     components: { CountTime },
     data () {
       return {
@@ -86,7 +89,7 @@
         this.createPram.emailAddress = this.sendCodeParam.sendToEmail
         this.$store.dispatch('postFetch', {api: 'forgotPassword', data: this.createPram}).then(data => {
           this.$bar.finish()
-          this.$router.push('/login')
+          this.isDialog ? this.$emit('change-success') : this.$router.push('/login')
         }).catch(error => {
           this.$utils.showErrorMes(this, error)
         })
@@ -100,7 +103,6 @@
 
 <style lang="less" scoped>
   .forgot-password{
-    min-height: 45vw;
     padding: 5vw 0;
     display: flex;
     flex-direction: column;
@@ -169,6 +171,9 @@
         color: @base-button-back;
         text-decoration: underline;
       }
+    }
+    .forgot-password-button{
+      min-width: 280px;
     }
   }
   @media (max-width: 1350px) {

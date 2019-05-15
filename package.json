@@ -4,7 +4,7 @@
   "author": "Davey Dai <327394114@qq.com>",
   "private": true,
   "scripts": {
-    "dev": "cross-env API_ROOT='http://10.0.0.183:11101' node server",
+    "dev": "cross-env API_ROOT='https://www-api.vava.com/vava-pc-gateway' node server",
     "start": "cross-env NODE_ENV=production node server",
     "build_test": "cross-env NODE_TEST=TESTBASE API_ROOT='http://10.0.0.183:11101' npm run build",
     "build_uat": "cross-env API_ROOT='http://api-uat.vava.com' npm run build",

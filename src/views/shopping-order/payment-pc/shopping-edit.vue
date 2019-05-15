@@ -35,7 +35,7 @@
                 </div>
               </div>
               <!-- 按钮下一步 -->
-              <vava-button :disable="selAddress.addressUuid" @click="clickCont" class="bg-gradient check-address">Continue</vava-button>
+              <vava-button :disable="!selAddress.addressUuid" @click="clickCont" class="bg-gradient check-address">Continue</vava-button>
             </div>
           </div>
           <!-- 地址选择好之后折叠内容展示 -->
@@ -95,7 +95,6 @@
         dialogVisible: false, // 修改地址弹出框是否显示(登陆状态)
         isGoPay: false, // 是否可以下订单
         fullscreenLoading: false,
-        emailLock: false, // 是否锁定邮箱禁止编辑
         isLogin: false, // 是否登陆
         // 弹出对话框设置option
         messageBoxOp: { title: '', confirmButtonText: 'Yes', cancelButtonText: 'No', type: 'warning', roundButton: true, center: true, cancelButtonClass: 'cance-confirm-class', confirmButtonClass: 'sure-confirm-class' }
@@ -106,9 +105,8 @@
        if (this.$cookies.get('token')) {
          this.isLogin = true
          this.getInAddress()
-       } else {
-          this.selAddress.notificationEmail = this.$route.query.email || ''
        }
+       this.selAddress.notificationEmail = this.$route.query.email || this.shoppingCart.payEmail || ''
     },
     methods: {
       loginSaveAddress (addressData) { // 登陆状态 编辑地址点击保存处理方法
@@ -141,7 +139,7 @@
         })
       },
       loginAddAddress () { // 登陆状态下新增地址
-        this.upAddressData = {}
+        this.upAddressData = {notificationEmail: this.selAddress.notificationEmail}
         this.isGoPay = false
         this.dialogVisible = true
       },
@@ -190,7 +188,22 @@
           this.$message.error(error)
         })
       },
-      clearCarts () { // 清空购物车
+      clearCarts () { // 清空购物车 直接刷新购物车列表
+        if (this.$cookies.get('token')) { // 获取登录用户购物车列表
+          this.$store.dispatch('postFetch', {api: 'getShopCartList', data: {pageNo: 1, pageSize: 100, condition: {}}}).then(data => {
+            this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data.records)) // 保存购物车数据
+          }).catch(error => {
+            this.$utils.showErrorMes(this, error)
+          })
+        } else { // 获取本地缓存购物车列表
+          if (this.shoppingCart.shoppingCartId) {
+            this.$store.dispatch('postByUrl', {api: 'getShopCartListNl', data: this.shoppingCart.shoppingCartId}).then(data => {
+              this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data, this.shoppingCart.shoppingCartId)) // 保存购物车信息到本地和store
+            }).catch(error => {
+              this.$utils.showErrorMes(this, error)
+            })
+          }
+        }
       },
       deleteAddress (item) { // 登陆状态下删除地址
         this.$confirm('Are you sure you want to delete this shipping address ?', 'Tips', this.messageBoxOp).then(() => {

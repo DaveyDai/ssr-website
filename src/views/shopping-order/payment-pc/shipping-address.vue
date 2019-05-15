@@ -16,7 +16,7 @@
         <el-input v-model="editAddress.notificationEmail" :disabled="emailLock"></el-input>
       </el-form-item>
       <el-form-item label="State/Province/Region" prop="regionId">
-        <el-select v-model="editAddress.regionId" filterable placeholder="please choose" style="width: 100%;">
+        <el-select v-model="editAddress.regionId" filterable no-data-text="No Data" placeholder="please choose" style="width: 100%;">
           <el-option v-for="item of regionData" :value="item.id" :label="item.regionName" :key="item.id" clearable></el-option>
         </el-select>
       </el-form-item>
@@ -45,10 +45,6 @@
 <script>
   export default {
     props: {
-      emailLock: { // 是否锁定邮箱不允许更改
-        type: Boolean,
-        default: true
-      },
       defaultAddress: Object, // 回显地址对象
       isCancel: Boolean // 是否显示取消按钮
     },
@@ -94,7 +90,8 @@
             { required: true, message: 'Email address must be entered.', trigger: 'blur' },
             { type: 'email', message: 'Invalid email address.', trigger: ['blur', 'change'] }
           ]
-        }
+        },
+        emailLock: true, // 是否锁定邮箱禁止编辑
       }
     },
     mounted () {
@@ -119,7 +116,7 @@
         })
       },
       saveAddress () { // 编辑地址点击保存地址
-        this.$emit('newAddress', this.editAddress)
+        // this.$emit('newAddress', this.editAddress)
         this.$refs['editAddress'].validate((valid) => {
           if (valid) {
             this.verify()

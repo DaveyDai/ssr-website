@@ -105,7 +105,7 @@ const totalShoppingCart = (data, obj) => { // 继续添加购物车
 }
 
 const calculationCart = (data, shoppingCartId, isPay) => { // 计算购物车数量和总价 isPay 是否是最终支付商品
-  let cartData = {totalNum: 0, totalAmount: 0, shoppingCartId: shoppingCartId}
+  let cartData = {totalNum: 0, totalAmount: 0, shoppingCartId: shoppingCartId || ''}
   if (data.length === 0) return Object.assign(cartData, {productList: []})
   data.forEach(item => {
     cartData.totalNum += item.totalQtyOrdered // 累计购物车所有商品数量
