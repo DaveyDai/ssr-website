@@ -29,41 +29,41 @@
     },
     methods: {
       getShoppingCart () { // 获取购物车列表， 未登陆时根据购物车ID
-        // this.$store.dispatch('postByUrl', {api: 'getShopCartListNl', data: this.shoppingCart.shoppingCartId}).then(data => {
-        //   this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data)) // 保存购物车信息到本地和store
-        // }).catch(error => {
-        //   this.$utils.showErrorMes(this, error)
-        // })
-        setTimeout(() => {
-          this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(
-          [{ // 模拟数据
-            "skuProductMainUrl":"https://dqqvg67sziwi8.cloudfront.net/prod/2018/09/28/11f59b5914.jpg",
-            "productName":"VAVA Dash Cam 2K-VD005",
-            "shortName":"VAVA Dash Cam 2K-VD005",
-            "description":"",
-            "colourCode":"Black",
-            "colourName":"#000000",
-            "listingPrice":149.99,
-            "sellPrice":139.99,
-            "model":"VA-VD005",
-            "state":true,
-            "productSkuId":"83-05000-018",
-            "totalQtyOrdered":8
-          }, { // 模拟数据
-            "skuProductMainUrl":"https://dqqvg67sziwi8.cloudfront.net/prod/2018/09/28/11f59b5914.jpg",
-            "productName":"VAVA Dash Cam 2K-VD005",
-            "shortName":"VAVA Dash Cam 2K-VD005",
-            "description":"",
-            "colourCode":"Black",
-            "colourName":"#000000",
-            "listingPrice":149.99,
-            "sellPrice":139.99,
-            "model":"VA-VD005",
-            "state":false,
-            "productSkuId":"83-05000-0188",
-            "totalQtyOrdered":8
-          }], this.shoppingCart.shoppingCartId || 1234))
-        }, 100)
+        this.$store.dispatch('postByUrl', {api: 'getShopCartListNl', data: this.shoppingCart.shoppingCartId}).then(data => {
+          this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data)) // 保存购物车信息到本地和store
+        }).catch(error => {
+          this.$utils.showErrorMes(this, error)
+        })
+        // setTimeout(() => {
+        //   this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(
+        //   [{ // 模拟数据
+        //     "skuProductMainUrl":"https://dqqvg67sziwi8.cloudfront.net/prod/2018/09/28/11f59b5914.jpg",
+        //     "productName":"VAVA Dash Cam 2K-VD005",
+        //     "shortName":"VAVA Dash Cam 2K-VD005",
+        //     "description":"",
+        //     "colourCode":"Black",
+        //     "colourName":"#000000",
+        //     "listingPrice":149.99,
+        //     "sellPrice":139.99,
+        //     "model":"VA-VD005",
+        //     "state":true,
+        //     "productSkuId":"83-05000-018",
+        //     "totalQtyOrdered":8
+        //   }, { // 模拟数据
+        //     "skuProductMainUrl":"https://dqqvg67sziwi8.cloudfront.net/prod/2018/09/28/11f59b5914.jpg",
+        //     "productName":"VAVA Dash Cam 2K-VD005",
+        //     "shortName":"VAVA Dash Cam 2K-VD005",
+        //     "description":"",
+        //     "colourCode":"Black",
+        //     "colourName":"#000000",
+        //     "listingPrice":149.99,
+        //     "sellPrice":139.99,
+        //     "model":"VA-VD005",
+        //     "state":true,
+        //     "productSkuId":"83-05000-0188",
+        //     "totalQtyOrdered":8
+        //   }], this.shoppingCart.shoppingCartId || 1234))
+        // }, 100)
         console.log(this.$store.state);
       }
     }

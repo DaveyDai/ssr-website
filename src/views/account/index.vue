@@ -104,7 +104,7 @@
     methods: {
       async fecthAccount () {
         this.$bar.start()
-        await this.$store.dispatch('getFetch', {api: 'getMemberInfo'}).then(data => {
+        await this.$store.dispatch('postFetch', {api: 'getMemberInfo'}).then(data => {
           this.$bar.finish()
           this.informationData = data
           this.$store.commit('setAccountData', JSON.parse(JSON.stringify(data)))

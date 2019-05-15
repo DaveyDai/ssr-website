@@ -168,6 +168,58 @@ body{
   .border-gradient{
     border: 1px solid @base-color;
   }
+  // 移动端弹框
+  .is-mobile .el-dialog__wrapper{
+    .el-dialog{
+      .dialog-title{
+        vertical-align: middle;
+        .self-title{
+          font-family: SFCompactDisplay-Regular;
+          font-size: 20px;
+          color: #333333;
+          display: inline-block;
+          display: flex;
+          align-items: center;
+          i{
+            display: inline-block;
+            transform: rotate(180deg);
+            margin-right: 10px;
+          }
+        }
+        .self-subtitle{
+          font-family: SFCompactDisplay-Regular;
+          font-size: 14px;
+          color: #333333;
+          text-align: justify;
+          margin-left: 12px;
+          // margin-top: 3px;
+          display: inline-block;
+        }
+      }
+      .el-dialog__header{
+        min-height: 40px;
+        line-height: 40px;
+        padding: 0 16px;
+        text-align: left;
+        .el-dialog__title{
+          font-family: SFCompactDisplay-Regular;
+          font-size: 20px;
+          color: #333333;
+          line-height: 40px;
+        }
+        .el-dialog__headerbtn{
+          top: 9px;
+          right: 10px;
+        }
+        .el-dialog__close{
+          font-size: 24px;
+        }
+      }
+      .el-dialog__body{
+        border-top: 1px solid #EEEEEE;
+      }
+    }
+  }
 }
 
 // 公共样式结束

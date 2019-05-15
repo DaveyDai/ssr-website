@@ -23,7 +23,7 @@ export function createStore () {
       blogData: {bannerData: [], labelData: [], homeData: []}, // blog首页数据
       blogDetailData: {},
       searchBlog: {records: []}, // blog搜索结果
-      mediaDevices: true, // 设备类型 false 移动端 true PC端
+      mediaDevices: false, // 设备类型 true为移动端
       shoppingCart: {totalNum: 0, shoppingCartId: '', totalAmount: '', productList: []}, // 购物车
       payShoppingCart: {totalNum: 0, shoppingCartId: '', totalAmount: '', productList: []} // 结算的购物车
     },

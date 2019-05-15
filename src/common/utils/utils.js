@@ -102,13 +102,13 @@ const calculationCart = (data, shoppingCartId, isPay) => { // 计算购物车数
   let cartData = {totalNum: 0, totalAmount: 0, shoppingCartId: shoppingCartId}
   if (data.length === 0) return Object.assign(cartData, {productList: []})
   data.forEach(item => {
-    cartData.totalNum += item.totalQtyOrdered // 累计总数
-    item.isSelect = typeof item.isSelect !== 'undefined' ? item.isSelect : true // 默认购买
+    cartData.totalNum += item.totalQtyOrdered // 累计购物车所有商品数量
+    item.isSelect = typeof item.isSelect !== 'undefined' ? item.isSelect : true // 默认购买(用户为主动取消则默认勾选)
     if (!item.state) item.isSelect = false // 如果商品下架 默认取消勾选
     if (item.isSelect) cartData.totalAmount += item.totalQtyOrdered * item.sellPrice // 累计总金额
   })
   cartData.totalAmount = toDecimal(cartData.totalAmount)
-  cartData.productList = data.filter(item => isPay ? item.isSelect : true) // 筛选勾选的商品
+  cartData.productList = data.filter(item => isPay ? item.isSelect : true) // isPay 为true时 勾选的商品才添加到列表(用于下单结算)
   return cartData
 }
 export default {

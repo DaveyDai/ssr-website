@@ -16,7 +16,6 @@
   import PageFooter from '@/components/page-footer.vue'
   const BlogHeader = () => import('@/components/vava-blog-header.vue') // blog-头部
   const BlogFooter = () => import('@/components/blog-page-footer.vue') // blog-尾部
-  import Utils from '@/common/utils/utils.js' // 工具方法
   export default {
     components: { PageHeader, PageFooter, BlogHeader, BlogFooter },
     data () {
@@ -35,7 +34,7 @@
       this.isBlogHeader = !!this.$route.meta.blog
     },
     mounted () {
-      this.isMobileShow = Utils.browserRedirect() // 判断当前是否移动设备
+      this.isMobileShow = this.$utils.browserRedirect() // 判断当前是否移动设备
       this.$store.commit('setMediaDevices', this.isMobileShow)
       this.isHideFooter = this.$route.meta.isShoppingcart && (this.isMobileShow || document.body.clientWidth < 875)  // 购物车页面 且是移动端设备或显示区域小于875不显示footer
       window.onresize = () => { // 监听浏览器显示区域变化
@@ -45,8 +44,6 @@
     },
     methods: {
       getShoppingCart () { // 获取本地缓存购物车列表
-        let shoppingCartData = localStorage.getItem('shoppingCarts') ? JSON.parse(localStorage.getItem('shoppingCarts')) : {totalNum: 0, shoppingCartId: '', cartList: []}
-        this.$store.commit('setShoppingCart', shoppingCartData)
       }
     }
   }

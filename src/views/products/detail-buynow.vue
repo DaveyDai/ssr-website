@@ -29,6 +29,64 @@
         <vava-button class="product-buy-now" v-if="buyProDetail.asin" @click="buyNowAZ" noActive>BUY ON AMAZON</vava-button>
       </div>
     </div>
+    <el-dialog :visible.sync="addCartDialogVisible" center top="18vh" class="add-cart-dialog">
+      <!-- 弹窗头部名称 -->
+      <div slot="title" class="dialog-title" v-if="!selectCheckOut">
+        <p class="self-title">Your Cart</p>
+        <p class="self-subtitle">{{shoppingCart.totalNum || ''}} item<span v-if="shoppingCart.totalNum > 1">s</span> </p>
+      </div>
+      <!-- check out 头部 -->
+      <div slot="title" class="dialog-title" v-else>
+        <p class="self-title" @click="selectCheckOut = false"><i class="icon icon-right-slide"></i> Back</p>
+      </div>
+      <div class="shopCartWrap" :style="{'left': selectCheckOut ? '-100%' : '0'}">
+        <div class="add-to-cart">
+          <div class="add-to-cart-left">
+            <div class="cart-item" v-for="(item, index) in shoppingCart.productList" :key="index">
+              <div><img :src="item.skuProductMainUrl"></div>
+              <div class="left-info">
+                <p class="left-info-item1 twoLine">{{item.shortName}}</p>
+                <div class="color-quantity">
+                  <p class="left-info-item3">Color: <span>{{item.colourCode}}</span></p>
+                  <p class="left-info-item4"><i class="el-icon-close"></i> <span>{{item.totalQtyOrdered}}</span></p>
+                </div>
+                <p class="left-info-item2"><span>{{currentUnit}}</span><span>{{item.sellPrice}}</span></p>
+              </div>
+            </div>
+          </div>
+          <div class="add-to-cart-right">
+            <!-- <div class="right-head">
+              <p class="right-head-item2">
+                <span class="left">{{shoppingCart.totalNum || ''}} items </span>
+              </p>
+            </div> -->
+            <div class="right-content">
+              <p class="right-content-item1">
+                <span class="left">Subtotal: </span>
+                <span class="right"><span>{{(currentUnit + shoppingCart.totalAmount) || ''}}</span></span>
+              </p>
+              <p class="right-content-item2">
+                <span class="left">Shipping: </span>
+                <span class="right">$0.00</span>
+              </p>
+              <p class="right-content-item3">
+                <span class="left">Pre-Tax total: </span>
+                <span class="right"><span>{{(currentUnit + shoppingCart.totalAmount) || ''}}</span></span>
+              </p>
+              <div class="btnWrap">
+                <vava-button class="btn40" noActive @click="viewAndBuyHandler('showCart')">View Cart</vava-button>
+                <vava-button class="btn40" @click="viewAndBuyHandler">Check Out</vava-button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="guestOrUser">
+          <vava-button class='btn40' noActive @click.native="continueGo('account')">Continue with Account</vava-button>
+          <p><span>or</span></p>
+          <vava-button class='btn40' noActive @click.native="continueGo('guest')">Continue as Guest</vava-button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -48,12 +106,18 @@
         // let color = proColor&&proColor.length&&proColor[this.colorIndex].colourCode.split('_')[2] || ''
         // return color.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase())
         return proColor[this.colorIndex].colourCode
+      },
+      shoppingCart () { // 所有购物车列表
+        return this.$store.state.shoppingCart
       }
     },
     data () {
       return {
         colorIndex: 0,
-        buyProDetail: {}
+        buyProDetail: {},
+        addCartDialogVisible: false, // 是否显示添加购物车弹框(移动端)
+        selectCheckOut: false, // 是否显示登陆或者游客购物(未登陆下移动端)
+        currentUnit: '$', // 币别
       }
     },
     created () {
@@ -70,39 +134,60 @@
         window.open(url)
       },
       buyNow () { // 添加购物车
-        let isLogin = !!this.$cookies.get('token') // 是否已登陆
-        this.$store.state.shoppingCart.totalNum > 0 ? this.shoppingCartAdd() : this.createCartId()
+        this.addCartDialogVisible = true
+        // 有购物车ID 或者 已登陆情况下 直接添加购物车 否则 先申请购物车ID
+        this.$store.state.shoppingCart.shoppingCartId || this.$cookies.get('token')
+        ? this.shoppingCartAdd() : this.createCartId()
       },
-      createCartId () { // 申请购物车id
-        this.$utils.setShoppingCart(this.$store.commit, { // 模拟数据
-          totalNum: 1,
-          shoppingCartId: 12345,
-          productList: [{productSkuId: this.buyProDetail.skuId, totalQtyOrdered: 1}]
+      createCartId () { // 无购物ID时申请购物车id (申请购物ID接口应该和添加购物车接口合并 前端如果没有传购物ID 则后台自动生成购物车ID 并返回当前购物车ID的购物车列表数据)
+        this.$store.dispatch('postFetch', {api: 'applyForShopCartId', data: {productSkuId: this.buyProDetail.skuId, totalQtyOrdered: 1}}).then(json => {
+          // 获得购物车ID后 根据购物车ID添加数据
+          this.$store.dispatch('getByUrl', {api: 'editShopCartNl', data: json.shopCartId}).then(data => {
+            // this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data)) // 保存购物车数据
+            if (this.$store.state.mediaDevices) { // 如果是移动端 显示购物车弹框
+              this.addCartDialogVisible = true
+            }
+          }).catch(error => {
+            this.$utils.showErrorMes(this, error)
+          })
+        }).catch(error => {
+          this.$utils.showErrorMes(this, error)
         })
+        // this.$message.error('etShoppingCart(this.$store.commitetShoppingCart(this.$store.commit')
         // this.$utils.setShoppingCart(this.$store.commit, { // 模拟数据
-        //   "skuProductMainUrl":"https://dqqvg67sziwi8.cloudfront.net/prod/2018/09/28/11f59b5914.jpg",
-        //   "productName":"VAVA Dash Cam 2K-VD005",
-        //   "shortName":"VAVA Dash Cam 2K-VD005",
-        //   "description":"",
-        //   "colourCode":"Black",
-        //   "colourName":"#000000",
-        //   "listingPrice":149.99,
-        //   "sellPrice":139.99,
-        //   "model":"VA-VD005",
-        //   "state":true,
-        //   "productSkuId":"83-05000-018",
-        //   "totalQtyOrdered":1
+        //   totalNum: 1,
+        //   shoppingCartId: 12345,
+        //   productList: [{productSkuId: this.buyProDetail.skuId, totalQtyOrdered: 1}]
         // })
-        // let productData = { productSkuId: this.buyProDetail.skuId, totalQtyOrdered: 1, source: 2}
-        // this.$store.dispatch('postFetch', {api: 'applyForShopCartId', data: productData}).then(data => {
-        //   this.$utils.setShoppingCart(this.$store.commit, data) // 保存购物车信息到本地和store
-        // }).catch(error => {
-        //   this.$utils.showErrorMes(this, error)
-        // })
+        // if (this.$store.state.mediaDevices) { // 如果是移动端 显示购物车弹框
+        //   this.addCartDialogVisible = true
+        // }
       },
-      shoppingCartAdd () { // 添加购物车
-        let newData = this.$utils.totalShoppingCart(JSON.parse(JSON.stringify(this.$store.state.shoppingCart)), {productSkuId: this.buyProDetail.skuId, totalQtyOrdered: 1})
-        this.$utils.setShoppingCart(this.$store.commit, newData)
+      shoppingCartAdd () { // 添加购物车 (编辑购物车接口最好改一下 post请求不要用URL拼接参数)
+        let editParam = {
+          productSkuId: this.buyProDetail.skuId,
+          totalQtyOrdered: 1,
+          source: this.$cookies.get('token') ? 1 : 3
+        }
+        this.$store.dispatch('postFetch', {api: this.$cookies.get('token') ? 'editShopCart' : 'editShopCartNl', data: editParam}).then(data => {
+          this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data, this.$store.state.shoppingCart.shoppingCartId)) // 保存购物车数据
+          if (this.$store.state.mediaDevices) { // 如果是移动端 显示购物车弹框
+            this.addCartDialogVisible = true
+          }
+        }).catch(error => {
+          this.$utils.showErrorMes(this, error)
+        })
+      },
+      viewAndBuyHandler (type) { // 移动端显示购物车 或者 去结算
+        if (type === 'showCart') { // 显示购物车
+          this.$router.push('/shopping-cart')
+        } else {
+          // 已登陆直接到下单页面 未登陆让用户选择登陆或者游客购买
+          this.$cookies.get('token') ? this.$router.push('//pay-m') : this.selectCheckOut = true
+        }
+      },
+      continueGo (type) { // 移动端未登陆点击check out跳转到对应页面
+        this.$router.push({path: '/customer-email', query: {type: type}})
       }
     }
   }
@@ -223,6 +308,169 @@
         }
       }
     }
+		.add-cart-dialog .el-dialog--center{
+      min-width: 300px;
+      width: 90%;
+      max-width: 600px;
+	  	.el-dialog__body {
+				overflow: hidden;
+        margin: 0 16px 16px;
+				padding: 0;
+				.shopCartWrap{
+					position: relative;
+          display: flex;
+          width: 200%;
+          transition: all .3s ease-in-out;
+          align-items: center;
+					.add-to-cart {
+						position: relative;
+						width: 50%;
+						.add-to-cart-left {
+							max-height: 246px;
+							overflow: auto;
+							.cart-item {
+								display: flex;
+								// flex-wrap: wrap;
+								padding: 7px 0;
+								img {
+									width: 80px;
+									height: 80px;
+								}
+								.left-info {
+									display: inline-block;
+									vertical-align: top;
+									margin-left: 12px;
+									width: 100%;
+									padding-top: 8px;
+									.left-info-item1 {
+										font-family: SFCompactDisplay-Medium;
+										font-size: 12px;
+										color: #333333;
+										line-height: 14px;
+									}
+									.left-info-item2 {
+									font-family: PingFangSC-Regular;
+									font-size: 14px;
+									color: #333333;
+									margin-top: 8px;
+									}
+									.color-quantity{
+										display: flex;
+										flex-direction: row;
+										justify-content: space-between;
+										align-items: center;
+										font-family: SFCompactDisplay-Regular;
+										font-size: 12px;
+										.left-info-item3 {
+											color: #999999;
+										}
+										.left-info-item4 {
+											color: #333333;
+											.el-icon-close{
+												color: #666666;
+											}
+										}
+									}
+									
+								}
+							}
+							.cart-item  + .cart-item {
+								border-top: 1px solid #EEEEEE;
+							}
+						}
+						.add-to-cart-right {
+							border-top: 1px solid #EEEEEE;
+							.right-head {
+								overflow: hidden;
+								padding-bottom: 10px;
+								border-bottom: 1px solid #F5F5F5;
+								margin-bottom: 14px;
+								.right-head-item1 {
+									font-family: MyriadPro-Semibold;
+									color: #333333;
+									font-size: 16px;
+									padding-bottom: 8px;
+								}
+								.left {
+									float: left;
+								}
+								.right {
+									float: right;
+								}
+							}
+							.right-content {
+								padding: 7px 0 17px;
+								.right-content-item1, .right-content-item2, .right-content-item3{
+									display: flex;
+									flex-direction: row;
+									justify-content: space-between;
+									align-items: center;
+									font-size: 14px;
+									line-height: 16px;
+									color: #666;
+									.left{
+										width: 90px;
+										text-align: right;
+									}
+									.right{
+										color: #666;
+									}
+								}
+								p + p{
+									margin-top: 4px;
+								}
+								.right-content-item3 {
+									font-family: 'avenir-next-demi';
+                  color: #333333;
+									.right{
+										color: #333333;
+									}
+								}
+								.btnWrap{
+									padding-top: 40px;
+									display:flex;
+									justify-content: space-between;
+                  .btn40{
+                    width: 45%;
+                    min-width: 125px;
+                    min-height: 35px;
+                    padding: 0 15px;
+                  }
+								}
+							}
+						}
+					}
+					.guestOrUser{
+            padding-top: 10px;
+            padding-bottom: 16px;
+            width: 50%;
+            text-align: center;
+            p{
+              border-top: 1px solid #EEEEEE;
+              position: relative;
+              margin: 18px 0;
+              span{
+                display: block;
+                width: 32px;
+                font-family: SFCompactDisplay-Regular;
+                font-size: 14px;
+                color: #999999;
+                background-color: white;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                padding-left: 10px;
+              }
+            }
+            .btn40{
+              width: 90%;
+            }
+          }
+				}
+	  		
+	  	}
+	  }
   }
   @media (max-width: 1200px) {
     .product-detail-buynow .buynow-content .product-high-light ul li{font-size: 13px;}

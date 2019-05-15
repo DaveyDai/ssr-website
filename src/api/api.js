@@ -12,7 +12,7 @@ export default {
   // 登录注册接口
   signIn: apiBaseUrl + '/vava-pc-user/baseUser/indexLoginUser', // 登录
   userRegister: apiBaseUrl + '/vava-pc-user/baseUser/registerUser', // 注册
-  getMemberInfo: apiBaseUrl + '/vava-pc-user/baseUser/getMemberInfo', // 获取用户信息
+  getMemberInfo: apiBaseUrl + '/vava-pc-user/baseUser/v2/getMemberInfo', // 获取用户信息
   saveMemberInfo: apiBaseUrl + '/vava-pc-user/baseUser/saveMemberInfo', // 修改账户信息
   changePassword: apiBaseUrl + '/vava-pc-user/baseUser/changePassword', // 修改密码
   forgotPassword: apiBaseUrl + '/vava-pc-user/baseUser/forgotPassword', // 忘记密码
