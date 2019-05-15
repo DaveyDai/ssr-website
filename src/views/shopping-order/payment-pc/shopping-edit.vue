@@ -1,63 +1,64 @@
 <template>
-  <div class="shopping-order-pay center-main" v-loading.fullscreen.lock="fullscreenLoading">
+  <div class="shopping-order-pay center-main" v-loading.lock="fullscreenLoading">
     <shopping-step :active="2" class="shopping-step"></shopping-step>
     <div class="order-pay-edit">
       <div class="slide-left ">
         <!-- 第一步 地址 -->
         <div class="box-address">
-          <div class="title"  v-bind:class="{ 'active' : isOrder }">1.Shipping Address</div>
-          <!-- 未登录的地址优化 -->
-          <shipping-address  @newAddress="showAddress" v-if="!isLogin" v-show="!isNew" @cancelAddress="cancelRess" :updateRess="updateRess"></shipping-address>
-          <!-- 登录情况地址 添加 如果没有登录就不要显示-->
-          <div class="box-list" v-if="isLogin" v-show="!isOrder">
-            <div class="list" >
-              <div class="item rel" v-for="(item,index) in inAddressList" @click="clickAddress(item)" v-bind:class="{ 'active': isSelect === item.id }" :key="index">
-                <p>{{ item.firstName }} {{ item.lastName }}</p>
-                <p>{{ email }}</p>
-                <div class="desc">
-                  <p>{{ item.address1 }} {{ item.address2 }}</p>
-                  <p> {{ item.city }}, {{ item.regionCode }} {{ item.postcode }}</p>
-                  <p> {{ item.countryCode }}</p>
-                  <p> Phone: {{item.telephone}}</p>
+          <div class="title"  v-bind:class="{ 'active' : isGoPay }">1.Shipping Address</div>
+          <!-- 编辑地址 -->
+          <div v-show="!isGoPay">
+            <!-- 未登录情况的 地址编辑 -->
+            <shipping-address  @newAddress="changeAddress" v-if="!isLogin" :default-address="selAddress" :is-cancel="!!selAddress.firstName" @cancelAddress="isGoPay = true"></shipping-address>
+            <!-- 登录情况地址列表-->
+            <div class="box-list" v-else>
+              <div class="list" >
+                <div class="item rel" v-for="(item,index) in inAddressList" @click="clickAddress(item)" v-bind:class="{ 'active': selAddress.addressUuid === item.addressUuid }" :key="index">
+                  <p>{{ item.firstName }} {{ item.lastName }}</p>
+                  <p>{{ item.notificationEmail }}</p>
+                  <div class="desc">
+                    <p>{{ item.address1 }} {{ item.address2 }}</p>
+                    <p> {{ item.city }}, {{ item.regionName }} {{ item.zipCode }}</p>
+                    <p> {{ item.countryName }}</p>
+                    <p> Phone: {{item.telephone}}</p>
+                  </div>
+                  <div class="abs-op">
+                    <i class="el-icon-edit" @click="updateAddress(item)" ></i>
+                    <i class="el-icon-delete" @click="deleteAddress(item)"></i>
+                  </div>
                 </div>
-                <div class="abs-op">
-                  <i class="el-icon-edit" @click="updateAddress(item)" ></i>
-                  <i class="el-icon-delete" @click="delAddress(item)"></i>
+                <div class="item"  @click="loginAddAddress">
+                  <div class="add-icon">
+                    <i class="el-icon-plus"></i>
+                  </div>
+                  <p class="text">Add a new address</p>
                 </div>
               </div>
-              <div class="item"  @click="addAddress">
-                <div class="add-icon">
-                  <i class="el-icon-plus"></i>
-                </div>
-                <p class="text">Add a new address</p>
-              </div>
+              <!-- 按钮下一步 -->
+              <vava-button :disable="selAddress.addressUuid" @click="clickCont" class="bg-gradient check-address">Continue</vava-button>
             </div>
-            <!-- 按钮下一步 -->
-            <vava-button :disable="inAddressList.length === 0" @click="clickCont" class="bg-gradient check-address">Continue</vava-button>
           </div>
-          <!-- 折叠内容展示 -->
-          <div class="detail" v-if="isOrder">
-              <p>{{ selAddress.firstName }} {{ selAddress.lastName }}</p>
-              <p>{{ email }}</p>
-              <div class="desc">
-                <p>{{ selAddress.address1 }} {{ selAddress.address2 }}</p>
-                <p> {{ selAddress.city }}, {{ selAddress.regionCode }} {{ selAddress.postcode }}</p>
-                <p> {{ selAddress.countryCode }}</p>
-                <p> Phone: {{selAddress.telephone}}</p>
-              </div>
-              <div class="abs-edit" @click="showAddres">
-                Change Address
-              </div>
+          <!-- 地址选择好之后折叠内容展示 -->
+          <div class="detail" v-if="isGoPay">
+            <p>{{ selAddress.firstName }} {{ selAddress.lastName }}</p>
+            <p>{{ email }}</p>
+            <div class="desc">
+              <p>{{ selAddress.address1 }} {{ selAddress.address2 }}</p>
+              <p> {{ selAddress.city }}, {{ selAddress.regionCode }} {{ selAddress.postcode }}</p>
+              <p> {{ selAddress.countryCode }}</p>
+              <p> Phone: {{selAddress.telephone}}</p>
+            </div>
+            <div class="abs-edit" @click="isGoPay = false">Change Address</div>
           </div>
           <!-- 登陆之后地址 修改地址弹框 -->
           <el-dialog :visible.sync="dialogVisible" title="Shipping Address" width="55%" top="10vh" class="dialog-ress" center>
-            <shipping-address  @newAddress="showAddress" :updateRess="updateRess" @cancelAddress="cancelRess"></shipping-address>
+            <shipping-address  @newAddress="loginSaveAddress" @cancelAddress="cancelRess" :default-address="upAddressData" isCancel loginSave></shipping-address>
           </el-dialog>
         </div>
         <!-- 第二步  2.Payment Methods-->
         <div class="pay-methods">
-          <div class="title"  v-bind:class="{ 'bg-ddd' : !isOrder }" >2.Payment Methods</div>
-          <div class="box-list" v-if="isOrder">
+          <div class="title"  v-bind:class="{ 'bg-ddd' : !isGoPay }" >2.Payment Methods</div>
+          <div class="box-list" v-if="isGoPay">
               <!-- pp支付 -->
               <div class="item rel border-gradient">
               <p class="sub-title">PayPal</p>
@@ -70,7 +71,7 @@
         </div>
       </div>
       <!-- 右边结算预览 -->
-      <order-summary class="order-pay-summary" :isActive="isOrder" @click="saveOrder"></order-summary>
+      <order-summary class="order-pay-summary" :isActive="isGoPay" isPay @click="saveOrder" :order-taxes="orderTaxes"></order-summary>
     </div>
   </div>
 </template>
@@ -81,464 +82,143 @@
   export default {
     components: { ShoppingStep, ShippingAddress, OrderSummary },
     computed: {
-      totalPrice () {
-        let total = this.$utils.toDecimal(Number(this.shoppingCart.totalAmount) + this.objTax.tax - this.couponAmount);
-        return total;
-      },
-      shoppingCart () { // 最终需要购买的商品
+      shoppingCart () { // 购物车列表(最终需要支付的)
         return this.$utils.calculationCart(this.$store.state.shoppingCart.productList, this.$store.state.shoppingCart.shoppingCartId, true)
       }
     },
     data () {
       return {
-        isNew: false, // 是否显示地址
-        isAdd: false, // 是否登录新增地址
-        email: '', // 用户操作邮箱
-        updateRess: {}, // 修改地址对象
-        objTax: {
-          tax: 0
-        }, // 税费
+        orderTaxes: 0, // 订单税费
         selAddress: {}, // 选中的地址列表
-        inAddressList: [], // 地址列表
-        isSelect: '',
-        couponCode: '', // 优惠码
-        couponName: '', // 名称
-        promotionType: '', // 优惠码类型
-        directDiscount: '', // 优惠码
-        couponAmount: 0.00, // 优惠价格
-        userAuthToken : '',
-        isCoupon: false, // 优惠券是否应用
-        dialogVisible: false, // 修改地址弹出框是否显示
-        isOrder: false, // 是否可以下订单
+        inAddressList: [], // 登陆状态下的地址列表
+        upAddressData: {}, // 登陆状态下用户需要编辑的地址
+        dialogVisible: false, // 修改地址弹出框是否显示(登陆状态)
+        isGoPay: false, // 是否可以下订单
         fullscreenLoading: false,
-        isTips: false, // 优惠错误提示
         emailLock: false, // 是否锁定邮箱禁止编辑
-        cartList: {productList: []},
-        isLogin: false // 是否登陆
+        isLogin: false, // 是否登陆
+        // 弹出对话框设置option
+        messageBoxOp: { title: '', confirmButtonText: 'Yes', cancelButtonText: 'No', type: 'warning', roundButton: true, center: true, cancelButtonClass: 'cance-confirm-class', confirmButtonClass: 'sure-confirm-class' }
       }
     },
-    mounted () {
+    beforeMount () {
       // 如果登陆就获取地址列表 未登陆直接显示地址编辑表单
        if (this.$cookies.get('token')) {
          this.isLogin = true
          this.getInAddress()
+       } else {
+          this.selAddress.notificationEmail = this.$route.query.email || ''
        }
     },
     methods: {
-      async showAddress (form) { // 编辑地址点击保存处理方法
-        // 登陆了才保存地址
-        if (this.isLogin) {
-          this.saveAddress(form, this.isAdd) // 保存地址
-          if (this.isAdd) {
-            this.dialogVisible = false;
-            this.isAdd = false;
-          }
-        } else {
-          // 没有登录
-          this.selAddress = form;
-          this.selAddress.countryCode = form.country;
-          this.selAddress.regionCode = form.region;
-          this.isNew = true;
-          this.isOrder = true;
-          // 获取税费
-          this.getOrderTax();
-        }
-      },
-      saveAddress (form, isAdd) { // 登陆状态下 编辑地址保存 isAdd 为true表示登陆下新增地址
-        this.$store.dispatch('postFetch', {api: isAdd ? 'addressAdd' : 'addressEdit', data: form}).then(data => {
-          this.$message.success('success')
-          this.getInAddress() // 保存成功后重新获取地址列表
+      loginSaveAddress (addressData) { // 登陆状态 编辑地址点击保存处理方法
+        this.$store.dispatch('postFetch', {api: addressData.addressUuid ? 'addressEdit' : 'addressAdd', data: addressData}).then(data => {
+          this.selAddress.addressUuid = addressData.addressUuid || data.addressUuid
+          this.inAddressList.push(this.selAddress) // 添加到地址列表供用户选择
+          this.dialogVisible = false // 关闭编辑地址弹框
+          this.isGoPay = true // 可以支付了
+          this.getOrderTax()
         }).catch(error => {
-          let messageStr = error.code === 'ECONNABORTED' ? 'The system is busy. Please try to refresh it.' : error && error.message || 'The system is busy. Please try to refresh it.'
-          this.$message.error(messageStr)
+          // 即时报错也不中断用户购买流程
+          this.changeAddress(addressData)
+          this.dialogVisible = false // 关闭编辑地址弹框
         })
       },
-      getInAddress () { // 获取地址列表
-        this.$store.dispatch('postFetch', {api: 'findAddressInfoListVo', data: {pageNo: 1, pageSize: 20}}).then(json => {
-          this.inAddressList = json.payload.data;
-          // 默认选中第一个
-          this.selAddress = this.inAddressList[0];
-          this.isSelect = this.selAddress.id;
-          // 获取税费
-          this.selAddress.country = this.selAddress.countryCode;
-          this.selAddress.region = this.selAddress.regionCode;
-          this.selAddress.email = this.userList.email;
-          ths.getOrderTax();
+      changeAddress (addressData) { // 未登陆状态下 保存地址
+        this.selAddress = addressData
+        this.isGoPay = true
+        this.getOrderTax() // 计算税费
+      },
+      getInAddress (isNoDefault) { // 获取地址列表 只有在登陆状态下 进入页面的时候调用
+        this.$store.dispatch('postFetch', {api: 'findAddressInfoListVo', data: {pageNo: 1, pageSize: 20}}).then(data => {
+          this.inAddressList = data.records
+          if (!isNoDefault) {
+            this.selAddress = this.inAddressList[0] // 默认选中第一个地址
+            this.getOrderTax() // 根据地址获取税费
+          }
         }).catch(error => {
           this.$message.error(error)
         })
       },
-      /**
-       * [addAddress 添加地址展开]
-       * @author luke 2018-12-17
-       */
-      addAddress () {
-        this.isAdd = true;
-        this.updateRess = '';
-        this.dialogVisible = true;
+      loginAddAddress () { // 登陆状态下新增地址
+        this.upAddressData = {}
+        this.isGoPay = false
+        this.dialogVisible = true
       },
-      /**
-       * [getOrderTax 保存地址调用税费接口]
-       * @author luke 2018-12-13
-       */
-      async getOrderTax () {
-        // 获取税费接口
-        let productList = [];
-        for (let i = 0; i < this.shoppingCart.productList.length; i++) {
-          let ths = this.shoppingCart.productList[i];
-          productList.push({
-            pid: ths.productId,
-            colorId: ths.colorId,
-            num: ths.productQty,
-            sku: ths.sku,
-            model: ths.model,
-            promotionType: this.promotionType,
-            directDiscount: this.directDiscount
-          })
+      getOrderTax () { // 根据地址获取税费
+        let taxesParam = {
+          orderAddressBo: this.selAddress, // 当前选择的地址
+          cartInfoBos: this.shoppingCart.productList, // 商品列表
+          email: this.selAddress.notificationEmail, // 账户邮箱（地址编辑里面的）
+          shopCartId: this.shoppingCart.shoppingCartId, // 购物车ID
+          useLogin: !!this.$cookies.get('token'), // 是否登陆
+          paymentMethod: 0,
+          source: 3
         }
-        // 购物车没有数据跳转到购物车界面
-        if (productList.length < 1) {
-          location.href = location.origin + '/carts/';
-        }
-        // 判断选择没有地址
-        if (this.$common.isNull(this.selAddress.email)) {
-          console.log(this.selAddress);
-          return false;
-        }
-        let obj = {
-          api: 'getOrderInfoPriceVo',
-          data: {
-            'brand': 'rp',
-            'lang': 'en',
-            'items': productList,
-            'rqShopOrderAddress': this.selAddress
-          }
-        }
-        let taxList = await this.$store.dispatch('requestPost', obj);
-        this.objTax = taxList.payload.data;
-      },
-      /**
-       * [getAccountToken 获取token]
-       * @author luke 2018-12-14
-       * @return {[type]} [description]
-       */
-      async getAccountToken () {
-        // 如果没有登录获取userAuthToken
-        let accountObj = {
-          api: 'getAccount',
-          data: {
-            'accountEmail': this.selAddress.email,
-            'brand': 'RAVPower',
-            'brandId': 1,
-            'langId': 1,
-            'originalSource': 'shopOrder'
-          }
-        }
-        let account = await this.$store.dispatch('requestPost', accountObj)
-        this.userAuthToken = account.payload.data.userAuthToken;
-      },
-      // 下单
-      saveOrder () {
-        this.fullscreenLoading = true
-        // 获取商品信息列表
-        let productList = [];
-        for (let i = 0; i < this.shoppingCart.productList.length; i++) {
-          let ths = this.shoppingCart.productList[i];
-          productList.push({
-            pid: ths.productId,
-            colorId: ths.colorId,
-            num: ths.productQty,
-            sku: ths.sku,
-            model: ths.model
-          })
-        }
-        let coupon = this.isCoupon ? this.couponCode : '';
-        // 先保存订单然后调用支付按钮
-        let obj = {
-          api: 'submitOrderInfo',
-          data: {
-            'brand': 'rp',
-            'lang': 'en',
-            'orderCurrencyCode': 'US',
-            'orderSource': 'RAVPower',
-            'purchaseType': '0',
-            'couponCode': coupon,
-            'amountTotal': this.shoppingCart.totalAmount,
-            'qtyTotal': this.shoppingCart.totalNum,
-            'qtyItem': productList.length,
-            'items': productList,
-            'userAuthToken': this.userAuthToken,
-            "rqShopOrderAddress": this.selAddress
-          }
-        }
-        this.$store.dispatch('postFetch', obj).then(orderList => { // 调用下单接口
-          // this.$seoFn.onCheckoutOption(3, 'Pay')
-          // 提交给pp支付并跳转
-          if (orderList) this.palpal(orderList) // 下单成功后调用PP支付
+        this.$store.dispatch('postFetch', {api: 'getOrderInfoPriceVo', data: taxesParam}).then(data => {
+          this.orderTaxes = data.subtotal // 订单税费
         }).catch(error => {
-          this.fullscreenLoading = false
-          this.$message.error(error && error.message || 'Server Error' )
         })
       },
-      /**
-       * [palpal 支付页面]
-       * @author luke 2018-12-14
-       * @return {[type]} [description]
-       */
-      palpal (orderList) {
-        // 提交给pp支付
-        let arrExList = [];
-        for(let i = 0 ; i < this.shoppingCart.productList.length; i++){
-          let orderItemExList = this.shoppingCart.productList[i];
-          let json = {
-            'sku': orderItemExList.sku,
-            'shortName': orderItemExList.productName,
-            'productId': orderItemExList.productId,
-            'price': orderItemExList.price,
-            'variant': orderItemExList.colorId,
-            'qtyOrdered': orderItemExList.productQty,
-            'discountPrice': orderItemExList.discountPrice || null,
-          };
-          arrExList.push(json);
+      // 下单
+      saveOrder (shoppingData) { // shoppingData 下单结算商品数据及总金额等
+        this.fullscreenLoading = true
+        let orderData = {
+          orderAddressBo: this.selAddress, // 当前选择的地址
+          cartInfoBos: this.shoppingCart.productList, // 商品列表
+          email: this.selAddress.notificationEmail, // 账户邮箱（地址编辑里面的）
+          shopCartId: this.shoppingCart.shoppingCartId, // 购物车ID
+          useLogin: !!this.$cookies.get('token'), // 是否登陆购买
+          paymentMethod: 1, // 支付方式(1-paypal)
+          source: Number(this.$store.state.mediaDevices) // 下单来源(0-pc 1-h5)
         }
-        let url = window.location.origin;
-        let pObj = {
-          api: 'payment',
-          data: {
-            'orderId': orderList.id,
-            'orderTotal': this.totalPrice,
-            'subTotal': this.shoppingCart.totalAmount,
-            'discountAmount': orderList.discountAmount,
-            'tax': this.objTax.tax,
-            'description': '',
-            'userAuthToken': this.userAuthToken,
-            'successUrl': url + '/pay-result-success',
-            'cancelUrl': url + '/pay-result-fail',
-            "orderAddressEx": {
-              'address1': orderList.orderAddressEx.address1,
-              'city': orderList.orderAddressEx.city,
-              'country': orderList.orderAddressEx.country,
-              'postcode': orderList.orderAddressEx.postcode,
-              'region': orderList.orderAddressEx.region,
-              'firstName': orderList.orderAddressEx.firstName,
-              'lastName': orderList.orderAddressEx.lastName
-            },
-            'orderItemExList': arrExList
-          }
-        }
-        // 清除购物车数据
-        this.clearCarts();
-        // 跳转pp
-        this.$store.dispatch('requestPost', pObj).then(json => {
-          let data = json.payload.data
-          if (data) {
-            // window.open(data.approvalUrl);
-            pObj.orderNo = orderList.orderNo;
-            // 20190123
-            pObj.userEmail = this.email
-            window.localStorage.setItem('paymentData', JSON.stringify(pObj));
-            window.location.href = data.approvalUrl;
-          } else if (json.resCode === 40000) {
-            this.fullscreenLoading = false
-            this.$message.error(json.resDes)
-          }
+        console.log('下单参数：', shoppingData)
+        // 用户下单
+        this.$store.dispatch('postFetch', {api: 'submitOrderInfo', data: orderData}).then(data => { // 调用下单接口
+          // this.$seoFn.onCheckoutOption(3, 'Pay')
+          this.clearCarts() // 清空购物车
+          this.payPalpal(data.orderNo, orderData.email) // 下单成功后调用PP支付
         }).catch(error => {
-          this.$message.error(error);
-        });
+          this.fullscreenLoading = false
+          this.$utils.showErrorMes(this, error)
+        })
       },
-      /**
-       * [clearCarts 清空购物车]
-       * @author luke 2019-01-03
-       */
-      clearCarts () {
-        let newArr = [];
-        let pList = this.shoppingCart.productList;
-        for (let i = 0; i < pList.length; i++) {
-          let ths = pList[i];
-          newArr.push({
-            pid: ths.productId,
-            num: 0,
-            colorId: ths.colorId,
-            sku: ths.sku,
-            model: ths.model
+      payPalpal (orderNo, email) { // 提交给pp支付
+        this.$store.dispatch('postFetch', {api: 'paypalOrder', data: { orderNo, email }}).then(data => {
+          window.location.href = data.successUrl
+        }).catch(error => {
+          this.$message.error(error)
+        })
+      },
+      clearCarts () { // 清空购物车
+      },
+      deleteAddress (item) { // 登陆状态下删除地址
+        this.$confirm('Are you sure you want to delete this shipping address ?', 'Tips', this.messageBoxOp).then(() => {
+          this.$store.dispatch('postFetch', {api: 'deleteAddress', data: [item.addressUuid]}).then(data => {
+            // 如果删除的地址是选中的地址 则需要重新选中第一地址
+            this.getInAddress(item.addressUuid !== this.selAddress.addressUuid)
+          }).catch(error => {
+            this.$utils.showErrorMes(this, error)
           })
-        }
-        let obj = {
-          countryId: 1,
-          brand: this.brand,
-          lang: this.lang,
-          items: newArr
-        };
-        this.$store.dispatch('UPDATE_CART_LIST', obj).then(json => {
-          localStorage.removeItem('shoppingCarts');
-        }).catch(error => {
-          this.$message.error(error);
-        });
+        }).catch(() => {})
       },
-      getCart () {
-        let obj = {
-          api: 'getCartList',
-          data: {
-            token: this.userAuthToken
-          }
-        };
-        this.$store.dispatch('fetchGetAll', obj).then(json => {
-          this.shoppingCart.productList = json.brandShopCartItems;
-          this.shoppingCart.totalAmount = json.brandShopCart[0].amountTotal;
-          this.shoppingCart.totalNum = json.brandShopCart[0].qtyTotal
-          this.loading = false;
-        }).catch(error => {
-          this.$message.error(error);
-        });
+      updateAddress (item) { // 登陆状态下更新地址
+        this.upAddressData = JSON.parse(JSON.stringify(this.selAddress))
+        this.dialogVisible = true
+        event.stopPropagation()
       },
-      /**
-       * [delAddress 删除地址]
-       * @author luke 2018-12-15
-       */
-      async delAddress (item) {
-        let obj = {
-          api: 'delAddress',
-          data: {
-            userAuthToken: this.userAuthToken,
-            id: item.id
-          }
-        };
-        await this.$store.dispatch('FETCH_ADDRESS_ALL', obj);
-        // 获取新的地址列表
-        this.getInAddress();
-        let inObj = {
-          api: 'getAddressList',
-          data: {
-            userAuthToken: this.userAuthToken
-          }
-        }
-        this.$store.dispatch('FETCH_ADDRESS_ALL', inObj).then(json => {
-          this.inAddressList = json.payload.data;
-        });
-        // 阻止事件冒泡
-        event.stopPropagation();
+      cancelRess () { // 登陆状态下 取消地址编辑
+        if (this.selAddress.addressUuid) this.isGoPay = true
+        this.dialogVisible = false
       },
-      /**
-       * [updateAddress 修改地址]
-       * @author luke 2018-12-17
-       */
-      updateAddress (item) {
-        this.updateRess = item;
-        this.isAdd = true;
-        this.dialogVisible = true;
-        // 阻止事件冒泡
-        event.stopPropagation();
+      clickAddress (item) { // 登陆状态下选中地址
+        this.selAddress = item
+        this.isGoPay = true
+        this.getOrderTax() // 获取税费
       },
-      /**
-       * [showAddres 显示地址 没有登录的情况]
-       * @author luke 2018-12-13
-       */
-      showAddres () {
-        if (this.isLogin) {
-          this.isOrder = false;
-        } else {
-          this.updateRess = this.selAddress;
-          this.isNew = false;
-          this.isOrder = false;
-        }
-      },
-      /**
-       * [cancelRess 关闭]
-       * @author luke 2018-12-19
-       */
-      cancelRess () {
-        this.isNew = true;
-        this.isAdd = false;
-        this.dialogVisible = false;
-        this.updateRess = '';
-      },
-      /**
-       * [clickAddress 登录之后选择地址]
-       * @author luke 2018-12-17
-       */
-      clickAddress (item) {
-        console.log(item);
-        this.isSelect = item.id;
-        // 设置email
-        this.selAddress = item;
-        this.selAddress.email = this.email;
-        this.selAddress.country = item.countryCode;
-        this.selAddress.region = item.regionCode;
-        // 获取税费
-        this.getOrderTax();
-      },
-      /**
-       * [clickCont 下一步]
-       * @author luke 2018-12-19
-       */
-      clickCont () {
-        this.isOrder = true;
-        this.$seoFn.onCheckoutOption(2, 'checkoutOption');
-      },
-      /**
-       * [setCoupon 设置地址]
-       * @author luke 2018-12-17
-       */
-      setCoupon () {
-        if (this.$common.isNull(this.couponCode)) {
-          return false;
-        }
-        this.isTips = false;
-        let obj = {
-          api: 'getCouponCode',
-          data: {
-            token: this.userAuthToken,
-            couponCode: this.couponCode,
-            subTotal: this.shoppingCart.totalAmount
-          }
-        };
-        this.$store.dispatch('FETCH_GET_ALL', obj).then(json => {
-          let data = json.payload.data;
-          if (data === null) {
-            // setCoupon
-            this.isTips = true;
-            return false;
-          }
-          this.isCoupon = true;
-          this.couponName = data.couponName;
-          this.directDiscount = data.directDiscount / 100;
-          this.promotionType = 1;
-          // 获取价格
-          var totPrice = 0;
-          var discount = 1;
-          for (let i = 0; i < this.shoppingCart.productList.length; i++) {
-            let ths = this.shoppingCart.productList[i];
-            let qty = ths.productQty;
-            let price = ths.price;
-            if (this.directDiscount !== '') {
-              discount = this.$common.toDecimal(1 - this.directDiscount);
-            }
-            totPrice += this.$common.toDecimal(price * discount) * qty;
-            ths.discountPrice = this.$common.toDecimal(price * discount);
-          }
-          this.couponAmount = this.$common.toDecimal(this.shoppingCart.totalAmount - totPrice);
-          // 获取税率
-          this.getOrderTax();
-        }).catch(error => {
-          this.$message.error(error);
-        });
-      },
-      /**
-       * [removeCoupon 取消优惠券]
-       * @author luke 2018-12-17
-       */
-      removeCoupon () {
-        this.isCoupon = false;
-        // 清空优惠码
-        this.couponCode = '';
-        this.directDiscount = 0.00;
-        this.promotionType = '';
-        this.couponAmount = 0.00;
-        // 获取税率
-        this.getOrderTax();
-      },
-      isLength (val) {
-        return val && val.length > 0
+      clickCont () { // 确定选择地址并下一步选中支付方式
+        this.isGoPay = true
+        // this.$seoFn.onCheckoutOption(2, 'checkoutOption');
       }
     }
   }

@@ -25,7 +25,6 @@ export function createStore () {
       searchBlog: {records: []}, // blog搜索结果
       mediaDevices: false, // 设备类型 true为移动端
       shoppingCart: {totalNum: 0, shoppingCartId: '', totalAmount: '', productList: []}, // 购物车
-      payShoppingCart: {totalNum: 0, shoppingCartId: '', totalAmount: '', productList: []} // 结算的购物车
     },
     actions,
     mutations,

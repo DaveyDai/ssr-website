@@ -9,6 +9,7 @@ export default {
   uploadFile: uploadBaseUrl + '/vava-file-center/file/upload/', // 文件上传
   selectShopCountryVo: apiBaseUrl + '/vava-pc-admin/common/selectShopCountryVo', // 获取国家列表
   getRegion: apiBaseUrl + '/vava-pc-admin/common/selectShopCountryRegionVoByCountryId/', // 根据国家ID获取省份/地区
+  validationAddress: apiBaseUrl + '/vava-pc-admin/common/validationAddress', // 校验收货地址区域是否支持
   // 登录注册接口
   signIn: apiBaseUrl + '/vava-pc-user/baseUser/indexLoginUser', // 登录
   userRegister: apiBaseUrl + '/vava-pc-user/baseUser/registerUser', // 注册
@@ -61,5 +62,7 @@ export default {
   getOrderInfoPriceVo: apiBaseUrl + '/vava-pc-order/shop/getOrderInfoPriceVo', // 查询订单税费、总价
   checkCompletePay: apiBaseUrl + '/vava-pc-order/shop/checkCompletePay', // 查询订单是否完成支付
   submitOrderInfo: apiBaseUrl + '/vava-pc-order/shop/submitOrderInfo', // 提交订单信息
+  // PP支付
+  paypalOrder: apiBaseUrl + '/vava-pc-pay/pay/paypalOrder', // pp支付
   
 }

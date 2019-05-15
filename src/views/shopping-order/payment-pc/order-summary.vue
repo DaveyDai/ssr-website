@@ -21,21 +21,30 @@
     </div>
     <!-- 明细 -->
     <div class="detail">
-      <div class="item">
-        <label>Subtotal:</label>
-        <p>${{ shoppingCart.totalAmount }}</p>
-      </div>
-      <div class="item">
-        <label>Shipping:</label>
-        <p>$0.00</p>
-      </div>
+      <div class="item"><label>Subtotal:</label><p>${{ shoppingCart.totalAmount }}</p></div>
+      <div class="item"><label>Shipping:</label><p>$0.00</p></div>
+      <template v-if="isPay">
+        <!-- <div class="item"><label>Coupon Amount:</label><p class="coupon-amount">-${{'0'}}</p></div> -->
+        <div class="item order-taxes"><label>Taxes:</label><p>${{orderTaxes}}</p></div>
+      </template>
     </div>
+    <!-- 优惠码 -->
+    <!-- <div class="coupon-box">
+      <p class="title">Promo Code:</p>
+      <div class="box-code">
+        <el-input v-model="couponCode" :disabled="isCoupon" v-bind:class="{ error : isTips }"  style="width: 182px;height: 32px;" >
+        </el-input>
+        <el-button class="bg-gradient ml10 btn-save"   @click="setCoupon"  v-if="!isCoupon">Apply
+        </el-button>
+        <el-button v-if="isCoupon" class="bg-gradient ml10 btn-save" @click="removeCoupon">Remove
+        </el-button>
+        <p class="tip-name" v-if="isCoupon" >{{ couponName }}</p>
+        <p class="tips" v-if="isTips">coupon code is not exist</p>
+      </div>
+    </div> -->
     <!-- 结算按钮区 -->
     <div class="box-checkout">
-      <div class="item">
-        <label>Order Total:</label>
-        <p>${{ shoppingCart.totalAmount }}</p>
-      </div>
+      <div class="item"><label>Order Total:</label><p>${{ totalAmount }}</p></div>
       <vava-button style="width: 100%;margin: 27px 0;max-height: 45px;" :disable="!isActive" @click="placeOrder">PLACE ORDER</vava-button>
       <p class="tip">*Use your coupon in the next step.</p>
     </div>
@@ -45,20 +54,92 @@
 <script>
   export default {
     props: {
-      isActive: Boolean // 是否高亮下单结算按钮
+      isActive: Boolean, // 是否高亮下单结算按钮
+      isPay: Boolean, // 是否是支付下单结算(是的话需要显示优惠码输入和显示计算税费)
+      orderTaxes: { // 订单税费
+        type: Number,
+        default: 0
+      }
     },
     data () {
       return {
+        couponAmount: 0, // 优惠码优惠金额
+        couponCode: '', // 优惠码
+        couponName: '', // 名称
+        promotionType: '', // 优惠码类型
+        directDiscount: '', // 优惠码
+        isCoupon: false, // 优惠券是否应用
+        isCoupon: false, // 优惠券是否应用
       }
     },
     computed: {
-      shoppingCart () { // 购物车列表
+      shoppingCart () { // 购物车列表(最终需要支付的)
         return this.$utils.calculationCart(this.$store.state.shoppingCart.productList, this.$store.state.shoppingCart.shoppingCartId, true)
+      },
+      totalAmount () { // 计算结算总金额 = 订单金额 + 税费 - 优惠码优惠金额
+        return this.$utils.toDecimal(Number(this.shoppingCart.totalAmount) + this.orderTaxes - this.couponAmount)
       }
     },
     methods: {
       placeOrder () { // 下单
-        if (this.isActive) this.$emit('click')
+        if (this.isActive) { // 按钮高亮才能结算
+          let shoppingData = Object.assign(this.shoppingCart, {
+            orderTaxes: this.orderTaxes, // 税费
+            couponAmount: this.couponAmount // 优惠码金额
+          })
+          this.$emit('click', shoppingData)
+        }
+      },
+      setCoupon () { // 设置优惠码
+        if (this.$common.isNull(this.couponCode)) {
+          return false;
+        }
+        this.isTips = false;
+        let obj = {
+          api: 'getCouponCode',
+          data: {
+            token: this.userAuthToken,
+            couponCode: this.couponCode,
+            subTotal: this.shoppingCart.totalAmount
+          }
+        };
+        this.$store.dispatch('FETCH_GET_ALL', obj).then(json => {
+          let data = json.payload.data;
+          if (data === null) {
+            // setCoupon
+            this.isTips = true;
+            return false;
+          }
+          this.isCoupon = true;
+          this.couponName = data.couponName;
+          this.directDiscount = data.directDiscount / 100;
+          this.promotionType = 1;
+          // 获取价格
+          var totPrice = 0;
+          var discount = 1;
+          for (let i = 0; i < this.shoppingCart.productList.length; i++) {
+            let ths = this.shoppingCart.productList[i];
+            let qty = ths.productQty;
+            let price = ths.price;
+            if (this.directDiscount !== '') {
+              discount = this.$common.toDecimal(1 - this.directDiscount);
+            }
+            totPrice += this.$common.toDecimal(price * discount) * qty;
+            ths.discountPrice = this.$common.toDecimal(price * discount);
+          }
+          this.couponAmount = this.$common.toDecimal(this.shoppingCart.totalAmount - totPrice);
+          // 获取税率
+          this.getOrderTax();
+        }).catch(error => {
+          this.$message.error(error);
+        });
+      },
+      removeCoupon () { // 取消优惠券
+        this.isCoupon = false;
+        this.couponCode = '';
+        this.directDiscount = 0.00;
+        this.promotionType = '';
+        this.couponAmount = 0.00;
       }
     }
   }
@@ -95,15 +176,25 @@
         line-height: 24px;
         label {
           text-align: left;
-          font-size: 14px;
+          font-size: 16px;
           font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
           color: #666666;
         }
         p{
           font-family: 'avenir-next-demi';
-          font-size: 14px;
+          font-size: 16px;
           color: #333333;
           text-align: right;
+        }
+        p.coupon-amount{
+          color: @base-color;
+        }
+      }
+      .order-taxes{
+        line-height: 30px;
+        font-size: 18px;
+        p{
+          font-size: 22px;
         }
       }
     }
