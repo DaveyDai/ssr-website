@@ -118,6 +118,7 @@
         addCartDialogVisible: false, // 是否显示添加购物车弹框(移动端)
         selectCheckOut: false, // 是否显示登陆或者游客购物(未登陆下移动端)
         currentUnit: '$', // 币别
+        totalQtyOrdered: 1// 单个商品总数
       }
     },
     created () {
@@ -134,49 +135,72 @@
         window.open(url)
       },
       buyNow () { // 添加购物车
-        this.addCartDialogVisible = true
-        // 有购物车ID 或者 已登陆情况下 直接添加购物车 否则 先申请购物车ID
-        this.$store.state.shoppingCart.shoppingCartId || this.$cookies.get('token')
-        ? this.shoppingCartAdd() : this.createCartId()
+        // this.addCartDialogVisible = true
+
+        // 计算购物车单个商品的总数
+        this.perProductNum(this.buyProDetail.id)
+        // 已登陆情况下 直接添加购物车 否则 先申请购物车ID
+        this.$cookies.get('token') ? this.shoppingCartAdd() : this.shoppingCartAddById()
       },
-      createCartId () { // 无购物ID时申请购物车id (申请购物ID接口应该和添加购物车接口合并 前端如果没有传购物ID 则后台自动生成购物车ID 并返回当前购物车ID的购物车列表数据)
-        this.$store.dispatch('postFetch', {api: 'applyForShopCartId', data: {productSkuId: this.buyProDetail.skuId, totalQtyOrdered: 1}}).then(json => {
-          // 获得购物车ID后 根据购物车ID添加数据
-          this.$store.dispatch('getByUrl', {api: 'editShopCartNl', data: json.shopCartId}).then(data => {
-            // this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data)) // 保存购物车数据
-            if (this.$store.state.mediaDevices) { // 如果是移动端 显示购物车弹框
-              this.addCartDialogVisible = true
-            }
-          }).catch(error => {
-            this.$utils.showErrorMes(this, error)
-          })
+      shoppingCartAddById () { 
+        // 获得购物车ID后 根据购物车ID添加数据
+        let editParam = {
+          productSkuId: this.buyProDetail.id, 
+          totalQtyOrdered: this.totalQtyOrdered, 
+          source: 3
+        }
+        this.$store.dispatch('postByUrl', {api: 'editShopCartNl', bodyData: editParam, data: '?shopCartId=' + this.$store.state.shoppingCart.shoppingCartId}).then(data => {
+          // 未登录用户添加购物车ID
+          if (!this.$store.state.shoppingCart.shoppingCartId) {
+            let cartData = {shoppingCartId: data.shopCartId}
+            this.$store.commit('setShoppingCart', cartData)
+          }
+          this.getShoppingCart()
         }).catch(error => {
           this.$utils.showErrorMes(this, error)
         })
-        // this.$message.error('etShoppingCart(this.$store.commitetShoppingCart(this.$store.commit')
-        // this.$utils.setShoppingCart(this.$store.commit, { // 模拟数据
-        //   totalNum: 1,
-        //   shoppingCartId: 12345,
-        //   productList: [{productSkuId: this.buyProDetail.skuId, totalQtyOrdered: 1}]
-        // })
-        // if (this.$store.state.mediaDevices) { // 如果是移动端 显示购物车弹框
-        //   this.addCartDialogVisible = true
-        // }
       },
       shoppingCartAdd () { // 添加购物车 (编辑购物车接口最好改一下 post请求不要用URL拼接参数)
         let editParam = {
-          productSkuId: this.buyProDetail.skuId,
-          totalQtyOrdered: 1,
-          source: this.$cookies.get('token') ? 1 : 3
+          productSkuId: this.buyProDetail.id,
+          totalQtyOrdered: this.totalQtyOrdered,
+          source: 1
         }
-        this.$store.dispatch('postFetch', {api: this.$cookies.get('token') ? 'editShopCart' : 'editShopCartNl', data: editParam}).then(data => {
-          this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data, this.$store.state.shoppingCart.shoppingCartId)) // 保存购物车数据
-          if (this.$store.state.mediaDevices) { // 如果是移动端 显示购物车弹框
-            this.addCartDialogVisible = true
-          }
+        this.$store.dispatch('postFetch', {api: 'editShopCart', data: editParam}).then(data => {
+          // this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data.records)) // 保存登录用户购物车数据
+          this.getShoppingCart()
         }).catch(error => {
           this.$utils.showErrorMes(this, error)
         })
+      },
+      perProductNum (productSkuId) {
+        if (this.$store.state.shoppingCart.productList && this.$store.state.shoppingCart.productList.length > 0) {
+          for (let item of this.$store.state.shoppingCart.productList) {
+            this.totalQtyOrdered = item.productSkuId === productSkuId ? item.totalQtyOrdered + 1 : 1
+            return
+          }
+        }
+        this.totalQtyOrdered = 1
+      },
+      // 获取购物车列表
+      getShoppingCart () {
+        if (this.$cookies.get('token')) {
+          // 获取登录用户购物车列表
+          this.$store.dispatch('postFetch', {api: 'getShopCartList', data: {pageNo: 1, pageSize: 100, condition: {}}}).then(data => {
+            this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data.records)) // 保存购物车信息到本地和store
+          }).catch(error => {
+            this.$utils.showErrorMes(this, error)
+          })
+        } else {
+          // 获取购物车列表， 未登陆时根据购物车ID
+          if (this.$store.state.shoppingCart.shoppingCartId) {
+            this.$store.dispatch('postByUrl', {api: 'getShopCartListNl', data: this.shoppingCart.shoppingCartId}).then(data => {
+              this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data, this.$store.state.shoppingCart.shoppingCartId)) // 保存购物车信息到本地和store
+            }).catch(error => {
+              this.$utils.showErrorMes(this, error)
+            })
+          }
+        }
       },
       viewAndBuyHandler (type) { // 移动端显示购物车 或者 去结算
         if (type === 'showCart') { // 显示购物车
@@ -371,7 +395,7 @@
 											}
 										}
 									}
-									
+
 								}
 							}
 							.cart-item  + .cart-item {
@@ -468,7 +492,7 @@
             }
           }
 				}
-	  		
+
 	  	}
 	  }
   }

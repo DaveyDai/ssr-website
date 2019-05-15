@@ -64,5 +64,4 @@ export default {
   submitOrderInfo: apiBaseUrl + '/vava-pc-order/shop/submitOrderInfo', // 提交订单信息
   // PP支付
   paypalOrder: apiBaseUrl + '/vava-pc-pay/pay/paypalOrder', // pp支付
-  
 }

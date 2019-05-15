@@ -52,8 +52,18 @@
         this.$store.dispatch('postFetch', {api: 'signIn', data: this.loginParam}).then(data => {
           this.$bar.finish()
           this.$store.commit('setToken', data.token)
+          this.getShoppingCart()
           window.localStorage.setItem('userName', this.remember ? this.loginParam.userName : '')
           this.routerLink(this.$route.query.redirect ? this.$route.query.redirect + '?redirect=/login' : '/account')
+        }).catch(error => {
+          this.$utils.showErrorMes(this, error)
+        })
+      },
+      // 获取购物车列表
+      getShoppingCart () {
+        // 获取登录用户购物车列表
+        this.$store.dispatch('postFetch', {api: 'getShopCartList', data: {pageNo: 1, pageSize: 100, condition: {}}}).then(data => {
+          this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data.records)) // 保存购物车信息到本地和store
         }).catch(error => {
           this.$utils.showErrorMes(this, error)
         })

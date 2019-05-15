@@ -17,11 +17,11 @@
           <p class="product-d-price">${{item.sellPrice}}<span>${{item.listingPrice}}</span></p>
         </div>
         <div class="li-product-number">
-          <el-input-number v-model="item.totalQtyOrdered" :disabled="!item.state" :min="1" :max="999" @change="upShoppingTotal(item)"></el-input-number>
+          <el-input-number v-model="item.totalQtyOrdered" :disabled="!item.state" :min="1" :max="999" @change="updateShoppingCart(item)"></el-input-number>
         </div>
         <div class="li-product-right">
           <div class="li-product-total">${{(item.totalQtyOrdered * item.sellPrice).toFixed(2)}}</div>
-          <i class="li-product-delete el-icon-delete" @click="deleteShoppingData(item)"></i>
+          <i class="li-product-delete el-icon-delete" @click="deleteShoppingData(item, index)"></i>
         </div>
       </li>
     </div>
@@ -55,11 +55,8 @@
     },
     data () {
       return {
-        // shoppingPayList: {}
+        totalQtyOrdered: ''
       }
-    },
-    mounted () {
-      // this.shoppingPayList = JSON.parse(JSON.stringify(this.shoppingCart))
     },
     methods: {
       cartCheckOut () {
@@ -68,9 +65,77 @@
       upShoppingTotal (item) { // 改变商品数量
         this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(this.shoppingCart.productList, this.shoppingCart.shoppingCartId))
       },
-      deleteShoppingData (item) {
-        this.shoppingCart.productList = this.shoppingCart.productList.filter(ii => ii.productSkuId !== item.productSkuId)
-        this.upShoppingTotal()
+      updateShoppingCart (item) {
+        this.$cookies.get('token') ? this.shoppingCartAdd(item) : this.shoppingCartAddById(item)
+      },
+      shoppingCartAddById (item) { 
+        // 获得购物车ID后 根据购物车ID添加数据
+        let editParam = {
+          productSkuId: item.productSkuId, 
+          totalQtyOrdered: item.totalQtyOrdered, 
+          source: 2
+        }
+        this.$store.dispatch('postByUrl', {api: 'editShopCartNl', bodyData: editParam, data: '?shopCartId=' + this.$store.state.shoppingCart.shoppingCartId}).then(data => {
+          if (!this.$store.state.shoppingCart.shoppingCartId) {
+            let cartData = {shoppingCartId: data.shopCartId}
+            this.$store.commit('setShoppingCart', cartData)
+          }
+          this.getShoppingCart()
+        }).catch(error => {
+          this.$utils.showErrorMes(this, error)
+        })
+      },
+      shoppingCartAdd (item) { // 添加购物车 (编辑购物车接口最好改一下 post请求不要用URL拼接参数)
+        let editParam = {
+          productSkuId: item.productSkuId,
+          totalQtyOrdered: item.totalQtyOrdered,
+          source: 0
+        }
+        this.$store.dispatch('postFetch', {api: 'editShopCart', data: editParam}).then(data => {
+          this.getShoppingCart()
+        }).catch(error => {
+          this.$utils.showErrorMes(this, error)
+        })
+      },
+      // 获取购物车列表
+      getShoppingCart () {
+        if (this.$cookies.get('token')) {
+          // 获取登录用户购物车列表
+          this.$store.dispatch('postFetch', {api: 'getShopCartList', data: {pageNo: 1, pageSize: 100, condition: {}}}).then(data => {
+            this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data.records)) // 保存购物车信息到本地和store
+          }).catch(error => {
+            this.$utils.showErrorMes(this, error)
+          })
+        } else {
+          // 获取购物车列表， 未登陆时根据购物车ID
+          if (this.$store.state.shoppingCart.shoppingCartId) {
+            this.$store.dispatch('postByUrl', {api: 'getShopCartListNl', data: this.shoppingCart.shoppingCartId}).then(data => {
+              this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data, this.$store.state.shoppingCart.shoppingCartId)) // 保存购物车信息到本地和store
+            }).catch(error => {
+              this.$utils.showErrorMes(this, error)
+            })
+          }
+        }
+      },
+      // 删除购物车列表
+      deleteShoppingData (item, index) {
+        if (this.$cookies.get('token')) {
+          // 删除登录用户购物车
+          this.$store.dispatch('postFetch', { api: 'deleteShopCart', data: [item.productSkuId] }).then(data => {
+            this.shoppingCart.productList.splice(index, 1)
+            this.upShoppingTotal()
+          }).catch(error => {
+            this.$utils.showErrorMes(this, error)
+          })
+        } else {
+          // 删除未登录用户购物车
+          this.$store.dispatch('postByUrl', { api: 'deleteShopCartNl', bodyData: [item.productSkuId], data: this.$store.state.shoppingCart.shoppingCartId }).then(data => {
+            this.shoppingCart.productList.splice(index, 1)
+            this.upShoppingTotal()
+          }).catch(error => {
+            this.$utils.showErrorMes(this, error)
+          })
+        }
       },
       removeShop () { // 取消购买
         this.upShoppingTotal()

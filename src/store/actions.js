@@ -22,7 +22,7 @@ export const getByUrl = ({ state }, params) => { // 公共get请求--参数拼�
   return $http.fetchGet(params.api, params.data, state)
 }
 export const postByUrl = ({ state }, params) => { // 公共post请求--参数拼到url后的
-  return $http.fetchPost(params.api, params.data, state)
+  return $http.fetchPost(params.api, params.data, params.bodyData, state)
 }
 
 export const queryCategoryList = ({commit, state}) => { // 获取分类

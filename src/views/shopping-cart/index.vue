@@ -28,12 +28,25 @@
       this.getShoppingCart()
     },
     methods: {
-      getShoppingCart () { // 获取购物车列表， 未登陆时根据购物车ID
-        this.$store.dispatch('postByUrl', {api: 'getShopCartListNl', data: this.shoppingCart.shoppingCartId}).then(data => {
-          this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data)) // 保存购物车信息到本地和store
-        }).catch(error => {
-          this.$utils.showErrorMes(this, error)
-        })
+      getShoppingCart () {
+        if (this.$cookies.get('token')) {
+          // 获取登录用户购物车列表
+          this.$store.dispatch('postFetch', {api: 'getShopCartList', data: {pageNo: 1, pageSize: 100, condition: {}}}).then(data => {
+            this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data.records)) // 保存购物车信息到本地和store
+          }).catch(error => {
+            this.$utils.showErrorMes(this, error)
+          })
+        } else {
+          // 获取购物车列表， 未登陆时根据购物车ID
+          if (this.$store.state.shoppingCart.shoppingCartId) {
+            this.$store.dispatch('postByUrl', {api: 'getShopCartListNl', data: this.shoppingCart.shoppingCartId}).then(data => {
+              this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data, this.$store.state.shoppingCart.shoppingCartId)) // 保存购物车信息到本地和store
+            }).catch(error => {
+              this.$utils.showErrorMes(this, error)
+            })
+          }
+        }
+
         // setTimeout(() => {
         //   this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(
         //   [{ // 模拟数据

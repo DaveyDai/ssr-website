@@ -111,11 +111,11 @@
         }).catch(error => {
           this.$bar.finish()
           if (error.code === 14006 || error.code === 14000 || error.code === 14001) {
-            this.$utils.message(error.message)
+            utils.message(error.message)
             this.$cookies.set('token', '')
             this.$router.push('/login')
           } else {
-            this.$utils.showErrorMes(this, error)
+            utils.showErrorMes(this, error)
           }
         })
       },
@@ -123,21 +123,21 @@
         await this.$store.dispatch('postFetch', {api: 'findAddressInfoListVo', data: {pageNo: 1, pageSize: 20}}).then(data => {
           this.addressList = data.records || []
         }).catch(error => {
-          this.$utils.showErrorMes(this, error)
+          utils.showErrorMes(this, error)
         })
       },
       async queryCredit () { // 获取支付卡片列表
         await this.$store.dispatch('postFetch', {api: 'findCreditCardInfoListVo', data: {pageNo: 1, pageSize: 20}}).then(data => {
           this.creditList = data.records || []
         }).catch(error => {
-          this.$utils.showErrorMes(this, error)
+          utils.showErrorMes(this, error)
         })
       },
       selectShopCountryVo () { // 获取国家列表
         this.$store.dispatch('postFetch', {api: 'selectShopCountryVo'}).then(data => {
           this.$store.commit('setSaleCountry', data)
         }).catch(error => {
-          this.$utils.showErrorMes(this, error)
+          utils.showErrorMes(this, error)
         })
       },
       saveChange () {
@@ -151,32 +151,32 @@
         }).catch(error => {
           this.$bar.finish()
           if (error.code === 14006 || error.code === 14000 || error.code === 14001) { // token过期或未登陆
-            this.$utils.message('Plases login')
+            utils.message('Plases login')
             this.logout()
           } else {
-            this.$utils.showErrorMes(this, error)
+            utils.showErrorMes(this, error)
           }
         })
       },
       changePassword () {
-        if (!this.$utils.trim(this.passwordData.oldPassword)) {
-          this.$utils.message('Old password cannot be empty.')
+        if (!utils.trim(this.passwordData.oldPassword)) {
+          utils.message('Old password cannot be empty.')
           return
         }
-        if (!this.$utils.trim(this.passwordData.newPassword)) {
-          this.$utils.message('New password cannot be empty.')
+        if (!utils.trim(this.passwordData.newPassword)) {
+          utils.message('New password cannot be empty.')
           return
         }
-        if (this.$utils.trim(this.passwordData.newPassword).length < 6) {
-          this.$utils.message('Password must not be less than 6 characters.')
+        if (utils.trim(this.passwordData.newPassword).length < 6) {
+          utils.message('Password must not be less than 6 characters.')
           return
         }
-        if (!this.$utils.trim(this.passwordData.reNewPassword)) {
-          this.$utils.message('Reenter New Password cannot be empty.')
+        if (!utils.trim(this.passwordData.reNewPassword)) {
+          utils.message('Reenter New Password cannot be empty.')
           return
         }
-        if (this.$utils.trim(this.passwordData.newPassword) !== this.$utils.trim(this.passwordData.reNewPassword)) {
-          this.$utils.message('Reenter New Password is incorrect.')
+        if (utils.trim(this.passwordData.newPassword) !== utils.trim(this.passwordData.reNewPassword)) {
+          utils.message('Reenter New Password is incorrect.')
           return
         }
         this.$bar.start()
@@ -188,13 +188,14 @@
           if (error.code === 14006 || error.code === 14000 || error.code === 14001) {
             this.logout()
           } else {
-            this.$utils.showErrorMes(this, error)
+            utils.showErrorMes(this, error)
           }
         })
       },
       logout () {
         this.$store.commit('setToken', '')
         this.$store.commit('setAccountData', {})
+        this.$utils.removeShoppingCart(this.$store.commit) // 清空购物车数据
         this.$router.push('/login')
       },
       showEdit (type) { // 显示对应主卡片详情
@@ -211,7 +212,7 @@
           if (type === 4 || (type === 6 && this.creditList.length === 0)) this.$refs.paymentEdit.showEditCard() // 当点击卡片或者没有地址时点击任何地方都弹出支付方式管理卡片
           if (type === 6 && this.creditList.length > 0) this.$refs.paymentEdit.editCard('edit', this.creditList[0], true) // 直接点击概览编辑支付管理
           let refs = type === 1 || type === 2 ? this.$refs.changeFrom : type === 3 || type === 5 ? this.$refs.addressEdit.$el : this.$refs.paymentEdit.$el
-          this.$utils.setScroll(refs.offsetTop)
+          utils.setScroll(refs.offsetTop)
         })
       }
     }

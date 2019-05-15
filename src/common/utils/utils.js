@@ -92,6 +92,12 @@ const setShoppingCart = (commit, data) => { // 设置购物车
   if (typeof window !== 'undefined') window.localStorage.setItem('shoppingCarts', JSON.stringify(data))
 }
 
+const removeShoppingCart = (commit) => { // 清空购物车
+  let shoppingCart = {totalNum: 0, shoppingCartId: '', totalAmount: '', productList: []}
+  commit('setShoppingCart', shoppingCart)
+  if (typeof window !== 'undefined') window.localStorage.setItem('shoppingCarts', JSON.stringify(shoppingCart))
+}
+
 const totalShoppingCart = (data, obj) => { // 继续添加购物车
   data.totalNum += obj.totalQtyOrdered
   data.productList.push(obj)
@@ -121,6 +127,7 @@ export default {
   browserRedirect,
   toDecimal,
   setShoppingCart,
+  removeShoppingCart,
   totalShoppingCart,
   calculationCart
 }

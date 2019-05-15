@@ -43,7 +43,19 @@
       this.getShoppingCart()
     },
     methods: {
-      getShoppingCart () { // 获取本地缓存购物车列表
+      getShoppingCart () {
+        if (this.$cookies.get('token')) {
+          // 获取登录用户购物车列表
+          this.$store.dispatch('postFetch', {api: 'getShopCartList', data: {pageNo: 1, pageSize: 100, condition: {}}}).then(data => {
+            this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data.records)) // 保存购物车数据
+          }).catch(error => {
+            this.$utils.showErrorMes(this, error)
+          })
+        } else {
+          // 获取本地缓存购物车列表
+          let shoppingCartData = localStorage.getItem('shoppingCarts') ? JSON.parse(localStorage.getItem('shoppingCarts')) : {totalNum: 0, shoppingCartId: '', productList: []}
+          this.$store.commit('setShoppingCart', shoppingCartData)
+        }
       }
     }
   }
