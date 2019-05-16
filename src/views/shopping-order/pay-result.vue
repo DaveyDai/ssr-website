@@ -1,6 +1,5 @@
 <template>
   <div>
-   <rp-header></rp-header>
       <!-- 是否登录界面 -->
     <div class="payment-result"  v-loading="loading">
       <div class="slide-top center-main">
@@ -65,12 +64,9 @@
       </div>
       <img :src="url" style="width:1px;height: 1px;">
     </div>
-    <rp-footer></rp-footer>
   </div>
 </template>
 <script>
-  import rpHeader from '../../components/Header.vue'
-  import rpFooter from '../../components/Footer.vue'
   import { mapGetters } from 'vuex'
   export default {
     computed: {
@@ -89,7 +85,7 @@
     data () {
       return {
         orderStatus: '', // 订单状态
-        loading: true,
+        loading: false,
         payment: {
           data: {
             userAuthToken: ''
@@ -226,10 +222,6 @@
       isLength (val) {
         return val && val.length > 0
       }
-    },
-    components: {
-      'rp-header': rpHeader,
-      'rp-footer': rpFooter,
     }
   }
 </script>

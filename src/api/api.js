@@ -22,7 +22,7 @@ export default {
   deleteAddress: apiBaseUrl + '/vava-pc-user/address/deleteByUuids', // 删除收货地址
   findAddressInfoListVo: apiBaseUrl + '/vava-pc-user/address/findAddressInfoListVo', // 获取收货地址列表
   addressEdit: apiBaseUrl + '/vava-pc-user/address/edit', // 编辑
-  saveDefaultByUuid: apiBaseUrl + '/vava-pc-user/address/saveDefaultByUuid/', // 设置默认地址
+  saveDefaultAddressByUuid: apiBaseUrl + '/vava-pc-user/address/saveDefaultByUuid/', // 设置默认地址
   // 支付方式管理
   creditAdd: apiBaseUrl + '/vava-pc-user/credit/cart/add', // 添加
   deleteCredit: apiBaseUrl + '/vava-pc-user/credit/cart/deleteByUuids', // 删除
@@ -52,7 +52,7 @@ export default {
   getBlogSearch: apiBaseUrl + '/vava-pc-user/index/findBlogManagerModuleDetailVo', // 获取blog搜索信息
   // 购物车接口
   applyForShopCartId: apiBaseUrl + '/vava-pc-order/cart/applyForShopCartId', // 申请购物车id(未登录)
-  editShopCartNl: apiBaseUrl + '/vava-pc-order/cart/addNoLogin/', // 添加/更新商品到购物车(未登录)
+  editShopCartNl: apiBaseUrl + '/vava-pc-order/cart/addNoLogin', // 添加/更新商品到购物车(未登录)
   editShopCart: apiBaseUrl + '/vava-pc-order/cart/add', // 添加/更新商品到购物车(已登录)(token)
   getShopCartListNl: apiBaseUrl + '/vava-pc-order/cart/findCartInfoListVoNoLogin/', // 购物车商品列表(未登录)
   getShopCartList: apiBaseUrl + '/vava-pc-order/cart/findCartInfoListVo', // 购物车商品列表-分页(已登录)(token)

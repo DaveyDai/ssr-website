@@ -89,7 +89,7 @@ const toDecimal = x => { // 转换金额函数保存2位小数
 
 const setShoppingCart = (commit, data) => { // 设置购物车
   commit('setShoppingCart', data)
-  if (typeof window !== 'undefined') window.localStorage.setItem('shoppingCarts', JSON.stringify(data))
+  if (typeof window !== 'undefined') window.localStorage.setItem('shoppingCarts', JSON.stringify(data)) // 购物车有效期为1天
 }
 
 const removeShoppingCart = (commit) => { // 清空购物车

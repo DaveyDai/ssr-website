@@ -160,7 +160,7 @@
       border-bottom: 1px solid #EEEEEE;
       .abs-quantity {
         font-size: 14px;
-        color: #13BED3;
+        color: #151515;
         text-align: right;
         position: absolute;
         right: 20px;
@@ -249,6 +249,7 @@
           flex-shrink: 0;
         }
         .right-desc {
+          flex-grow: 1;
           margin: 5px 0px;
           font-family: AvenirNext-DemiBold;
           color: #333333;

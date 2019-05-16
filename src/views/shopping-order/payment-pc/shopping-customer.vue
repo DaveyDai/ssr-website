@@ -170,7 +170,7 @@
           .sign {
             font-family: SFCompactDisplay-Regular;
             font-size: 14px;
-            color: #13BED3;
+            color: #6244BB;
             cursor: pointer;
           }
           .account {

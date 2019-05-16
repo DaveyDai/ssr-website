@@ -44,9 +44,17 @@
       <span class="pretax-total-price">Pre-Tax total: <em>${{shoppingCart.totalAmount}}</em></span>
       <vava-button class="cart-check-out no-wrap" @click="cartCheckOut">Check Out</vava-button>
     </div>
+    <el-dialog class='guestOrUserPart' :visible.sync="dialogTableVisible">
+      <div class="guestOrUser">
+        <vava-button class="cart-check-out no-wrap" @click="routerRedirect('account')">Continue with  Account</vava-button>
+        <p><span>or</span></p>
+        <vava-button class="cart-check-out no-wrap" @click="routerRedirect('guest')">Continue as Guest</vava-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
+  import { invokeGetShoppingCart, invokeShoppingCartAdd, invokeShoppingCartAddById } from '@/api/invoke.js'
   export default {
     computed: {
       shoppingCart () { // 购物车列表
@@ -55,12 +63,24 @@
     },
     data () {
       return {
-        totalQtyOrdered: ''
+        totalQtyOrdered: '',
+        dialogTableVisible: false
       }
     },
     methods: {
       cartCheckOut () {
-        this.$router.push(this.$cookies.get('token') ? '/pay' : '/shopping-customer')
+        if (this.$utils.browserRedirect()) {
+          if (this.$cookies.get('token')) {
+            this.$router.push('/pay-m')
+          } else {
+            this.dialogTableVisible = true
+          }
+        } else {
+          this.$router.push(this.$cookies.get('token') ? '/pay' : '/shopping-customer')
+        }
+      },
+      routerRedirect (routerId) {
+        this.$router.push({ name: 'ShoppingCustomerMobile', params: { id: routerId } })
       },
       upShoppingTotal (item) { // 改变商品数量
         this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(this.shoppingCart.productList, this.shoppingCart.shoppingCartId))
@@ -68,54 +88,18 @@
       updateShoppingCart (item) {
         this.$cookies.get('token') ? this.shoppingCartAdd(item) : this.shoppingCartAddById(item)
       },
-      shoppingCartAddById (item) { 
-        // 获得购物车ID后 根据购物车ID添加数据
+      // 添加购物车 (编辑购物车接口最好改一下 post请求不要用URL拼接参数)
+      shoppingCartAdd (item) { 
         let editParam = {
           productSkuId: item.productSkuId, 
           totalQtyOrdered: item.totalQtyOrdered, 
-          source: 2
+          source: this.$cookies.get('token') ? 0 : 2
         }
-        this.$store.dispatch('postByUrl', {api: 'editShopCartNl', bodyData: editParam, data: '?shopCartId=' + this.$store.state.shoppingCart.shoppingCartId}).then(data => {
-          if (!this.$store.state.shoppingCart.shoppingCartId) {
-            let cartData = {shoppingCartId: data.shopCartId}
-            this.$store.commit('setShoppingCart', cartData)
-          }
-          this.getShoppingCart()
-        }).catch(error => {
-          this.$utils.showErrorMes(this, error)
+        this.$cookies.get('token') ? invokeShoppingCartAdd(this, editParam, () => {
+          invokeGetShoppingCart(this) // 获取购物车列表
+        }) : invokeShoppingCartAddById (this, editParam, () => {
+          invokeGetShoppingCart(this) // 获取购物车列表
         })
-      },
-      shoppingCartAdd (item) { // 添加购物车 (编辑购物车接口最好改一下 post请求不要用URL拼接参数)
-        let editParam = {
-          productSkuId: item.productSkuId,
-          totalQtyOrdered: item.totalQtyOrdered,
-          source: 0
-        }
-        this.$store.dispatch('postFetch', {api: 'editShopCart', data: editParam}).then(data => {
-          this.getShoppingCart()
-        }).catch(error => {
-          this.$utils.showErrorMes(this, error)
-        })
-      },
-      // 获取购物车列表
-      getShoppingCart () {
-        if (this.$cookies.get('token')) {
-          // 获取登录用户购物车列表
-          this.$store.dispatch('postFetch', {api: 'getShopCartList', data: {pageNo: 1, pageSize: 100, condition: {}}}).then(data => {
-            this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data.records)) // 保存购物车信息到本地和store
-          }).catch(error => {
-            this.$utils.showErrorMes(this, error)
-          })
-        } else {
-          // 获取购物车列表， 未登陆时根据购物车ID
-          if (this.$store.state.shoppingCart.shoppingCartId) {
-            this.$store.dispatch('postByUrl', {api: 'getShopCartListNl', data: this.shoppingCart.shoppingCartId}).then(data => {
-              this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data, this.$store.state.shoppingCart.shoppingCartId)) // 保存购物车信息到本地和store
-            }).catch(error => {
-              this.$utils.showErrorMes(this, error)
-            })
-          }
-        }
       },
       // 删除购物车列表
       deleteShoppingData (item, index) {
@@ -612,3 +596,42 @@
     }
   }
 </style>
+<style lang="less">
+.guestOrUserPart{
+  .guestOrUser{
+    padding-top: 10px;
+    padding-bottom: 16px;
+    p {
+      border-top: 1px solid #EEEEEE;
+      position: relative;
+      margin: 18px 0;
+      span {
+        display: block;
+        width: 32px;
+        font-family: Montserrat-Regular;
+        font-size: 14px;
+        color: #999999;
+        background-color: white;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+  .vava-button {
+    font-family: avenir-next-regular;
+  }
+  .el-dialog{
+    margin-top: 30vh!important;
+  }
+  .el-dialog__header{
+    border: 0;
+  }
+  .el-dialog__body{
+    padding-bottom: 32px;
+    border-top: 0 !important;
+  }
+}
+</style>
+

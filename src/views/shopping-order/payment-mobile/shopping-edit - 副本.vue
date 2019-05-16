@@ -56,7 +56,7 @@
             </div>
           </div>
           <!-- 产品列表 -->
-          <shopping-detail :order-taxes="orderTaxes" ></shopping-detail>
+          <shopping-detail @cartListChange="cartListChange" :allowEdit="allowEdit" :showNum="showNum" @refreshCart="refresh" ></shopping-detail>
           <div class="coupon-box" v-if="false">
             <router-link class="coupon-box-wrap spaceBetween" tag="a" to="/pay-coupon">
               <p class="box-title spaceBetween">
@@ -73,7 +73,7 @@
           <div class="total-detail">
             <div class="item">
               <label>Subtotal: </label>
-              <span>${{ shoppingCart.totalAmount }}</span>
+              <span>${{ cartList.totalAmount }}</span>
             </div>
             <div class="item">
               <label>Shipping: </label>
@@ -88,18 +88,18 @@
             </div>
             <div class="item">
               <label>Taxes: </label>
-              <span>${{ orderTaxes }}</span>
+              <span>${{ objTax.tax }}</span>
             </div>
             <div class="item totalPrice">
               <label>Order Total: </label>
-              <span class="price">${{ totalAmount }}</span>
+              <span class="price">${{ totalPrice }}</span>
             </div>
             <!-- 支付方式 -->
             <div class="pay-methods" ref="payMethods">
               <div class="title">Select Payment Methods</div>
               <div class="box-list">
                 <!-- pp支付 -->
-                <div :class="{item: true, rel: true, active: isGoPay}" @click="isGoPay = !isGoPay">
+                <div :class="{item: true, rel: true, active: hasPayType}" @click="hasPayType = !hasPayType">
                   <p class="sub-title">PayPal</p>
                   <div class="right-block">
                     <img src="@/assets/images/shopping/paypal.png">
@@ -115,7 +115,7 @@
             <div class="placeOrder" style='padding: 0 15px;'>
               <vava-button type="primary" style="width: 100%;margin-top: 20px;"
                 @click="noPay"
-                class="bg-gradient" round v-if="!(shoppingCart.productList.length > 0 && hasAddress && isGoPay)">
+                class="bg-gradient" round v-if="!(cartList.productList.length > 0 && hasAddress && hasPayType)">
                 Place Order
               </vava-button>
 
@@ -136,57 +136,95 @@
   export default {
     components: { ShoppingDetail },
     computed: {
-      shoppingCart () { // 购物车列表(最终需要支付的)
-        return this.$utils.calculationCart(this.$store.state.shoppingCart.productList, this.$store.state.shoppingCart.shoppingCartId, true)
+      isLogin () {
+        // if (this.userList && this.userList.accountId !== undefined) {
+        //   return true;
+        // }
+        return false
       },
-      totalAmount () { // 计算结算总金额 = 订单金额 + 税费 - 优惠码优惠金额
-        return this.$utils.toDecimal(Number(this.shoppingCart.totalAmount) + this.orderTaxes - this.couponAmount)
+      /**
+       * [totalPrice 总价格]
+       * @author luke 2018-12-13
+       */
+      totalPrice () {
+        // let total = this.$common.toDecimal(Number(this.cartList.totalAmount) + this.objTax.tax - this.couponAmount);
+        return '';
+      },
+      // 是否有地址
+      hasAddress () {
+        const selAddr = JSON.stringify(this.selAddress)
+        return this.selAddress && selAddr !== '{}' && selAddr !== ''
       }
+    },
+    filter() {
     },
     // 定义变量
     data () {
       return {
-        couponInfo: {},
-        orderTaxes: 0, // 订单税费
-        selAddress: {}, // 选中的地址列表
-        inAddressList: [], // 登陆状态下的地址列表
-        upAddressData: {}, // 登陆状态下用户需要编辑的地址
-        dialogVisible: false, // 修改地址弹出框是否显示(登陆状态)
-        isGoPay: false, // 是否可以下订单
+        shoppingCart: [],
+        isNew: false, // 是否显示地址
+        isAdd: false, // 是否登录新增地址
+        email: '', // 用户操作邮箱
+        updateRess: {}, // 修改地址对象
+        objTax: {
+          tax: 0
+        }, // 税费
+        selAddress: {}, // 选中的地址列表，当前购物选定的地址
+        inAddressList: [], // 地址列表
+        selectId: -1, // 登录状态下，从地址列表选择的地址的数据id
+        couponCode: '', // 优惠码
+        couponName: '', // 名称
+        promotionType: '', // 优惠码类型
+        directDiscount: '', // 优惠码
+        couponAmount: 0.00, // 优惠价格
+        userAuthToken : '',
+        isCoupon: false, // 优惠券是否应用
+        dialogVisible: false, // 修改地址弹出框是否显示
+        isOrder: false, // 是否可以下订单
         fullscreenLoading: false,
-        isLogin: false, // 是否登陆
-        // 弹出对话框设置option
-        messageBoxOp: { title: '', confirmButtonText: 'Yes', cancelButtonText: 'No', type: 'warning', roundButton: true, center: true, cancelButtonClass: 'cance-confirm-class', confirmButtonClass: 'sure-confirm-class' }
+        isTips: false, // 优惠错误提示
+        showNum: 2, // 购物车默认显示的数量
+        hasPayType: true,
+        allowEdit: false, // 购物车列表是否允许编辑
+        isLoadingAddr: false, // 是否正在加载地址
+        cartList: {productList: []},
+        couponInfo: {}
       }
     },
     beforeMount () {
-      // 如果登陆就获取地址列表 未登陆直接显示地址编辑表单
-       if (this.$cookies.get('token')) {
-         this.isLogin = true
-         this.getInAddress()
-       }
-       this.selAddress.notificationEmail = this.$route.query.email || this.shoppingCart.payEmail || (this.$store.state.accountData.memberInfoBo && this.$store.state.accountData.memberInfoBo.emailAddress) || ''
+      console.log(this.$utils)
+      this.cartList = JSON.parse(window.localStorage.getItem('shoppingCarts') || {})
+    },
+    mounted: async function () {
+      // const query = this.$route.query
+      // if (query && query.selectId) {
+      //   this.selectId = Number(query.selectId)
+      // }
+      // await this.$store.dispatch('fetchIsLogin');
+      // this.userAuthToken = this.$cookie.get('userAuthToken');
+      // // 初始化方法
+      // this.init();
+      // this.setCoupon();
+      // this.$cookie.delete('currentAddrId')
+    },
+    watch: {
+      // cartList(val, oldVal) {
+      //   if (oldVal.productList.length === 0 && val.productList.length > 0) {
+      //     this.getOrderTax();
+      //   } else if (oldVal.productList.length === 0 && val.productList.length === 0) {
+      //     this.$router.push("/carts/")
+      //   }
+      // }
     },
     // 方法
     methods: {
-      loginSaveAddress (addressData) { // 登陆状态 编辑地址点击保存处理方法
-        this.$store.dispatch('postFetch', {api: addressData.addressUuid ? 'addressEdit' : 'addressAdd', data: addressData}).then(data => {
-          this.selAddress.addressUuid = addressData.addressUuid || data // 设置收货地址uuid
-          Object.assign(this.selAddress, addressData)
-          this.inAddressList.push(this.selAddress) // 添加到地址列表供用户选择
-          this.dialogVisible = false // 关闭编辑地址弹框
-          this.isGoPay = true // 可以支付了
-          this.getOrderTax()
-        }).catch(error => {
-          // 即时报错也不中断用户购买流程
-          this.changeAddress(addressData)
-          this.dialogVisible = false // 关闭编辑地址弹框
-        })
-      },
-      loginAddAddress () { // 登陆状态下新增地址
-        this.upAddressData = {notificationEmail: this.selAddress.notificationEmail}
-        this.isGoPay = false
-        this.dialogVisible = true
+      // 购物车数据变化时
+      cartListChange(cartList) {
+        if (JSON.stringify(this.couponInfo) !== '{}' && this.couponInfo.couponName) {
+          this.setCoupon();
+        } else {
+          this.getOrderTax();
+        }
       },
       // 跟改地址
       changeAddr(selAddress) {
@@ -531,6 +569,26 @@
           this.getOrderTax();
         }
       },
+      /**
+       * [getCart 获取购物车数据]
+       * @author luke 2018-12-07
+       */
+      // getCart () {
+      //   let obj = {
+      //     api: 'getCartList',
+      //     data: {
+      //       token: this.userAuthToken
+      //     }
+      //   };
+      //   this.$store.dispatch('fetchGetAll', obj).then(json => {
+      //     this.cartList.productList = json.brandShopCartItems;
+      //     this.cartList.totalAmount = json.brandShopCart[0].amountTotal;
+      //     this.cartList.totalNum = json.brandShopCart[0].qtyTotal
+      //     this.loading = false;
+      //   }).catch(error => {
+      //     this.$vueOnToast.pop('error', error)
+      //   });
+      // },
       /**
        * [delAddress 删除地址]
        * @author luke 2018-12-15

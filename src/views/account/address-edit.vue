@@ -117,7 +117,7 @@
         })
       },
       setDefalut (item) {
-        this.$store.dispatch('postByUrl', {api: 'saveDefaultByUuid', data: item.addressUuid}).then(data => {
+        this.$store.dispatch('postByUrl', {api: 'saveDefaultAddressByUuid', data: item.addressUuid}).then(data => {
           this.$utils.message('success')
           this.upAddress()
         }).catch(error => {

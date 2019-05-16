@@ -92,6 +92,7 @@
 
 <script>
   import VavaImgSwiper from '@/components/vava-swiper.vue'
+  import { invokeGetShoppingCart, invokeShoppingCartAdd, invokeShoppingCartAddById } from '@/api/invoke.js'
   export default {
     components: { VavaImgSwiper },
     computed: {
@@ -140,74 +141,39 @@
         // 计算购物车单个商品的总数
         this.perProductNum(this.buyProDetail.id)
         // 已登陆情况下 直接添加购物车 否则 先申请购物车ID
-        this.$cookies.get('token') ? this.shoppingCartAdd() : this.shoppingCartAddById()
+        this.shoppingCartAdd()
       },
-      shoppingCartAddById () { 
-        // 获得购物车ID后 根据购物车ID添加数据
-        let editParam = {
-          productSkuId: this.buyProDetail.id, 
-          totalQtyOrdered: this.totalQtyOrdered, 
-          source: 3
-        }
-        this.$store.dispatch('postByUrl', {api: 'editShopCartNl', bodyData: editParam, data: '?shopCartId=' + this.$store.state.shoppingCart.shoppingCartId}).then(data => {
-          // 未登录用户添加购物车ID
-          if (!this.$store.state.shoppingCart.shoppingCartId) {
-            let cartData = {shoppingCartId: data.shopCartId}
-            this.$store.commit('setShoppingCart', cartData)
-          }
-          this.getShoppingCart()
-        }).catch(error => {
-          this.$utils.showErrorMes(this, error)
-        })
-      },
-      shoppingCartAdd () { // 添加购物车 (编辑购物车接口最好改一下 post请求不要用URL拼接参数)
+      // 添加购物车 (编辑购物车接口最好改一下 post请求不要用URL拼接参数)
+      shoppingCartAdd () { 
         let editParam = {
           productSkuId: this.buyProDetail.id,
           totalQtyOrdered: this.totalQtyOrdered,
-          source: 1
+          source: this.$cookies.get('token') ? 1 : 3
         }
-        this.$store.dispatch('postFetch', {api: 'editShopCart', data: editParam}).then(data => {
-          // this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data.records)) // 保存登录用户购物车数据
-          this.getShoppingCart()
-        }).catch(error => {
-          this.$utils.showErrorMes(this, error)
+        this.$cookies.get('token') ? invokeShoppingCartAdd(this, editParam, () => {
+          this.$utils.message('The goods have been added to the shopping cart. Please go to the shopping cart')
+          invokeGetShoppingCart(this) // 获取购物车列表
+        }) : invokeShoppingCartAddById (this, editParam, () => {
+          invokeGetShoppingCart(this) // 获取购物车列表
         })
       },
       perProductNum (productSkuId) {
         if (this.$store.state.shoppingCart.productList && this.$store.state.shoppingCart.productList.length > 0) {
           for (let item of this.$store.state.shoppingCart.productList) {
-            this.totalQtyOrdered = item.productSkuId === productSkuId ? item.totalQtyOrdered + 1 : 1
-            return
+            if ( item.productSkuId === productSkuId ) {
+              this.totalQtyOrdered = item.totalQtyOrdered + 1
+              return
+            }
           }
         }
         this.totalQtyOrdered = 1
-      },
-      // 获取购物车列表
-      getShoppingCart () {
-        if (this.$cookies.get('token')) {
-          // 获取登录用户购物车列表
-          this.$store.dispatch('postFetch', {api: 'getShopCartList', data: {pageNo: 1, pageSize: 100, condition: {}}}).then(data => {
-            this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data.records)) // 保存购物车信息到本地和store
-          }).catch(error => {
-            this.$utils.showErrorMes(this, error)
-          })
-        } else {
-          // 获取购物车列表， 未登陆时根据购物车ID
-          if (this.$store.state.shoppingCart.shoppingCartId) {
-            this.$store.dispatch('postByUrl', {api: 'getShopCartListNl', data: this.shoppingCart.shoppingCartId}).then(data => {
-              this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data, this.$store.state.shoppingCart.shoppingCartId)) // 保存购物车信息到本地和store
-            }).catch(error => {
-              this.$utils.showErrorMes(this, error)
-            })
-          }
-        }
       },
       viewAndBuyHandler (type) { // 移动端显示购物车 或者 去结算
         if (type === 'showCart') { // 显示购物车
           this.$router.push('/shopping-cart')
         } else {
           // 已登陆直接到下单页面 未登陆让用户选择登陆或者游客购买
-          this.$cookies.get('token') ? this.$router.push('//pay-m') : this.selectCheckOut = true
+          this.$cookies.get('token') ? this.$router.push('/pay-m') : this.selectCheckOut = true
         }
       },
       continueGo (type) { // 移动端未登陆点击check out跳转到对应页面

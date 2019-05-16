@@ -1,30 +1,20 @@
 <template>
   <!-- 购物车内游客填邮箱页 -->
-  <div class="cartsGuest">
-    <div class="slide-unlogin">
-      <h3 class="title">
-        <i class="icon icon-right-slide expand" @click='goBack'></i>
-        <span>Please enter your notification email</span>
-      </h3>
-      <el-form :model="unSign" ref="unSign" class="ruleForm">
-        <el-form-item
-          prop="email"
-        >
-          <el-input  class="login-input" placeholder="Email Address" v-model="unSign.email"></el-input>
-        </el-form-item>
-
-        <el-form-item>
-          <vava-button type="primary" class="bg-gradient" round 
-              @click="guestLogin"  style="width: 100%;">
-            Next
-          </vava-button>
-        </el-form-item>
-        <p class='orPart'>
-          <span>or</span>
-        </p>
-        <a class='signInA' href="/carts-login">Sign In</a>
-      </el-form>
-    </div>
+  <div class="slide-unlogin">
+    <h3 class="title">
+      <i class="icon icon-right-slide expand" @click='goBack'></i>
+      <span>Please enter your notification email</span>
+    </h3>
+    <el-form :model="unSign"  :rules="rules" ref="unSign" class="ruleForm">
+      <el-form-item prop="email">
+        <el-input  class="login-input" placeholder="Email Address" v-model="unSign.email"></el-input>
+      </el-form-item>
+    </el-form>
+    <vava-button class="bg-gradient" round @click="guestLogin">Next</vava-button>
+    <p class='orPart'>
+      <span>or</span>
+    </p>
+    <a class='signInA' href="/carts-login">Sign In</a>
   </div>
 </template>
 
@@ -32,42 +22,32 @@
   export default {
     data() {
       return {
-        unSign: {
-          email: ''
+        unSign: { email: '' },
+        rules: {
+          email: [
+            { required: true, message: 'Please enter the Email'},
+            { type: 'email', message: 'Please enter a valid Email', trigger: ['blur', 'change'] }
+          ]
         },
-        rules: [
-          { required: true, message: 'Please enter the Email'},
-          { type: 'email', message: 'Please enter a valid Email', trigger: ['blur', 'change'] }
-        ],
         userAuthToken: ''
       }
     },
     methods: {
-      /**
-       * [guestLogin 游客登陆]
-       * @author luke 2018-12-12
-       */
       guestLogin () {
         this.$refs['unSign'].validate((valid) => {
           if (valid) {
-            // 跳转支付页面
-            this.$router.push('/pay/?email=' + this.unSign.email);
-          } else {
-            console.log('error submit!!');
-            return false;
+            this.$router.push('/pay-m/?email=' + this.unSign.email) // 跳转支付页面
           }
-        });
+        })
       },
-      // 返回上一级
-      goBack() {
-        this.$router.push('/carts/')
+      goBack() { // 返回上一级
+        this.$router.push('/shopping-cart')
       }
     },
   }
 </script>
 
 <style lang="less" scoped>
-.cartsGuest{
   .slide-unlogin {
     background: #FFFFFF;
     padding: 0 15px 30px;
@@ -119,16 +99,18 @@
       text-align: center;
       display: block;
     }
+
   }
-}
 </style>
 <style lang="less">
-.cartsGuest{
+.slide-unlogin{
   .el-form-item{
     margin-bottom: 16px;
   }
   .vava-button{
     font-size: 16px;
+    width: 100%;
+    margin-top: 10px;
   }
 }
 </style>

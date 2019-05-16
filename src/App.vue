@@ -3,7 +3,7 @@
     <page-header v-if="!isBlogHeader"></page-header>
     <blog-header v-else></blog-header>
     <transition name="fade" mode="out-in">
-      <router-view class="vava-page-content" :class="isMobileShow ? 'is-mobile':''"></router-view>
+      <router-view class="vava-page-content" :class="$store.state.mediaDevices ? 'is-mobile':''"></router-view>
     </transition>
     <page-footer v-if="!isBlogHeader" v-show="!isHideFooter"></page-footer>
     <blog-footer v-else></blog-footer>
@@ -12,6 +12,7 @@
 </template>
 
 <script>
+  import { invokeGetShoppingCart } from '@/api/invoke.js'
   import PageHeader from '@/components/page-header.vue'
   import PageFooter from '@/components/page-footer.vue'
   const BlogHeader = () => import('@/components/vava-blog-header.vue') // blog-头部
@@ -21,42 +22,25 @@
     data () {
       return {
         isBlogHeader: false, // 是否显示blog页面的
-        isHideFooter: false, // 是否隐藏footer
-        isMobileShow: false // 是否响应小屏幕显示
+        isHideFooter: false // 是否隐藏footer
       }
     },
     watch: {
       $route (route) { // 监听路由
         this.isBlogHeader = !!route.meta.blog
+        this.isHideFooter = this.$route.meta.isShoppingcart && this.$store.state.mediaDevices
       }
     },
     created () {
       this.isBlogHeader = !!this.$route.meta.blog
+      this.isHideFooter = this.$route.meta.isShoppingcart && this.$store.state.mediaDevices // 移动端购物时 是不显示footer的
+    },
+    beforeMount () { // 虽然没什么用 但还是买个保险稳妥一点  万一node端判断设备失败了呢
+      this.$store.commit('setMediaDevices', this.$utils.browserRedirect())
     },
     mounted () {
-      this.isMobileShow = this.$utils.browserRedirect() // 判断当前是否移动设备
-      this.$store.commit('setMediaDevices', this.isMobileShow)
-      this.isHideFooter = this.$route.meta.isShoppingcart && (this.isMobileShow || document.body.clientWidth < 875)  // 购物车页面 且是移动端设备或显示区域小于875不显示footer
-      window.onresize = () => { // 监听浏览器显示区域变化
-        this.isHideFooter = this.$route.meta.isShoppingcart && (document.body.clientWidth < 875 || this.isMobileShow)
-      }
-      this.getShoppingCart()
-    },
-    methods: {
-      getShoppingCart () {
-        if (this.$cookies.get('token')) {
-          // 获取登录用户购物车列表
-          this.$store.dispatch('postFetch', {api: 'getShopCartList', data: {pageNo: 1, pageSize: 100, condition: {}}}).then(data => {
-            this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data.records)) // 保存购物车数据
-          }).catch(error => {
-            this.$utils.showErrorMes(this, error)
-          })
-        } else {
-          // 获取本地缓存购物车列表
-          let shoppingCartData = localStorage.getItem('shoppingCarts') ? JSON.parse(localStorage.getItem('shoppingCarts')) : {totalNum: 0, shoppingCartId: '', productList: []}
-          this.$store.commit('setShoppingCart', shoppingCartData)
-        }
-      }
+      this.isHideFooter = this.$route.meta.isShoppingcart && this.$store.state.mediaDevices // 这个也是稳妥一点才加上
+      invokeGetShoppingCart(this, true) // 获取购物车列表
     }
   }
 </script>

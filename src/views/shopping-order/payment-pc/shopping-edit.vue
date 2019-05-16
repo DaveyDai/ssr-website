@@ -9,7 +9,7 @@
           <!-- 编辑地址 -->
           <div v-show="!isGoPay">
             <!-- 未登录情况的 地址编辑 -->
-            <shipping-address  @newAddress="changeAddress" v-if="!isLogin" :default-address="selAddress" :is-cancel="!!selAddress.firstName" @cancelAddress="isGoPay = true"></shipping-address>
+            <shipping-address  @newAddress="changeAddress" v-if="!isLogin" :defaultdefault-address="selAddress" :is-cancel="!!selAddress.firstName" @cancelAddress="isGoPay = true"></shipping-address>
             <!-- 登录情况地址列表-->
             <div class="box-list" v-else>
               <div class="list" >
@@ -41,7 +41,7 @@
           <!-- 地址选择好之后折叠内容展示 -->
           <div class="detail" v-if="isGoPay">
             <p>{{ selAddress.firstName }} {{ selAddress.lastName }}</p>
-            <p>{{ email }}</p>
+            <p>{{ selAddress.notificationEmail }}</p>
             <div class="desc">
               <p>{{ selAddress.address1 }} {{ selAddress.address2 }}</p>
               <p> {{ selAddress.city }}, {{ selAddress.regionCode }} {{ selAddress.postcode }}</p>
@@ -76,6 +76,7 @@
   </div>
 </template>
 <script>
+  import { invokeGetShoppingCart } from '@/api/invoke.js'
   import ShippingAddress  from './shipping-address.vue'
   import OrderSummary from './order-summary.vue'
   import ShoppingStep from './shopping-step.vue'
@@ -106,12 +107,13 @@
          this.isLogin = true
          this.getInAddress()
        }
-       this.selAddress.notificationEmail = this.$route.query.email || this.shoppingCart.payEmail || ''
+       this.selAddress.notificationEmail = this.$route.query.email || this.shoppingCart.payEmail || (this.$store.state.accountData.memberInfoBo && this.$store.state.accountData.memberInfoBo.emailAddress) || ''
     },
     methods: {
       loginSaveAddress (addressData) { // 登陆状态 编辑地址点击保存处理方法
         this.$store.dispatch('postFetch', {api: addressData.addressUuid ? 'addressEdit' : 'addressAdd', data: addressData}).then(data => {
-          this.selAddress.addressUuid = addressData.addressUuid || data.addressUuid
+          this.selAddress.addressUuid = addressData.addressUuid || data // 设置收货地址uuid
+          Object.assign(this.selAddress, addressData)
           this.inAddressList.push(this.selAddress) // 添加到地址列表供用户选择
           this.dialogVisible = false // 关闭编辑地址弹框
           this.isGoPay = true // 可以支付了
@@ -122,6 +124,11 @@
           this.dialogVisible = false // 关闭编辑地址弹框
         })
       },
+      loginAddAddress () { // 登陆状态下新增地址
+        this.upAddressData = {notificationEmail: this.selAddress.notificationEmail}
+        this.isGoPay = false
+        this.dialogVisible = true
+      },
       changeAddress (addressData) { // 未登陆状态下 保存地址
         this.selAddress = addressData
         this.isGoPay = true
@@ -130,18 +137,13 @@
       getInAddress (isNoDefault) { // 获取地址列表 只有在登陆状态下 进入页面的时候调用
         this.$store.dispatch('postFetch', {api: 'findAddressInfoListVo', data: {pageNo: 1, pageSize: 20}}).then(data => {
           this.inAddressList = data.records
-          if (!isNoDefault) {
+          if (!isNoDefault && this.inAddressList && this.inAddressList.length > 0) {
             this.selAddress = this.inAddressList[0] // 默认选中第一个地址
             this.getOrderTax() // 根据地址获取税费
           }
         }).catch(error => {
           this.$message.error(error)
         })
-      },
-      loginAddAddress () { // 登陆状态下新增地址
-        this.upAddressData = {notificationEmail: this.selAddress.notificationEmail}
-        this.isGoPay = false
-        this.dialogVisible = true
       },
       getOrderTax () { // 根据地址获取税费
         let taxesParam = {
@@ -151,7 +153,7 @@
           shopCartId: this.shoppingCart.shoppingCartId, // 购物车ID
           useLogin: !!this.$cookies.get('token'), // 是否登陆
           paymentMethod: 0,
-          source: 3
+          source: 0
         }
         this.$store.dispatch('postFetch', {api: 'getOrderInfoPriceVo', data: taxesParam}).then(data => {
           this.orderTaxes = data.subtotal // 订单税费
@@ -189,21 +191,7 @@
         })
       },
       clearCarts () { // 清空购物车 直接刷新购物车列表
-        if (this.$cookies.get('token')) { // 获取登录用户购物车列表
-          this.$store.dispatch('postFetch', {api: 'getShopCartList', data: {pageNo: 1, pageSize: 100, condition: {}}}).then(data => {
-            this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data.records)) // 保存购物车数据
-          }).catch(error => {
-            this.$utils.showErrorMes(this, error)
-          })
-        } else { // 获取本地缓存购物车列表
-          if (this.shoppingCart.shoppingCartId) {
-            this.$store.dispatch('postByUrl', {api: 'getShopCartListNl', data: this.shoppingCart.shoppingCartId}).then(data => {
-              this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(data, this.shoppingCart.shoppingCartId)) // 保存购物车信息到本地和store
-            }).catch(error => {
-              this.$utils.showErrorMes(this, error)
-            })
-          }
-        }
+        invokeGetShoppingCart(this)
       },
       deleteAddress (item) { // 登陆状态下删除地址
         this.$confirm('Are you sure you want to delete this shipping address ?', 'Tips', this.messageBoxOp).then(() => {

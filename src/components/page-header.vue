@@ -53,7 +53,7 @@
           <!-- <vava-button class="search-button">Search</vava-button> -->
         </div>
 	    	<vava-collapse-item @click="routerLink('/shopping-cart')">
-          <span slot="leftIcon" class="collapse-title-left header-shopping-cart"><i class="icon icon-shopping-cart"></i><em>{{ shoppingCartProductNum }}</em></span>
+          <span slot="leftIcon" class="collapse-title-left header-shopping-cart"><i class="icon icon-shopping-cart"></i><em v-if="shoppingCartProductNum">{{ shoppingCartProductNum }}</em></span>
 	    		<span slot="titleContent" class="phone-account-name">CART</span>
 	    	</vava-collapse-item>
 	    	<vava-collapse-item @click="routerLink('/account')">

@@ -2,10 +2,23 @@
   <div class="shopping-no-commodity" >
     <img src="@/assets/images/shopping/no.png" width="100%" >
     <p>Your Shopping Cart is Still Empty!</p>
-    <vava-button class="button-standard no-wrap mt20">GO SHOPPING</vava-button>
-    <p class="no-commodity-login">Sign In</p>
+    <vava-button class="button-standard no-wrap mt20" @click="goShopping">GO SHOPPING</vava-button>
+    <p class="no-commodity-login" @click="signIn">Sign In</p>
   </div>
 </template>
+<script>
+  export default {
+    methods: {
+      goShopping () {
+        this.$router.push('/')
+      },
+      signIn () {
+        this.$router.push({path: '/login', query: {redirect: 'shopping-cart'}})
+      }
+    }
+  }
+</script>
+
 <style lang="less" scoped>
   .shopping-no-commodity{
     width: 100%;

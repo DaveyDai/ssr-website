@@ -95,8 +95,11 @@
       }
     },
     mounted () {
-      this.editAddress = JSON.parse(JSON.stringify(this.defaultAddress))
+      if (this.defaultAddress) {
+        this.editAddress = JSON.parse(JSON.stringify(this.defaultAddress))
+      }
       if (this.countryList.length === 0) this.selectShopCountryVo() // 如果国家列表为空则查询国家列表
+      this.editAddress.notificationEmail = this.$route.query.email || this.shoppingCart.payEmail || (this.$store.state.accountData.memberInfoBo && this.$store.state.accountData.memberInfoBo.emailAddress) || ''
     },
     // 方法
     methods: {

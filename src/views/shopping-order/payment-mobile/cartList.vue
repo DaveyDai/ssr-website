@@ -4,15 +4,15 @@
       <!-- 列表 -->
       <div class="list">
         <div class="item" v-for="(item, key) in cartList.productList" :key="key">
-          <a v-if="allowEdit" :href="url + '/p/' + item.urlKey + '.html'" class="productImg"  :alt="item.productName">
-            <img :src="item.imgUrl" :alt="item.productName" class="box-img" >
+          <a v-if="allowEdit" class="productImg"  :alt="item.productName">
+            <img :src="item.skuProductMainUrl" :alt="item.productName" class="box-img" >
           </a>
           <a v-else class="productImg"  :alt="item.productName">
-            <img :src="item.imgUrl" :alt="item.productName" class="box-img" >
+            <img :src="item.skuProductMainUrl" :alt="item.productName" class="box-img" >
           </a>
           <div class="box-info">
             <div class="namePart">
-              <a v-if="allowEdit" :href="url + '/p/' + item.urlKey + '.html'" alt="item.productName">
+              <a v-if="allowEdit"  alt="item.productName">
                 <span class="name twoLine">{{ item.productName }}</span>
               </a>
               <a v-else alt="item.productName">
@@ -24,30 +24,21 @@
             </div>
             
             <div class='colorPart'>
-              <!-- <span class="model">Model: {{ item.model }}</span> -->
-              <span class="color">Color: {{ item.colorId | colorName(colorList) }}</span>
+              <span class="color">Color: {{ item.colourCode }}</span>
             </div>
             <div class="price-quantity">
               <p class="pricePart">
-                <span>${{ item.price.toFixed(2) }}</span>
+                <span>${{ item.sellPrice.toFixed(2) }}</span>
                 <del v-if="item.listingPrice">${{ item.listingPrice.toFixed(2) }}</del>
               </p>
               <div class="quantity">
                 <el-input-number v-if="allowEdit" class='elNum24' size="mini" :min="1" :max="99" v-model="item.productQty" @change="changeQty(item)">
                 </el-input-number>
-                <span v-else>X{{item.productQty}}</span>
+                <span v-else>X{{item.totalQtyOrdered}}</span>
               </div>
             </div>
           </div>
-          <!-- 商品数量 -->
-          
-          <!-- 总价格 -->
-          <!-- <div class="total">
-            ${{ (item.totalPrice || item.price * item.productQty).toFixed(2) }}
-          </div> -->
         </div>
-        <!-- <div class="operateShow" v-if="showBtn && unfold" @click='unfoldOperate'> Unfold  All </div> -->
-        <!-- <div class="operateShow" v-if="showBtn && !unfold" @click='foldOperate'> Fold </div> -->
       </div>
     </div>
     <div class="slide-right">
@@ -81,7 +72,58 @@
         unfold: true, // 默认折叠
         showNumCopy: 0, // 保存原始显示的购物车条数
         colorList: [],
-        cartList: {productList: []}
+        cartList: {productList: []},
+        countryList: [], // 国家下拉列表
+        regionList: [], // region下拉列表
+        ruleForm: {
+          active: false,
+          firstName: '',
+          lastName: '',
+          countryId: 1,
+          regionId: '',
+          city: '',
+          address1: '',
+          address2: '',
+          postcode: '',
+          telephone: '',
+          email: '',
+          fax: '',
+          country: '',
+          region: '',
+        },
+        rules: {
+          firstName: [
+            { required: true, message: 'Must be entered.', trigger: 'blur' }
+          ],
+          lastName: [
+            { required: true, message: 'Must be entered.', trigger: 'blur' }
+          ],
+          regionId: [
+            { required: true, message: 'Must be entered.', trigger: 'blur' }
+          ],
+          countryId: [
+            { required: true, message: 'You must enter your country .', trigger:'blur' }
+          ],
+          postcode: [
+            { required: true, message: 'Must be entered.', trigger:'blur' }
+          ],
+          city: [
+            { required: true, message: 'Must be entered.', trigger: 'blur' }
+          ],
+          telephone: [
+            { required: true, message: 'Must be entered.', trigger: 'blur'},
+            { validator: checkPhone, trigger: 'blur' }
+          ],
+          address1: [
+            { required: true, message: 'Must be entered.', trigger: 'blur' }
+          ],
+          email: [
+            { required: true, message: 'Email address must be entered.', trigger: 'blur' },
+            { type: 'email', message: 'Invalid email address.', trigger: ['blur', 'change'] }
+          ]
+        },
+        isLoading: false,
+        emailLock: false
       }
     },
     // 引入组件
@@ -244,6 +286,7 @@
     padding: 0;
     background-color: white;
     .slide-left{
+      width: 100%;
       .list {
         .item{
           display: flex;
@@ -254,6 +297,7 @@
             height: 104px;
           }
           .box-info {
+            flex-grow: 1;
             padding: 5px 0 0 15px;
             .namePart{
               width: 100%;
@@ -302,6 +346,10 @@
                   color: #999999;
                   margin-left: 4px;
                 }
+              }
+              .quantity {
+                font-size: 12px;
+                color: #333;
               }
             }
           }

@@ -15,7 +15,7 @@ export default {
   },
   setToken (state, data) {
     state.token = data
-    VueCookies.set('token', data)
+    if (typeof window !== 'undefined') VueCookies.set('token', data)
   },
   setAccountData (state, data) {
     if (typeof window !== 'undefined' && window && window.localStorage) window.localStorage.setItem('accountName', data.emailAddress || '')
