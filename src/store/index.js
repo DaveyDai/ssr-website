@@ -9,6 +9,8 @@ Vue.use(Vuex)
 export function createStore () {
   return new Vuex.Store({
     state: {
+      selAddress: {}, // 选中的地址对象
+      inAddressList: [], // 登录用户地址列表
       dicTreeList: {}, // 数据字典
       saleCountry: [], // 国家列表
       homePageData: {bannerImages: [], productImages: {leftImges: {}, imagesList: []}, socialMediaImages: []}, // 首页数据

@@ -9,7 +9,7 @@
           <!-- 编辑地址 -->
           <div v-show="!isGoPay">
             <!-- 未登录情况的 地址编辑 -->
-            <shipping-address  @newAddress="changeAddress" v-if="!isLogin" :defaultdefault-address="selAddress" :is-cancel="!!selAddress.firstName" @cancelAddress="isGoPay = true"></shipping-address>
+            <shipping-address  @newAddress="changeAddress" v-if="!isLogin" :default-address="selAddress" :is-cancel="!!selAddress.firstName" @cancelAddress="isGoPay = true"></shipping-address>
             <!-- 登录情况地址列表-->
             <div class="box-list" v-else>
               <div class="list" >
@@ -18,9 +18,9 @@
                   <p>{{ item.notificationEmail }}</p>
                   <div class="desc">
                     <p>{{ item.address1 }} {{ item.address2 }}</p>
-                    <p> {{ item.city }}, {{ item.regionName }} {{ item.zipCode }}</p>
-                    <p> {{ item.countryName }}</p>
-                    <p> Phone: {{item.telephone}}</p>
+                    <p>{{ item.city }}, {{ item.regionName }} {{ item.zipCode }}</p>
+                    <p>{{ item.countryName }}</p>
+                    <p>Phone: {{ item.telephone }}</p>
                   </div>
                   <div class="abs-op">
                     <i class="el-icon-edit" @click="updateAddress(item)" ></i>
@@ -103,11 +103,15 @@
     },
     beforeMount () {
       // 如果登陆就获取地址列表 未登陆直接显示地址编辑表单
-       if (this.$cookies.get('token')) {
-         this.isLogin = true
-         this.getInAddress()
-       }
-       this.selAddress.notificationEmail = this.$route.query.email || this.shoppingCart.payEmail || (this.$store.state.accountData.memberInfoBo && this.$store.state.accountData.memberInfoBo.emailAddress) || ''
+      if (this.$cookies.get('token')) {
+        this.isLogin = true
+        this.getInAddress()
+      }
+      let accountName = ''
+      if (typeof window !== 'undefined' && window && window.sessionStorage) {
+        accountName = sessionStorage.getItem('accountName')
+      }
+      this.selAddress.notificationEmail = this.$route.query.email || (this.shoppingCart && this.shoppingCart.payEmail) || (this.$store.state.accountData && this.$store.state.accountData.emailAddress) || accountName || ''
     },
     methods: {
       loginSaveAddress (addressData) { // 登陆状态 编辑地址点击保存处理方法
@@ -116,7 +120,6 @@
           Object.assign(this.selAddress, addressData)
           this.inAddressList.push(this.selAddress) // 添加到地址列表供用户选择
           this.dialogVisible = false // 关闭编辑地址弹框
-          this.isGoPay = true // 可以支付了
           this.getOrderTax()
         }).catch(error => {
           // 即时报错也不中断用户购买流程
@@ -135,7 +138,7 @@
         this.getOrderTax() // 计算税费
       },
       getInAddress (isNoDefault) { // 获取地址列表 只有在登陆状态下 进入页面的时候调用
-        this.$store.dispatch('postFetch', {api: 'findAddressInfoListVo', data: {pageNo: 1, pageSize: 20}}).then(data => {
+        this.$store.dispatch('postFetch', {api: 'findAddressInfoListVo', data: {pageNo: 1, pageSize: 20, condition:{}}}).then(data => {
           this.inAddressList = data.records
           if (!isNoDefault && this.inAddressList && this.inAddressList.length > 0) {
             this.selAddress = this.inAddressList[0] // 默认选中第一个地址
@@ -156,7 +159,8 @@
           source: 0
         }
         this.$store.dispatch('postFetch', {api: 'getOrderInfoPriceVo', data: taxesParam}).then(data => {
-          this.orderTaxes = data.subtotal // 订单税费
+          this.isGoPay = true // 可以支付了
+          this.orderTaxes = data.amount // 订单税费
         }).catch(error => {
         })
       },
@@ -176,7 +180,6 @@
         // 用户下单
         this.$store.dispatch('postFetch', {api: 'submitOrderInfo', data: orderData}).then(data => { // 调用下单接口
           // this.$seoFn.onCheckoutOption(3, 'Pay')
-          this.clearCarts() // 清空购物车
           this.payPalpal(data.orderNo, orderData.email) // 下单成功后调用PP支付
         }).catch(error => {
           this.fullscreenLoading = false
@@ -185,6 +188,7 @@
       },
       payPalpal (orderNo, email) { // 提交给pp支付
         this.$store.dispatch('postFetch', {api: 'paypalOrder', data: { orderNo, email }}).then(data => {
+          this.clearCarts() // 清空购物车
           window.location.href = data.successUrl
         }).catch(error => {
           this.$message.error(error)

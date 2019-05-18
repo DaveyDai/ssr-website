@@ -53,8 +53,8 @@
         this.$store.dispatch('postFetch', {api: 'signIn', data: this.loginParam}).then(data => {
           this.$bar.finish()
           this.$store.commit('setToken', data.token)
-          // let accountData = { isLogin: true, emailAddress: this.loginParam.userName }
-          // this.$store.commit('setAccountData', accountData)
+          let accountData = { emailAddress: this.loginParam.userName }
+          this.$store.commit('setAccountData', accountData)
           invokeGetShoppingCart(this) // 获取购物车列表
           window.localStorage.setItem('userName', this.remember ? this.loginParam.userName : '')
           this.routerLink(this.$route.query.redirect ? this.$route.query.redirect + '?redirect=/login' : '/account')

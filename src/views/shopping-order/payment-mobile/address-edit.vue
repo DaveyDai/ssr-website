@@ -1,7 +1,7 @@
 <template>
   <div class="box-adderss" >
     <div class="title">
-      <i @click='goBack' class="el-icon-arrow-left expand"></i>
+      <i @click='goBack' class="icon icon-right-slide expand"></i>
       <span v-if="isEdit"> Edit Address</span>
       <span v-else>Add Address</span>
     </div>
@@ -42,6 +42,10 @@
           <el-input v-model="editAddress.telephone" ></el-input>
         </el-form-item>
       </el-form>
+      <div style="width: 100%;" class="btn-add">
+        <vava-button class="bg-gradient btn-cancel" v-if="isCancel" @click="goBack" noActive>Cancel</vava-button>
+        <vava-button class="bg-gradient btn-save" @click="saveAddress">Save</vava-button>
+      </div>
     </div>
   </div>
 </template>
@@ -53,8 +57,14 @@
       isCancel: Boolean // 是否显示取消按钮
     },
     computed: {
+      shoppingCart () { // 购物车列表(最终需要支付的)
+        return this.$store.state.shoppingCart
+      },
       countryList () {
         return this.$store.state.saleCountry
+      },
+      isEdit() {
+        return this.defaultAddress && this.defaultAddress.firstName
       }
     },
     watch: {
@@ -78,6 +88,7 @@
         }
       }
       return {
+        emailAddress: '',
         regionData: [], // 区域数据
         editAddress: {}, // 地址编辑区域
         addressRules: { // 地址数据保存校验
@@ -98,12 +109,17 @@
         emailLock: true, // 是否锁定邮箱禁止编辑
       }
     },
-    mounted () {
+    beforeMount () {
       if (this.defaultAddress) {
         this.editAddress = JSON.parse(JSON.stringify(this.defaultAddress))
       }
       if (this.countryList.length === 0) this.selectShopCountryVo() // 如果国家列表为空则查询国家列表
-      this.editAddress.notificationEmail = this.$route.query.email || this.shoppingCart.payEmail || (this.$store.state.accountData.memberInfoBo && this.$store.state.accountData.memberInfoBo.emailAddress) || ''
+
+      let accountName = ''
+      if (typeof window !== 'undefined' && window && window.sessionStorage) {
+        accountName = sessionStorage.getItem('accountName')
+      }
+      this.editAddress.notificationEmail = this.$route.query.email || (this.shoppingCart && this.shoppingCart.payEmail) || (this.$store.state.accountData && this.$store.state.accountData.emailAddress) || accountName || ''
     },
     // 方法
     methods: {
@@ -142,21 +158,16 @@
       clearValidate () { // 移除校验结果
         this.$refs['editAddress'].clearValidate()
       },
-      cancelEdit () {
-        this.$emit('cancelAddress')
-      },
       goBack() {
         this.$router.go(-1)
       }
-    },
-    components: {
     }
   }
 </script>
 <style lang='less' scoped>
   .box-adderss {
     background: #FFFFFF;
-    padding-top: 44px;
+    // padding-top: 44px;
     .title{
       padding: 0 15px;
       height: 40px;
@@ -173,6 +184,7 @@
         left: 15px;
         top: 13px;
         font-size: 18px;
+        transform: rotate(180deg);
       }
     }
     .formRegion{
@@ -182,6 +194,11 @@
       width: 100%;
       text-align: center;
       margin-top: 20px;
+      display: flex;
+      justify-content: space-around;
+      button {
+        width: 40%;
+      }
       .btnWrap {
         padding: 1px;
         width: 180px;
@@ -194,7 +211,8 @@
         line-height: 36px;
         vertical-align: top;
         .btn-cancel {
-          width: 100%;
+          // width: 100%;
+          margin-right: 10px;
           height: 38px;
           font-size: 16px;
           border-radius: 24px;
@@ -204,7 +222,7 @@
         }
       }
       .btn-save {
-        width: 180px;
+        // width: 180px;
         border-radius: 24px;
         font-family: SFCompactDisplay-Regular;
         font-size: 16px;

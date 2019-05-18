@@ -117,6 +117,7 @@ const calculationCart = (data, shoppingCartId, isPay) => { // 计算购物车数
   cartData.productList = data.filter(item => isPay ? item.isSelect : true) // isPay 为true时 勾选的商品才添加到列表(用于下单结算)
   return cartData
 }
+
 export default {
   validateEmail,
   message,

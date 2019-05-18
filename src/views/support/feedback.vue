@@ -77,7 +77,7 @@
         this.$bar.start()
         this.$store.dispatch('postFetch', {api: 'getMemberInfo'}).then(data => {
           this.$bar.finish()
-          this.$store.commit('setAccountData', JSON.parse(JSON.stringify(data)))
+          this.$store.commit('setAccountData', JSON.parse(JSON.stringify(data.memberInfoBo)))
           this.feedbackSuccess = this.isShowView = true
         }).catch(error => {
           this.$bar.finish()

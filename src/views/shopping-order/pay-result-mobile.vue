@@ -1,8 +1,7 @@
 <template>
   <div>
-   <rp-header></rp-header>
       <!-- 是否登录界面 -->
-    <div class="payment-result"  v-loading="loading">
+    <div class="payment-result-mobile"  v-loading="loading">
       <!-- 头部 -->
       <div class="bread-self" v-if="finishLoading">
         <!-- class： bg-gradient(成功)  fail(失败) -->
@@ -24,11 +23,11 @@
           <p class="desc">You will receive an email regarding to the order details, please check your inbox within 5 minutes.</p>
           <div class='operateWrap'>
             <a :href="'/order/detail/?orderNo=' + orderNo + '&userEmail=' + userEmail" alt="order">
-              <el-button class="bg40 bg-gradient" round  style="width: 100%;margin-bottom: 16px;">Order Details</el-button>
+              <vava-button class="bg40 bg-gradient" round  style="width: 100%;margin-bottom: 16px;">Order Details</vava-button>
             </a>
             <div class="btnWrap">
               <a href="/c/wireless-chargers.html" alt="Wireless Chargers">
-                <el-button class="btn-buy btn40" round>Continue to Buy</el-button>
+                <vava-button class="btn-buy btn40" round>Continue to Buy</vava-button>
               </a>
             </div>
           </div>
@@ -40,9 +39,9 @@
           <p class="desc">Prompt : Your order will expire in 1 days. Please make the payment in time. </p>
           <div class='operateWrap'>
             <div class="btnWrap">
-              <el-button class="bg40 bg-gradient" round @click="dialogTableVisible = true" style="width: 100%;margin-bottom: 16px;">Try Again</el-button>
+              <vava-button class="bg40 bg-gradient" round @click="dialogTableVisible = true" style="width: 100%;margin-bottom: 16px;">Try Again</vava-button>
               <a :href="'/order/detail/?orderNo=' + orderNo + '&userEmail=' + userEmail" alt="order">
-                <el-button class="btn-buy btn40" round>Order Details</el-button>
+                <vava-button class="btn-buy btn40" round>Order Details</vava-button>
               </a>
             </div>
           </div>
@@ -60,12 +59,9 @@
       </el-dialog>
       <img :src="url" style="width:1px;height: 1px;">
     </div>
-    <rp-footer></rp-footer>
   </div>
 </template>
 <script>
-  import rpHeader from '../../components/Header.vue'
-  import rpFooter from '../../components/Footer.vue'
   import { mapGetters } from 'vuex'
   export default {
     computed: {
@@ -84,7 +80,7 @@
     data () {
       return {
         orderStatus: '', // 订单状态
-        loading: true,
+        loading: false,
         payment: {
           data: {
             userAuthToken: ''
@@ -97,29 +93,29 @@
         selectPay: false,
         isLoadingPay: false,
         url: '',
-        finishLoading: false
+        finishLoading: true
       }
     },
     // 引入组件
     props: {},
     mounted: async function () {
-      // 初始化方法
-      await this.$store.dispatch('fetchIsLogin');
-      let pObj = window.localStorage.getItem('paymentData');
-      if (pObj) {
-        pObj = JSON.parse(pObj);
-        this.orderNo = pObj.orderNo;
-        this.payment = pObj;
-        // 20190123
-        if (this.isLogin) {
-          this.userEmail = this.userList.email;
-        } else {
-          this.userEmail = pObj.userEmail;
-        }
-        await this.getSuccessPay();
-      } else {
-        this.$router.push("/")
-      }
+      // // 初始化方法
+      // await this.$store.dispatch('fetchIsLogin');
+      // let pObj = window.localStorage.getItem('paymentData');
+      // if (pObj) {
+      //   pObj = JSON.parse(pObj);
+      //   this.orderNo = pObj.orderNo;
+      //   this.payment = pObj;
+      //   // 20190123
+      //   if (this.isLogin) {
+      //     this.userEmail = this.userList.email;
+      //   } else {
+      //     this.userEmail = pObj.userEmail;
+      //   }
+      //   await this.getSuccessPay();
+      // } else {
+      //   this.$router.push("/")
+      // }
     },
     // 方法
     methods: {

@@ -1,7 +1,7 @@
 <template>
   <div class="payAddressList">
     <!-- 订单确认页内地址列表页 -->
-    <div class='list-wrap' v-loading='isLoading'>
+    <div class='list-wrap'>
       <div class="title">
         <i @click='goBack' class="el-icon-arrow-left expand"></i>
         <span>Shipping Address</span>
@@ -9,26 +9,26 @@
       <div class="addNewAddress">
         <a class='infoA' href="/pay-addressdetail"><i class='el-icon-circle-plus-outline'></i>Add a new address</a>
       </div>
-      <div class="list-main" v-if="addressList.length > 0 && isLogin">
-        <div :class="{'list-item': true, 'active': selectIdx === item.id}" v-for="(item, index) in addressList" :key="index" @click="selectAddr(item, index)">
+      <div class="list-main" v-if="inAddressList.length > 0">
+        <div :class="{'list-item': true, 'active': selAddress.addressUuid === item.addressUuid }" v-for="(item, index) in inAddressList" @click="clickAddress(item)" :key="index">
           <div class="name">
             <strong>{{ item.firstName }} {{ item.lastName }} </strong>
             <p class="abs-op">
               <i class="el-icon-edit" @click.stop="goEdit(item)" ></i>
-              <i class="el-icon-delete" @click.stop="goDel(item)"></i>
+              <i class="el-icon-delete" @click.stop="deleteAddress(item, index)"></i>
             </p>
           </div>
-          <p class="email">{{ email }}</p>
+          <p class="email">{{ item.notificationEmail }}</p>
           <div class="addr-info">
             <div class="desc">
               <p>{{ item.address1 }} {{ item.address2 }}</p>
               <p> {{ item.city }}, {{ item.regionCode }} {{ item.postcode }}</p>
               <p> {{ item.countryCode }}</p>
-              <p> Phone: {{item.telephone}}</p>
+              <p> Phone: {{ item.telephone }}</p>
             </div>
-            <p>
+            <!-- <p>
               <el-checkbox @click.native.stop="updateAddress(item, index)" v-model="item.active">Default Address</el-checkbox>
-            </p>
+            </p> -->
           </div>
         </div>
       </div>
@@ -51,153 +51,58 @@
 
 <script>
   export default {
-    computed: {
-      isLogin () {
-        if (this.userList && this.userList.accountId !== undefined) {
-          return true;
-        }
-        return false
-      }
-    },
     data() {
       return {
-        userAuthToken: '',
-        addressList: [],
-        isLoading: false,
-        dialogTableVisible: false, // 删除地址信息的二次确认弹框
-        delAddr: {},
-        selectIdx: -1
+        dialogTableVisible: false,
+        selAddress: {}, // 选中的地址列表
+        inAddressList: [], // 登陆状态下的地址列表
+        // 弹出对话框设置option
+        messageBoxOp: { title: '', confirmButtonText: 'Yes', cancelButtonText: 'No', type: 'warning', roundButton: true, center: true, cancelButtonClass: 'cance-confirm-class', confirmButtonClass: 'sure-confirm-class' }
       }
     },
-    watch: {
-      dialogTableVisible(val) {
-        if (!val) {
-          this.delAddr = {}
-        }
-      }
-    },
-    async mounted() {
-      await this.$store.dispatch('fetchIsLogin');
-      this.userAuthToken = this.$cookie.get('userAuthToken');
-      if (this.isLogin) {
-        await this.getAddressList()
-        this.email = this.userList.email;
-      } else {
-        this.email = this.$route.query.email;
-      }
-      this.selectIdx = Number(this.$cookie.get('currentAddrId'))
+    beforeMount () {
+      this.inAddressList = this.$store.state.inAddressList || []
+      this.selAddress = this.$store.state.selAddress || {}
+      this.getInAddress()
     },
     methods: {
-      // 选择一个地址并跳转
-      selectAddr(item, idx) {
-        this.selectIdx = item.id
-        setTimeout(() => {
-          this.$router.push(`/pay?selectId=${item.id}`)
-        }, 500);
-        // 选择地址
-        this.$seoFn.onCheckoutOption(2, 'checkoutOption');
-      },
-      // 删除地址
-      goDel(item) {
-        this.delAddr = JSON.parse(JSON.stringify(item));
-        this.dialogTableVisible = true
-      },
-      // 跳转到地址编辑页面编辑当条地址数据
-      goEdit(item) {
-        this.$router.push(`/pay-addressdetail?editId=${item.id}`)
-      },
-      /**
-       * [getInAddress 获取登陆]
-       * @author luke 2018-12-15
-       */
-      getAddressList () {
-        this.isLoading = true
-        // 获取地址列表
-        let obj = {
-          api: 'getAddressList',
-          data: {
-            userAuthToken: this.userAuthToken
-          }
-        }
-        let ths = this;
-        this.$store.dispatch('FETCH_ADDRESS_ALL', obj).then(json => {
-          if (json && json.payload && json.payload.data && Array.isArray(json.payload.data) && json.payload.data.length > 0) {
-            let dataList = json.payload.data
-            dataList = dataList.map((item) => {
-              item.active = !!item.active
-              return item
-            })
-            this.addressList = dataList
-          }
-          this.isLoading = false
-        }).catch(error => {
-          this.$vueOnToast.pop('error', error)
-          this.isLoading = false
-        });
-      },
-      /**
-       * [delAddress 删除地址]
-       * @author luke 2018-12-15
-       */
-      async delAddress (item) {
-        let obj = {
-          api: 'delAddress',
-          data: {
-            userAuthToken: this.userAuthToken,
-            id: item.id
-          }
-        };
-        await this.$store.dispatch('FETCH_ADDRESS_ALL', obj);
-        this.dialogTableVisible = false
-        // 获取新的地址
-        this.getAddressList();
-        let inObj = {
-          api: 'getAddressList',
-          data: {
-            userAuthToken: this.userAuthToken
-          }
-        }
-        this.$store.dispatch('FETCH_ADDRESS_ALL', inObj).then(json => {
-          if (json && json.payload && json.payload.data && Array.isArray(json.payload.data) && json.payload.data.length > 0) {
-            let dataList = json.payload.data
-            dataList = dataList.map((item) => {
-              item.active = !!item.active
-              return item
-            })
-            this.addressList = dataList
-          }
-        });
-        // 阻止事件冒泡
-        event.stopPropagation();
-      },
-      /**
-       * [updateAddress 修改地址]
-       * @author luke 2018-12-17
-       */
-      async updateAddress (item, index) {
-        setTimeout(async() => {
-          item = JSON.parse(JSON.stringify(item))
-          let obj = {
-            api: 'updateActive',
-            data: {
-              userAuthToken: this.userAuthToken,
-              id: item.id
+      deleteAddress (item, index) { // 登陆状态下删除地址
+        this.$confirm('Are you sure you want to delete this shipping address ?', 'Tips', this.messageBoxOp).then(() => {
+          this.$store.dispatch('postFetch', {api: 'deleteAddress', data: [item.addressUuid]}).then(data => {
+            this.inAddressList.splice(index, 1)
+            this.$store.commit('setInAddressList', this.inAddressList) // 保存地址列表
+            if (item.addressUuid === this.selAddress.addressUuid) {
+              this.$store.commit('setSelAddress', {}) // 保存选中的地址
             }
-          }
-          this.isLoading = true
-          await this.$store.dispatch('UPDATE_ADDRESS', obj);
-          this.addressList.forEach((item, key) => {
-            if (key !== index) {
-              item.active = false
-            }
+          }).catch(error => {
+            this.$utils.showErrorMes(this, error)
           })
-          // if (this.isLogin) {
-          //   await this.getAddressList()
-          // }
-          this.isLoading = false
-          // 阻止事件冒泡
-          event.stopPropagation();
-        }, 50);
+        }).catch(() => {})
+      },
+      getInAddress (isNoDefault) { // 获取地址列表 只有在登陆状态下 进入页面的时候调用
+        this.$store.dispatch('postFetch', {api: 'findAddressInfoListVo', data: {pageNo: 1, pageSize: 20, condition: {}}}).then(data => {
+          this.inAddressList = data.records
+          this.$store.commit('setInAddressList', this.inAddressList) // 保存地址列表
+        }).catch(error => {
+          this.$message.error(error)
+        })
+      },
+      // deleteAddress (item) { // 登陆状态下删除地址
+      //   this.$confirm('Are you sure you want to delete this shipping address ?', 'Tips', this.messageBoxOp).then(() => {
+      //     this.$store.dispatch('postFetch', {api: 'deleteAddress', data: [item.addressUuid]}).then(data => {
+      //       // 如果删除的地址是选中的地址 则需要重新选中第一地址
+      //       this.getInAddress(item.addressUuid !== this.selAddress.addressUuid)
+      //     }).catch(error => {
+      //       this.$utils.showErrorMes(this, error)
+      //     })
+      //   }).catch(() => {})
+      // },
+      clickAddress (item) { // 登陆状态下选中地址
+        this.selAddress = item
+        this.$store.commit('setSelAddress', this.selAddress) // 保存选中的地址
+        setTimeout(() => {
+          this.$router.push(`/pay-m?addressUuid=${item.addressUuid}`)
+        }, 500);
       },
       goBack() {
         this.$router.go(-1)
@@ -208,7 +113,7 @@
 
 <style lang="less" scoped>
 .payAddressList{
-  padding-top: 44px;
+  // padding-top: 44px;
   background-color: #f5f5f5;
   height: 100%;
   .list-wrap{
@@ -268,7 +173,7 @@
         margin-bottom: 1px;
         border: 1px solid  transparent;
         &.active{
-          border: 1px solid  #00C1D6;
+          border: 1px solid  #6244BB;
         }
         .name{
           display: flex;
@@ -296,7 +201,7 @@
             display: inline-block;
             padding: 5px;
             margin-right: 10px;
-            color: #13bed3;
+            color: #666666;
             &:last-child {
               margin-right: 0px;
             }

@@ -27,15 +27,12 @@ const BlogSearch = () => import('../views/blog/blog-search.vue') // blog-search
 const ShoppingCart = () => import('../views/shopping-cart/index.vue') // 购物车列表
 const ShoppingCustomer = () => import('../views/shopping-order/payment-pc/shopping-customer.vue') // 购物车判断登陆
 const ShoppingCustomerMobile = () => import('../views/shopping-order/payment-mobile/shopping-customer.vue') // 购物车判断登陆
-// const ShoppingCustomerGuest= () => import('../views/shopping-order/payment-mobile/customer-guest.vue') // 购物车判断登陆
-// const ShoppingCustomerLogin = () => import('../views/shopping-order/payment-mobile/shopping-login.vue') // 购物车判断登陆
 const ShoppingOrder = () => import('../views/shopping-order/index.vue') // pc下单
-const CustomerEmail = () => import('../views/shopping-order/payment-mobile/shopping-customer.vue') // 未登陆下单输入邮箱
 const PayMobile = () => import('../views/shopping-order/payment-mobile/shopping-edit.vue') // 移动端下单
 const PayAddrDetail = () => import('../views/shopping-order/payment-mobile/pay-addressdetail.vue') // 移动端编辑收货地址
 const PayAddrList = () => import('../views/shopping-order/payment-mobile/pay-addresslist.vue') // 移动端收货地址列表
 const PayCoupon = () => import('../views/shopping-order/payment-mobile/pay-coupon.vue') // 移动端优惠码
-const PayResult = () => import('../views/shopping-order/pay-result.vue') // 移动端优惠码
+const PayResult = () => import('../views/shopping-order/pay-result.vue') // 支付结果页
 
 /* meta参数说明开始 */
 /**
@@ -77,13 +74,10 @@ export function createRouter () {
       { path: '/shopping-cart', component: ShoppingCart, meta: {isShoppingcart: true} },
       { path: '/shopping-customer', component: ShoppingCustomer, meta: {isShoppingcart: true} },
       { path: '/shopping-customer-m/:id', name: 'ShoppingCustomerMobile', component: ShoppingCustomerMobile, meta: {isShoppingcart: true} },
-      // { path: '/shopping-customer-guest', name: 'ShoppingCustomerGuest', component: ShoppingCustomerGuest },
-      // { path: '/shopping-customer-login', name: 'ShoppingCustomerLogin', component: ShoppingCustomerLogin },
-      { path: '/customer-email', component: CustomerEmail, meta: {isShoppingcart: true} },
       { path: '/pay', component: ShoppingOrder, meta: {isShoppingcart: true} },
       { path: '/pay-m', component: PayMobile, meta: {isShoppingcart: true} },
       { path: '/pay-addressdetail', component: PayAddrDetail, meta: {isShoppingcart: true} },
-      { path: '/pay-addrList', component: PayAddrList, meta: {isShoppingcart: true} },
+      { path: '/pay-addresslist', component: PayAddrList, meta: {isShoppingcart: true} },
       { path: '/pay-coupon', component: PayCoupon, meta: {isShoppingcart: true} },
       { path: '/pay-result', component: PayResult, meta: {isShoppingcart: true} },
       { path: '/', name: 'homePage', component: HomePage, meta: {sourceCode: 'SUB_INDEX_SOURCE'} },

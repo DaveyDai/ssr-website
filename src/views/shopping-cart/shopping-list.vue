@@ -17,7 +17,7 @@
           <p class="product-d-price">${{item.sellPrice}}<span>${{item.listingPrice}}</span></p>
         </div>
         <div class="li-product-number">
-          <el-input-number v-model="item.totalQtyOrdered" :disabled="!item.state" :min="1" :max="999" @change="updateShoppingCart(item)"></el-input-number>
+          <el-input-number v-model="item.totalQtyOrdered" :disabled="!item.state" :min="1" :max="999" @change="shoppingCartAdd(item)"></el-input-number>
         </div>
         <div class="li-product-right">
           <div class="li-product-total">${{(item.totalQtyOrdered * item.sellPrice).toFixed(2)}}</div>
@@ -84,9 +84,6 @@
       },
       upShoppingTotal (item) { // 改变商品数量
         this.$utils.setShoppingCart(this.$store.commit, this.$utils.calculationCart(this.shoppingCart.productList, this.shoppingCart.shoppingCartId))
-      },
-      updateShoppingCart (item) {
-        this.$cookies.get('token') ? this.shoppingCartAdd(item) : this.shoppingCartAddById(item)
       },
       // 添加购物车 (编辑购物车接口最好改一下 post请求不要用URL拼接参数)
       shoppingCartAdd (item) { 
@@ -618,12 +615,16 @@
         transform: translate(-50%, -50%);
       }
     }
+    button {
+      width: 100%;
+    }
   }
   .vava-button {
     font-family: avenir-next-regular;
   }
   .el-dialog{
     margin-top: 30vh!important;
+    width: 80%;
   }
   .el-dialog__header{
     border: 0;

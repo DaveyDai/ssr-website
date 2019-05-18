@@ -17,8 +17,12 @@ export default {
     state.token = data
     if (typeof window !== 'undefined') VueCookies.set('token', data)
   },
-  setAccountData (state, data) {
-    if (typeof window !== 'undefined' && window && window.localStorage) window.localStorage.setItem('accountName', data.emailAddress || '')
+  setAccountData (state, data, isSession = true) {
+    if (!isSession) {
+      if (typeof window !== 'undefined' && window && window.localStorage) window.localStorage.setItem('accountName', data.emailAddress || '')
+      
+    }
+    if (typeof window !== 'undefined' && window && window.sessionStorage) window.sessionStorage.setItem('accountName', data.emailAddress || '')
     state.accountData = data
   },
   setHomePageData (state, data) {
@@ -85,5 +89,11 @@ export default {
   },
   setShoppingCart (state, data) {
     state.shoppingCart = data
+  },
+  setInAddressList (state, data) {
+    state.inAddressList = data
+  },
+  setSelAddress (state, data) {
+    state.selAddress = data
   }
 }

@@ -107,7 +107,7 @@
         await this.$store.dispatch('postFetch', {api: 'getMemberInfo'}).then(data => {
           this.$bar.finish()
           this.informationData = data
-          this.$store.commit('setAccountData', JSON.parse(JSON.stringify(data)))
+          this.$store.commit('setAccountData', JSON.parse(JSON.stringify(data.memberInfoBo)))
         }).catch(error => {
           this.$bar.finish()
           if (error.code === 14006 || error.code === 14000 || error.code === 14001) {
@@ -120,14 +120,14 @@
         })
       },
       async queryAddress () { // 获取地址列表
-        await this.$store.dispatch('postFetch', {api: 'findAddressInfoListVo', data: {pageNo: 1, pageSize: 20}}).then(data => {
+        await this.$store.dispatch('postFetch', { api: 'findAddressInfoListVo', data: { pageNo: 1, pageSize: 20, condition: {} } }).then(data => {
           this.addressList = data.records || []
         }).catch(error => {
           this.$utils.showErrorMes(this, error)
         })
       },
       async queryCredit () { // 获取支付卡片列表
-        await this.$store.dispatch('postFetch', {api: 'findCreditCardInfoListVo', data: {pageNo: 1, pageSize: 20}}).then(data => {
+        await this.$store.dispatch('postFetch', { api: 'findCreditCardInfoListVo', data: { pageNo: 1, pageSize: 20, condition: {} } }).then(data => {
           this.creditList = data.records || []
         }).catch(error => {
           this.$utils.showErrorMes(this, error)

@@ -177,7 +177,7 @@
         }
       },
       continueGo (type) { // 移动端未登陆点击check out跳转到对应页面
-        this.$router.push({path: '/customer-email', query: {type: type}})
+        this.$router.push({path: '/shopping-customer-m', query: {type: type}})
       }
     }
   }

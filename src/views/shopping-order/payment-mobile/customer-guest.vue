@@ -14,7 +14,7 @@
     <p class='orPart'>
       <span>or</span>
     </p>
-    <a class='signInA' href="/carts-login">Sign In</a>
+    <a class='signInA' href="/login">Sign In</a>
   </div>
 </template>
 
@@ -36,6 +36,8 @@
       guestLogin () {
         this.$refs['unSign'].validate((valid) => {
           if (valid) {
+            let accountData = { emailAddress: this.unSign.email }
+            this.$store.commit('setAccountData', accountData)
             this.$router.push('/pay-m/?email=' + this.unSign.email) // 跳转支付页面
           }
         })
@@ -53,7 +55,7 @@
     padding: 0 15px 30px;
     margin-right: 20px;
     .title{
-      font-family: SFCompactDisplay-Regular;
+      font-family: avenir-next-regular;
       font-size: 16px;
       color: #333333;
       text-align: center;
@@ -79,7 +81,7 @@
       position:relative;
       margin: 25px 0 22px;
       span{
-        font-family: SFCompactDisplay-Regular;
+        font-family: avenir-next-regular;
         font-size: 14px;
         color: #999999;
         position: absolute;
@@ -93,7 +95,7 @@
       }
     }
     .signInA{
-      font-family: SFCompactDisplay-Regular;
+      font-family: avenir-next-regular;
       font-size: 16px;
       color: @base-color;
       text-align: center;

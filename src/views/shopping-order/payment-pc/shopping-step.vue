@@ -8,7 +8,7 @@
 <script>
   export default {
     props: {
-      active: Number
+      active: Number // 1 选择商品阶段 2 下单阶段 3 支付成功 4 支付失败
     }
   }
 </script>

@@ -58,6 +58,8 @@
       login () { // 登陆
         this.$store.dispatch('postFetch', {api: 'signIn', data: this.sign}).then(data => {
           this.$store.commit('setToken', data.token)
+          let accountData = { emailAddress: this.sign.userName }
+          this.$store.commit('setAccountData', accountData)
           this.$router.push('/pay-m/?email=' + this.sign.userName)
         }).catch(error => {
           this.$utils.showErrorMes(this, error)
@@ -69,11 +71,12 @@
 
 <style lang="less" scoped>
 .cartsLogin{
-  .slide-login{
+  .slide-login {
     background: #FFFFFF;
     padding: 0 15px 30px;
+    font-family: avenir-next-regular;
     .title{
-      font-family: SFCompactDisplay-Regular;
+      font-family: avenir-next-regular;
       font-size: 16px;
       color: #333333;
       text-align: center;
@@ -95,7 +98,7 @@
       justify-content: space-between;
       padding: 0 15px;
       a {
-        font-family: SFCompactDisplay-Regular;
+        font-family: avenir-next-regular;
         font-size: 12px;
         color: @base-color;
         text-align: right;
