@@ -149,6 +149,7 @@
         })
       },
       getOrderTax () { // 根据地址获取税费
+        this.fullscreenLoading = true // 开启弹窗，防止用户在税费没查询出来的情况下，点击支付按钮
         let taxesParam = {
           orderAddressBo: this.selAddress, // 当前选择的地址
           cartInfoBos: this.shoppingCart.productList, // 商品列表
@@ -159,9 +160,12 @@
           source: 0
         }
         this.$store.dispatch('postFetch', {api: 'getOrderInfoPriceVo', data: taxesParam}).then(data => {
+          this.fullscreenLoading = false
           this.isGoPay = true // 可以支付了
           this.orderTaxes = data.amount // 订单税费
         }).catch(error => {
+          this.fullscreenLoading = false
+          this.$utils.showErrorMes(this, error)
         })
       },
       // 下单

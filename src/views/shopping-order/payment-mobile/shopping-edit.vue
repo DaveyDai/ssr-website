@@ -217,6 +217,7 @@
         }
       },
       getOrderTax () { // 根据地址获取税费
+        this.fullscreenLoading = true // 开启弹窗，防止用户在税费没查询出来的情况下，点击支付按钮
         let taxesParam = {
           orderAddressBo: this.selAddress, // 当前选择的地址
           cartInfoBos: this.shoppingCart.productList, // 商品列表
@@ -227,9 +228,11 @@
           source: 0
         }
         this.$store.dispatch('postFetch', {api: 'getOrderInfoPriceVo', data: taxesParam}).then(data => {
+          this.fullscreenLoading = false
           this.isGoPay = true // 可以支付了
           this.orderTaxes = data.amount // 订单税费
         }).catch(error => {
+          this.fullscreenLoading = false
           this.$utils.showErrorMes(this, error)
         })
       },
@@ -596,55 +599,6 @@
       color: #fff;
       &:hover{
         box-shadow: 0 8px 24px #DDDDDD;
-      }
-    }
-  }
-  /*购物车导航面包屑*/
-  .bread-self{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    .item24{
-      flex: 1;
-      height: 24px;
-      line-height: 24px;
-      background-color:  #E0E0E0;
-      position: relative;
-      text-align: center;
-      font-family: SFCompactDisplay-Regular;
-      font-size: 12px;
-      color: #666666;
-      &.bg-gradient{
-        color: white;
-        background-color: @base-color;
-        span{
-          z-index: 2;
-          border-left-color: @active-color;
-        }
-      }
-      &.fail{
-        background-color: #FF9B1F;
-        color: white;
-        span{
-          z-index: 2;
-          border-left-color: #FF9B1F;
-        }
-      }
-      span{
-        display: block;
-        position: absolute;
-        right: -13px;
-        top: 0;
-        border-left: 13px solid  #E0E0E0;
-        border-top: 12px solid transparent; 
-        border-right: 0 solid transparent; 
-        border-bottom: 12px solid transparent; 
-      }
-      &:nth-last-child(1){
-        span{
-          display: none;
-        }
       }
     }
   }
