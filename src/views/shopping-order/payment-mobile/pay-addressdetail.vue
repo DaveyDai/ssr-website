@@ -14,9 +14,13 @@
     },
     data() {
       return {
-        selAddress: this.$store.state.selAddress || {}, // 选中的地址列表
-        inAddressList: this.$store.state.inAddressList || [],
+        selAddress: {}, // 选中的地址列表
+        inAddressList: [],
       }
+    },
+    beforeMount () {
+      this.selAddress = this.$store.state.selAddress || {}
+      this.inAddressList = this.$store.state.inAddressList || []
     },
     methods: {
       changeAddress (addressData) {

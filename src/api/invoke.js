@@ -72,10 +72,9 @@ export function invokeShoppingCartAdd (vm, params, callback, errorCallback) { //
 export function invokeShoppingCartAddById (vm, params, callback, errorCallback) { 
   vm.$store.dispatch('postByUrl', {api: 'editShopCartNl', bodyData: params, data: '?shopCartId=' + vm.$store.state.shoppingCart.shoppingCartId}).then(data => {
     // 未登录用户添加购物车ID
-    if (!vm.$store.state.shoppingCart.shoppingCartId) {
-      let cartData = {shoppingCartId: data.shopCartId}
-      vm.$store.commit('setShoppingCart', cartData)
-    }
+    let cartData = vm.$store.state.shoppingCart || {}
+    cartData.shoppingCartId = data.shopCartId
+    vm.$store.commit('setShoppingCart', cartData)
     if (typeof callback === 'function') {
       callback()
     } 

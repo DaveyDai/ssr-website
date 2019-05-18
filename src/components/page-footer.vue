@@ -14,10 +14,12 @@
           <li @click="routerLink('/support/after-sales')">After-Sales</li>
           <li @click="routerLink('/support/terms-conditions')">Terms & Conditions</li>
           <li @click="routerLink('/support/private-policy')">Privacy Policy</li>
+          <li @click="routerLink('/support/refund-exchange')">Refund & Exchange</li>
         </div>
         <div class="left-footer-column">
           <h5>OTHERS</h5>
           <li @click="routerLink('/about.html')">About Us</li>
+          <li @click="routerLink('/support/intellectual-property-rights')">Intellectual Property Rights</li>
           <!-- <li>Subscribe</li> -->
         </div>
         <div class="left-footer-column">
@@ -58,6 +60,7 @@
         <span slot="titleContent" class="footer-collapse-title">OTHERS</span>
         <span slot="rightIcon" class="icon icon-right-slide"></span>
         <li @click="routerLink('/about.html')">About Us</li>
+        <li @click="routerLink('/support/intellectual-property-rights')">Intellectual Property Rights</li>
         <!-- <li>Subscribe</li> -->
       </vava-collapse-item>
       <vava-collapse-item>
@@ -83,6 +86,7 @@
         </li>
       </vava-collapse-item>
     </div>
+    <div class="desc-card-img"><img src="/static/website-imgages/support//card-img.png" alt=""></div>
   </div>
 </template>
 
@@ -173,6 +177,16 @@
       }
     }
   }
+  .page-footer .desc-card-img{
+      padding: 0.52vw 9%;
+      background-color: #2E1F5C;
+      height: 30px;
+      img{
+        height: 30px;
+      }
+  }
+  @media (max-width: 1660px) {.page-footer .desc-card-img{padding: 10px 8%;}}
+  @media (max-width: 800px) {.page-footer .desc-card-img{padding: 0 20px 20px 20px;}}
   @media (max-width: 1617px) {
     .page-footer .footer-pc{
       .footer-conter-line{width: 1px;}

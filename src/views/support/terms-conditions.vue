@@ -120,7 +120,14 @@
         <span slot="titleContent" class="terms-conditions-content-title">LAW AND JURISDICTION</span>
         <span slot="rightIcon" class="icon icon-right-slide"></span>
         <div class="terms-conditions-li">
-          <p>These terms and conditions will be governed by and construed in accordance with US law, and any disputes relating to these terms and conditions will be subject to the exclusive jurisdiction of the courts of California.</p>
+          <p>These terms and conditions will be governed by and construed in accordance with UK law, and any disputes relating to these terms and conditions will be subject to the exclusive jurisdiction of the courts of UK.</p>
+        </div>
+      </vava-collapse-item>
+      <vava-collapse-item>
+        <span slot="titleContent" class="terms-conditions-content-title">QANDIES</span>
+        <span slot="rightIcon" class="icon icon-right-slide"></span>
+        <div class="terms-conditions-li">
+          <img style="width:100%;" src="https://www.9-bill.com/?v=aZcPQNfmJ7rAbpRHs8vk" alt="QANDIES bill">
         </div>
       </vava-collapse-item>
     </div>

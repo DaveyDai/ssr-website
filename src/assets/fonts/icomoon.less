@@ -8,6 +8,26 @@
   font-weight: normal;
   font-style : normal;
 }
+@font-face { // 引入element-ui iocn
+  font-family: element-icons;
+  src        : url(/src/assets/fonts/element-icons.woff) format("woff"), url(/src/assets/fonts/element-icons.ttf) format("truetype");
+  font-weight: 400;
+  font-style : normal
+}
+[class*=" el-icon-"],
+[class^=el-icon-] {
+  font-family            : element-icons !important;
+  speak                  : none;
+  font-style             : normal;
+  font-weight            : 400;
+  font-variant           : normal;
+  text-transform         : none;
+  line-height            : 1;
+  vertical-align         : baseline;
+  display                : inline-block;
+  -webkit-font-smoothing : antialiased;
+  -moz-osx-font-smoothing: grayscale
+}
 .icon {
   font-family   : 'icomoon' !important;
   speak         : none;
@@ -99,4 +119,56 @@
 .icon-account-lock:before {
   content: "\e903";
   color  : rgba(98, 68, 187, 0.2);
+}
+// 下面是element-ui icon
+.el-icon-arrow-up:before {
+  content: "\e605"
+}
+.el-icon-close:before {
+  content: "\e60f"
+}
+.el-icon-minus:before {
+  content: "\e621"
+}
+.el-icon-plus:before {
+  content: "\e62b"
+}
+.el-icon-delete:before {
+  content: "\e612"
+}
+.el-icon-loading {
+  -webkit-animation: rotating 2s linear infinite;
+  animation        : rotating 2s linear infinite
+}
+
+.el-icon--right {
+  margin-left: 5px
+}
+
+.el-icon--left {
+  margin-right: 5px
+}
+
+@-webkit-keyframes rotating {
+  0% {
+    -webkit-transform: rotateZ(0);
+    transform        : rotateZ(0)
+  }
+
+  100% {
+    -webkit-transform: rotateZ(360deg);
+    transform        : rotateZ(360deg)
+  }
+}
+
+@keyframes rotating {
+  0% {
+    -webkit-transform: rotateZ(0);
+    transform        : rotateZ(0)
+  }
+
+  100% {
+    -webkit-transform: rotateZ(360deg);
+    transform        : rotateZ(360deg)
+  }
 }

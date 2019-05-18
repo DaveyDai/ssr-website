@@ -21,6 +21,7 @@ const TermsConditions = () => import('../views/support/terms-conditions.vue') //
 const PrivatePolicy = () => import('../views/support/private-policy.vue') // private-policy首页
 const Influencer = () => import('../views/support/influencer.vue') // influencer首页
 const Feedback = () => import('../views/support/feedback.vue') // feedback首页
+const intellectualPropertyRights = () => import('../views/support/intellectual-property-rights.vue')
 const Blog = () => import('../views/blog/index.vue') // blog首页
 const BlogDetail = () => import('../views/blog/blog-detail.vue') // blog-detail
 const BlogSearch = () => import('../views/blog/blog-search.vue') // blog-search
@@ -32,7 +33,10 @@ const PayMobile = () => import('../views/shopping-order/payment-mobile/shopping-
 const PayAddrDetail = () => import('../views/shopping-order/payment-mobile/pay-addressdetail.vue') // 移动端编辑收货地址
 const PayAddrList = () => import('../views/shopping-order/payment-mobile/pay-addresslist.vue') // 移动端收货地址列表
 const PayCoupon = () => import('../views/shopping-order/payment-mobile/pay-coupon.vue') // 移动端优惠码
-const PayResult = () => import('../views/shopping-order/pay-result.vue') // 支付结果页
+const PayResult = () => import('../views/shopping-order/pay-result.vue') // 移动端优惠码
+const ViewDetails = () => import('../views/account/view-details.vue') // 订单详情
+const RefundExchange = () => import('../views/account/refund-exchange.vue') // 退换货
+const TrackOrders = () => import('../views/account/track-orders.vue') // track orders
 
 /* meta参数说明开始 */
 /**
@@ -67,6 +71,8 @@ export function createRouter () {
       { path: '/support/private-policy', component: PrivatePolicy },
       { path: '/support/influencer', component: Influencer },
       { path: '/support/feedback', component: Feedback },
+      { path: '/support/refund-exchange', component: RefundExchange},
+      { path: '/support/intellectual-property-rights', component: intellectualPropertyRights },
       { path: '/blog', component: Blog, meta: {blog: true} },
       { path: '/blog/:label(\\d+)', component: BlogDetail, meta: {blog: true} },
       { path: '/blog/search', component: BlogSearch, meta: {blog: true} },
@@ -81,7 +87,9 @@ export function createRouter () {
       { path: '/pay-coupon', component: PayCoupon, meta: {isShoppingcart: true} },
       { path: '/pay-result', component: PayResult, meta: {isShoppingcart: true} },
       { path: '/', name: 'homePage', component: HomePage, meta: {sourceCode: 'SUB_INDEX_SOURCE'} },
-      { path: '/icontest', name: 'icontest', component: IconTest } // 测试页面
+      { path: '/icontest', name: 'icontest', component: IconTest }, // 测试页面
+      { path: '/view-details', component: ViewDetails},
+      { path: '/track-orders', component: TrackOrders}
     ]
   })
 }

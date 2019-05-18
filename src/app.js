@@ -57,7 +57,7 @@ export function createApp (language, token, isMobile) {
   })
   router.beforeEach((to, from, next) => {
     let userToken = typeof window !== 'undefined' ? Vue.cookies.get('token') : token
-    to.path === '/account' && !userToken ? next('/login') : next()
+    to.path === '/account' && !userToken ? next('/track-orders') : next()
   })
   return { app, router, store }
 }

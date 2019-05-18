@@ -60,14 +60,19 @@
     </transition>
     <address-edit v-if="editType===3||editType===5" ref="addressEdit" :data-list="addressList" @upList="queryAddress"></address-edit>
     <payment-edit v-if="editType===4||editType===6" ref="paymentEdit" :data-list="creditList" @upList="queryCredit"></payment-edit>
+    <!-- 订单列表 -->
+    <div class="order_list">
+      <OrderComp/>
+    </div>
   </div>
 </template>
 
 <script>
   import AddressEdit from './address-edit.vue'
   import PaymentEdit from './payment-edit.vue'
+  import OrderComp from '../../components/order-comp.vue'
   export default {
-    components: { AddressEdit, PaymentEdit },
+    components: { AddressEdit, PaymentEdit, OrderComp },
     data () {
       return {
         editType: 0, // 1修改个人信息  2 修改密码 3 收货地址管理 4 支付管理 5 编辑收货地址预览 6 编辑支付方式预览
@@ -82,7 +87,7 @@
           reNewPassword: ''
         },
         addressList: [], // 地址列表
-        creditList: [] // 支付卡片列表
+        creditList: [], // 支付卡片列表
       }
     },
     computed: {
@@ -140,6 +145,7 @@
           this.$utils.showErrorMes(this, error)
         })
       },
+      
       saveChange () {
         this.editType == 1 ? this.changeMemberInfo() : this.editType == 2 ? this.changePassword() : ''
       },
@@ -376,6 +382,12 @@
     }
     .collapse-transition{
       transition: .3s height ease-out;
+    }
+    .order_list {
+      width: 100%;
+      background: #fafafa;
+      padding: 1.2vw 5.2vw 0;
+      overflow: hidden;
     }
   }
   @media (max-width: 1450px) {

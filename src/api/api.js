@@ -62,6 +62,15 @@ export default {
   getOrderInfoPriceVo: apiBaseUrl + '/vava-pc-order/shop/getOrderInfoPriceVo', // 查询订单税费、总价
   checkCompletePay: apiBaseUrl + '/vava-pc-order/shop/checkCompletePay', // 查询订单是否完成支付
   submitOrderInfo: apiBaseUrl + '/vava-pc-order/shop/submitOrderInfo', // 提交订单信息
+
   // PP支付
   paypalOrder: apiBaseUrl + '/vava-pc-pay/pay/paypalOrder', // pp支付
+
+  // 订单接口
+  findOrderList: apiBaseUrl + '/vava-pc-order/orderManager/findOrderList', // 订单列表
+  getOrderDetails: apiBaseUrl + '/vava-pc-order/orderManager/getOrder', // 订单详情
+  cancelOrder: apiBaseUrl + '/vava-pc-order/orderManager/cancelOrder/', // 取消订单
+  selectLogistics: apiBaseUrl + '/vava-pc-order/orderManager/selectLogistics', // 查询物流
+  refunds: apiBaseUrl + '/vava-pc-order/orderManager/refunds', // 退换货申请
+  
 }

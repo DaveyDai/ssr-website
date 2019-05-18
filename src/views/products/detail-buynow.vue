@@ -154,6 +154,7 @@
           this.$utils.message('The goods have been added to the shopping cart. Please go to the shopping cart')
           invokeGetShoppingCart(this) // 获取购物车列表
         }) : invokeShoppingCartAddById (this, editParam, () => {
+          this.$utils.message('The goods have been added to the shopping cart. Please go to the shopping cart')
           invokeGetShoppingCart(this) // 获取购物车列表
         })
       },
